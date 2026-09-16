@@ -1,0 +1,164 @@
+(() => {
+  const form = document.querySelector('#scan-form');
+  if (!form) return;
+
+  const input = document.querySelector('#photo');
+  const startButton = document.querySelector('#start-camera');
+  const captureButton = document.querySelector('#capture-photo');
+  const stopButton = document.querySelector('#stop-camera');
+  const stage = document.querySelector('#camera-stage');
+  const video = document.querySelector('#camera-video');
+  const error = document.querySelector('#camera-error');
+  const previewWrap = document.querySelector('#photo-preview-wrap');
+  const preview = document.querySelector('#photo-preview');
+  const name = document.querySelector('#photo-name');
+  const ready = document.querySelector('#photo-ready');
+  const analyzeButton = document.querySelector('#analyze-button');
+  const tryOnPhotoKey = 'formusense_tryon_photo_v1';
+  let stream = null;
+  let previewUrl = null;
+  let submitting = false;
+
+  analyzeButton.disabled = true;
+
+  const stopCamera = () => {
+    if (stream) stream.getTracks().forEach((track) => track.stop());
+    stream = null;
+    video.srcObject = null;
+    stage.hidden = true;
+    captureButton.hidden = true;
+    stopButton.hidden = true;
+    startButton.hidden = false;
+  };
+
+  const showPreview = (fromCamera) => {
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    const file = input.files[0];
+    previewWrap.hidden = !file;
+    analyzeButton.disabled = !file;
+    if (!file) {
+      previewUrl = null;
+      preview.removeAttribute('src');
+      return;
+    }
+    name.textContent = `${file.name} · ${(file.size / 1048576).toFixed(1)} MB`;
+    ready.textContent = fromCamera
+      ? 'Foto berhasil diambil. Periksa hasilnya, lalu tekan Analisis foto.'
+      : 'Foto dipilih. Periksa hasilnya, lalu tekan Analisis foto.';
+    previewUrl = URL.createObjectURL(file);
+    preview.src = previewUrl;
+  };
+
+  const cachePhotoForTryOn = (file) => new Promise((resolve) => {
+    const image = new Image();
+    const objectUrl = URL.createObjectURL(file);
+    image.onload = () => {
+      try {
+        const scale = Math.min(1, 960 / Math.max(image.width, image.height));
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.round(image.width * scale);
+        canvas.height = Math.round(image.height * scale);
+        canvas.getContext('2d').drawImage(image, 0, 0, canvas.width, canvas.height);
+        sessionStorage.setItem(tryOnPhotoKey, canvas.toDataURL('image/jpeg', 0.8));
+      } catch (cause) {
+        // The scan still works if browser storage is unavailable.
+      } finally {
+        URL.revokeObjectURL(objectUrl);
+        resolve();
+      }
+    };
+    image.onerror = () => {
+      URL.revokeObjectURL(objectUrl);
+      resolve();
+    };
+    image.src = objectUrl;
+  });
+
+  startButton.addEventListener('click', async () => {
+    error.hidden = true;
+    if (!navigator.mediaDevices?.getUserMedia) {
+      error.textContent = 'Kamera langsung tidak tersedia di browser ini. Coba buka lewat HTTPS atau localhost, atau unggah foto.';
+      error.hidden = false;
+      return;
+    }
+    startButton.disabled = true;
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({
+        audio: false,
+        video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 960 } },
+      });
+      video.srcObject = stream;
+      stage.hidden = false;
+      await video.play();
+      captureButton.hidden = false;
+      stopButton.hidden = false;
+      startButton.hidden = true;
+      stage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } catch (cause) {
+      stopCamera();
+      error.textContent = cause.name === 'NotAllowedError'
+        ? 'Izin kamera ditolak. Izinkan kamera di pengaturan browser atau unggah foto.'
+        : 'Kamera tidak dapat dibuka. Periksa apakah sedang dipakai aplikasi lain, atau unggah foto.';
+      error.hidden = false;
+    } finally {
+      startButton.disabled = false;
+    }
+  });
+
+  captureButton.addEventListener('click', () => {
+    if (!stream || !video.videoWidth || !video.videoHeight) return;
+    captureButton.disabled = true;
+    const scale = Math.min(1, 1280 / Math.max(video.videoWidth, video.videoHeight));
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.round(video.videoWidth * scale);
+    canvas.height = Math.round(video.videoHeight * scale);
+    const context = canvas.getContext('2d');
+    context.translate(canvas.width, 0);
+    context.scale(-1, 1);
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    canvas.toBlob((blob) => {
+      captureButton.disabled = false;
+      if (!blob) {
+        error.textContent = 'Foto gagal diambil. Coba lagi atau unggah foto.';
+        error.hidden = false;
+        return;
+      }
+      try {
+        const file = new File([blob], 'foto-kamera.jpg', { type: 'image/jpeg' });
+        const transfer = new DataTransfer();
+        transfer.items.add(file);
+        input.files = transfer.files;
+        showPreview(true);
+        stopCamera();
+        previewWrap.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        analyzeButton.focus({ preventScroll: true });
+      } catch (cause) {
+        error.textContent = 'Browser tidak dapat memasukkan hasil kamera ke formulir. Coba unggah foto melalui tombol pilih foto.';
+        error.hidden = false;
+      }
+    }, 'image/jpeg', 0.88);
+  });
+
+  stopButton.addEventListener('click', stopCamera);
+  input.addEventListener('change', () => showPreview(false));
+  form.addEventListener('submit', async (event) => {
+    if (submitting || !input.files[0]) return;
+    event.preventDefault();
+    stopCamera();
+    analyzeButton.textContent = 'Menganalisis foto…';
+    analyzeButton.setAttribute('aria-busy', 'true');
+    analyzeButton.disabled = true;
+    await cachePhotoForTryOn(input.files[0]);
+    analyzeButton.disabled = false;
+    submitting = true;
+    form.requestSubmit(analyzeButton);
+  });
+  document.querySelectorAll('button[name="action"][value="manual"], button[name="action"][value="demo"]')
+    .forEach((button) => button.addEventListener('click', () => {
+      try { sessionStorage.removeItem(tryOnPhotoKey); } catch (cause) { /* Storage is optional. */ }
+    }));
+  window.addEventListener('pagehide', () => {
+    stopCamera();
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+  });
+})();

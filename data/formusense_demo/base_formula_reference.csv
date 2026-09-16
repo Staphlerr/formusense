@@ -1,0 +1,8 @@
+formula_id,formula_name,phase,ingredient_function,ingredient_or_group,percentage,source_type,validation_note
+BASE001,Demo Satin Lip Color Base,base,oil_phase,emollient_oil_blend,34.0,demo_template,Needs formulator review before real use
+BASE001,Demo Satin Lip Color Base,base,structure,wax_blend,16.0,demo_template,Needs formulator review before real use
+BASE001,Demo Satin Lip Color Base,base,film_and_slip,butter_or_ester_blend,18.0,demo_template,Needs formulator review before real use
+BASE001,Demo Satin Lip Color Base,pigment,pigment_blend_total,iron_oxide_red_yellow_black_titanium_dioxide_dc_red,20.0,demo_template,Demo pigment envelope only; not production formula
+BASE001,Demo Satin Lip Color Base,additive,texture_modifier,silica_or_spherical_powder,5.0,demo_template,Optional texture adjustment
+BASE001,Demo Satin Lip Color Base,additive,antioxidant_preservative,tocopherol_and_approved_additives,1.0,demo_template,Regulatory review required
+BASE001,Demo Satin Lip Color Base,base,balance,additional_oil_or_binder,6.0,demo_template,Adjust to 100 percent

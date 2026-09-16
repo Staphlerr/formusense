@@ -1,0 +1,25 @@
+shade_id,shade_name,brand_line,color_family,hex,undertone_fit,intensity,finish,portfolio_status,source_type,notes
+SHD001,Soft Warm Nude,Demo Lip Satin,nude,#B77A66,warm,light-medium,satin,existing,demo_curated,Everyday warm nude for medium skin
+SHD002,Peach Beige,Demo Lip Satin,nude,#C48772,warm,light,satin,existing,demo_curated,Soft peach nude
+SHD003,Rose Nude,Demo Lip Cream,nude,#B86F78,neutral,medium,cream,existing,demo_curated,Nude with rose balance
+SHD004,Muted Mauve,Demo Lip Matte,mauve,#9F5C70,cool,medium,matte,existing,demo_curated,Muted mauve for soft look
+SHD005,Dusty Pink,Demo Lip Cream,pink,#C76F86,cool,medium,cream,existing,demo_curated,Soft pink shade
+SHD006,Warm Pink,Demo Lip Satin,pink,#D06F78,warm,medium,satin,existing,demo_curated,Warm pink for fresh look
+SHD007,Coral Bloom,Demo Lip Gloss,coral,#D66B54,warm,medium,glossy,existing,demo_curated,Bright coral
+SHD008,Muted Coral,Demo Lip Satin,coral,#C2604D,warm,medium,satin,limited_match,demo_curated,Coral with muted depth
+SHD009,Energized Terracotta,Demo Lip Satin,terracotta,#B9543E,warm_olive,medium-high,satin,opportunity,demo_curated,Main demo opportunity shade
+SHD010,Terracotta Nude,Demo Lip Cream,terracotta,#A95443,warm_olive,medium,cream,limited_match,demo_curated,Nude terracotta
+SHD011,Burnt Terracotta,Demo Lip Matte,terracotta,#8F3F32,warm_olive,bold,matte,opportunity,demo_curated,Deeper terracotta
+SHD012,Brick Red,Demo Lip Matte,red,#8E2F2B,warm,bold,matte,existing,demo_curated,Bold warm red
+SHD013,Classic Red,Demo Lip Satin,red,#B4212E,neutral,bold,satin,existing,demo_curated,Classic red
+SHD014,Cherry Red,Demo Lip Gloss,red,#C9223B,cool,bold,glossy,existing,demo_curated,Cool bright red
+SHD015,Rose Brown,Demo Lip Cream,brown,#8D4D48,neutral,medium,cream,existing,demo_curated,Rose brown
+SHD016,Cocoa Nude,Demo Lip Matte,brown,#764438,warm,medium,matte,existing,demo_curated,Brown nude
+SHD017,Caramel Brown,Demo Lip Satin,brown,#9B5A3F,warm,medium-high,satin,existing,demo_curated,Warm caramel brown
+SHD018,Berry Soft,Demo Lip Cream,berry,#8A3F61,cool,medium,cream,existing,demo_curated,Soft berry
+SHD019,Deep Berry,Demo Lip Matte,berry,#612741,cool,bold,matte,existing,demo_curated,Deep berry
+SHD020,Plum Rose,Demo Lip Satin,berry,#74415C,cool,medium-high,satin,existing,demo_curated,Plum rose
+SHD021,Fresh Guava,Demo Lip Tint,coral,#DE6F68,warm,medium,glowy,existing,demo_curated,Fresh coral pink
+SHD022,Soft Cinnamon,Demo Lip Cream,brown,#9C5E4A,warm,medium,cream,limited_match,demo_curated,Soft brown for warm profiles
+SHD023,Olive Rose,Demo Lip Satin,mauve,#9A5F66,warm_olive,medium,satin,opportunity,demo_curated,Rose shade for olive undertone
+SHD024,Deep Terracotta Gloss,Demo Lip Gloss,terracotta,#904033,warm_olive,bold,glossy,opportunity,demo_curated,Glossy terracotta opportunity

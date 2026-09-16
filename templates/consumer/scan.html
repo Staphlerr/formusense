@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Analisis foto · FormuSense{% endblock %}
+{% block content %}
+<section class="page narrow"><span class="eyebrow">Langkah 4 dari 4</span><h1>Kenali profil bibirmu</h1>
+<p class="lead">Ambil foto langsung dengan kamera atau unggah foto. Hadapkan wajah ke depan, pastikan bibir terlihat, gunakan cahaya alami, dan hindari lipstik tebal. Kamu juga bisa memakai profil manual atau contoh demo.</p>
+<p class="status-pill">{% if ai_available %}AI vision dikonfigurasi · jika gagal, isi manual{% else %}AI vision belum dikonfigurasi · profil manual dan demo siap dipakai{% endif %}</p>
+{% if photo_consent %}
+<form method="post" enctype="multipart/form-data" class="card form-card" id="scan-form">{% csrf_token %}
+  <div><strong>1 · Buka kamera</strong>
+    <div class="actions camera-actions"><button class="button secondary" id="start-camera" type="button">Buka kamera</button><button class="button secondary" id="stop-camera" type="button" hidden>Tutup kamera</button></div>
+    <p class="fine-print">Setelah kamera terbuka, tombol <strong>Ambil foto</strong> ada tepat di bawah gambar. Kamera berhenti setelah foto diambil atau halaman ditutup.</p>
+    <p class="message error" id="camera-error" role="alert" hidden></p>
+  </div>
+  <div class="camera-stage" id="camera-stage" hidden><video id="camera-video" autoplay playsinline muted aria-label="Pratinjau kamera langsung"></video><span class="camera-guide" aria-hidden="true"></span><p class="fine-print">Posisikan wajah dan bibir di tengah bingkai.</p><div class="camera-capture-actions"><button class="button" id="capture-photo" type="button" hidden>2 · Ambil foto sekarang</button></div></div>
+  <div><label for="photo">Atau pilih foto JPG/PNG, maksimal 10 MB</label><input id="photo" name="photo" type="file" accept="image/jpeg,image/png" required></div>
+  <div id="photo-preview-wrap" hidden><strong id="photo-ready" class="photo-ready" role="status"></strong><img id="photo-preview" class="photo-preview" alt="Pratinjau foto yang akan dianalisis"><p id="photo-name"></p></div>
+  <button class="button" id="analyze-button" name="action" value="analyze">3 · Analisis foto</button>
+</form>
+<script src="{% static 'js/camera.js' %}" defer></script>
+{% endif %}
+<form method="post" class="actions">{% csrf_token %}<button class="button secondary" name="action" value="manual">Isi profil manual</button><button class="button secondary" name="action" value="demo">Gunakan profil demo</button></form>
+</section>
+{% endblock %}

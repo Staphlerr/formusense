@@ -1,0 +1,32 @@
+{% load static %}
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}FormuSense{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+</head>
+<body>
+  <header class="site-header">
+    <nav class="container nav" aria-label="Navigasi utama">
+      <a class="brand" href="{% url 'consumer:home' %}"><span class="brand-mark">F</span> FormuSense</a>
+      <div class="nav-links">
+        <a href="{% url 'consumer:home' %}">Home</a>
+        <a href="{% url 'consumer:profile_start' %}">Discover</a>
+        <a href="{% url 'consumer:how_it_works' %}">How it works</a>
+        <a href="{% url 'research:overview' %}">R&D Preview</a>
+      </div>
+    </nav>
+  </header>
+  <main class="container">
+    {% if messages %}
+      <div class="messages" aria-live="polite">
+        {% for message in messages %}<p class="message {{ message.tags }}">{{ message }}</p>{% endfor %}
+      </div>
+    {% endif %}
+    {% block content %}{% endblock %}
+  </main>
+  <footer class="container footer">Prototipe hackathon · Data komunitas dan R&D: simulasi</footer>
+</body>
+</html>

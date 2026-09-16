@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="page research-page">
+<span class="eyebrow">R&D Intelligence · data demo/sintetis</span>
+<div class="rd-layout"><aside class="rd-sidebar" aria-label="Navigasi R&D">
+  <a href="{% url 'research:overview' %}">Overview</a>
+  <a href="{% url 'research:unmet_demand' %}">Unmet Demand</a>
+  <a href="{% url 'research:evidence' %}">Consumer Evidence</a>
+  <a href="{% url 'research:formula_lab' %}">Formula Lab</a>
+</aside><div class="rd-content">{% block research_content %}{% endblock %}</div></div>
+</section>
+{% endblock %}

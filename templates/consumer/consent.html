@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block title %}Persetujuan foto · FormuSense{% endblock %}
+{% block content %}
+<section class="page narrow"><span class="eyebrow">Langkah 2 dari 4</span><h1>Foto kamu, pilihan kamu</h1>
+<p class="lead">Jika setuju, foto dikirim ke penyedia AI Sumopod untuk memperkirakan karakter warna yang tampak. Foto tidak disimpan oleh aplikasi demo ini. Hasilnya bisa kamu koreksi.</p>
+<div class="card"><p>Analisis ini bukan pemeriksaan kesehatan. Kamu bisa lanjut tanpa foto dan mengisi profil manual.</p>
+<form method="post" class="actions">{% csrf_token %}<button class="button" name="choice" value="photo">Saya setuju menggunakan foto</button><button class="button secondary" name="choice" value="manual">Lanjut tanpa foto</button></form></div>
+</section>
+{% endblock %}

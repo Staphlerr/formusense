@@ -1,0 +1,12 @@
+{% extends 'research/base_research.html' %}
+{% block title %}Consumer Evidence · FormuSense{% endblock %}
+{% block research_content %}
+<h1>Consumer Evidence</h1><p class="lead">Keluhan pemakaian dihitung terpisah dari minat warna. Komentar demo dan masukan lokal juga dipisahkan agar asal datanya jelas.</p>
+<form method="get" class="filter-form"><label for="opportunity">Lihat keluarga warna</label><select id="opportunity" name="opportunity"><option value="">Semua shade</option>{% for item in opportunities %}<option value="{{ item.opportunity_id }}" {% if selected_opportunity.opportunity_id == item.opportunity_id %}selected{% endif %}>{{ item.target_shade_name }}</option>{% endfor %}</select><button class="button secondary" type="submit">Terapkan</button></form>
+{% if selected_opportunity %}<div class="card note"><strong>{{ selected_opportunity.target_shade_name }}</strong><p>{{ selected_opportunity.demo_interest }} minat positif demo pada konsep · {{ selected_opportunity.local_requests }} permintaan warna baru dari feedback lokal.</p></div>{% endif %}
+<div class="two-column"><div class="card"><h2>Keluhan pemakaian · demo</h2><ul>{% for issue, count in demo_issues %}<li>{{ issue|title }} · {{ count }}</li>{% empty %}<li>Belum ada keluhan demo pada pilihan ini.</li>{% endfor %}</ul></div>
+<div class="card"><h2>Keluhan pemakaian · lokal</h2><ul>{% for issue, count in local_issues %}<li>{{ issue|title }} · {{ count }}</li>{% empty %}<li>Belum ada keluhan lokal. Coba kirim feedback pemakaian.</li>{% endfor %}</ul></div></div>
+<div class="two-column"><div class="card"><h2>Komentar demo sintetis</h2><ul class="comment-list">{% for row in demo_comments %}<li>“{{ row.comment }}”<small>{{ row.shade_name }} · {{ row.skin_tone }} / {{ row.undertone }}</small></li>{% empty %}<li>Belum ada.</li>{% endfor %}</ul></div>
+<div class="card"><h2>Komentar pengguna lokal</h2><ul class="comment-list">{% for row in local_comments %}<li>“{{ row.comment }}”<small>{{ row.shade_name }} · {{ row.skin_tone }} / {{ row.undertone }}</small></li>{% empty %}<li>Belum ada komentar lokal.</li>{% endfor %}</ul></div></div>
+{% if selected_opportunity %}<a class="button" href="{% url 'research:formula_lab' %}?opportunity={{ selected_opportunity.opportunity_id }}">Buat brief formulasi</a>{% else %}<a class="button" href="{% url 'research:unmet_demand' %}">Pilih peluang shade</a>{% endif %}
+{% endblock %}

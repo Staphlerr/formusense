@@ -1,0 +1,2 @@
+draft_id,opportunity_id,target_shade_name,base_formula_id,pigment_red_oxide,pigment_yellow_oxide,pigment_titanium_dioxide,pigment_dc_red,pigment_black_oxide,base_binder_adjustment,total_formula_check,validation_status,rationale
+DRF001,OPP001,Energized Terracotta,BASE001,8.4,3.6,2.4,1.6,0.4,83.6,100.0,ai_assisted_draft_requires_lab_validation,"Increase warm red-brown direction while keeping satin base; requires shade drawdown and stability testing."

@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Feedback · FormuSense{% endblock %}
+{% block content %}
+<section class="page narrow"><span class="eyebrow">{{ shade.shade_id }} · {{ shade.portfolio_status }}</span><h1>Bagaimana menurutmu tentang {{ shade.shade_name }}?</h1>
+<div class="mini-swatch" style="background: {{ shade.hex }}"></div>
+<p class="lead">Pisahkan kesan dari gambar dan pengalaman setelah mencoba. Masukanmu akan dihitung sebagai sinyal lokal pada dashboard R&D.</p>
+<form method="post" class="card form-card" id="feedback-form">{% csrf_token %}
+  {{ form.non_field_errors }}
+  <div><label>Jenis penilaian</label>{{ form.feedback_type }}{{ form.feedback_type.errors }}</div>
+  <div><label for="{{ form.color_response.id_for_label }}">Penilaian warna</label>{{ form.color_response }}{{ form.color_response.errors }}</div>
+  <div class="form-divider"><strong>Masih mencari shade lain?</strong><p>Opsional. Pilihan ini muncul sebagai permintaan baru di dashboard R&D.</p></div>
+  <div><label for="{{ form.desired_color_family.id_for_label }}">{{ form.desired_color_family.label }}</label>{{ form.desired_color_family }}{{ form.desired_color_family.errors }}</div>
+  <div><label for="{{ form.desired_finish.id_for_label }}">{{ form.desired_finish.label }}</label>{{ form.desired_finish }}{{ form.desired_finish.errors }}</div>
+  <div class="form-divider wear-only"><strong>Setelah mencoba produk</strong><p>Isi hanya jika produk benar-benar sudah dipakai.</p></div>
+  <div class="wear-only"><label for="{{ form.texture_response.id_for_label }}">Tekstur</label>{{ form.texture_response }}{{ form.texture_response.errors }}</div>
+  <div class="wear-only"><label for="{{ form.finish_response.id_for_label }}">Hasil akhir</label>{{ form.finish_response }}{{ form.finish_response.errors }}</div>
+  <div class="wear-only"><label for="{{ form.rating.id_for_label }}">Rating (1–5)</label>{{ form.rating }}{{ form.rating.errors }}</div>
+  <div class="wear-only checkbox-line">{{ form.tried_product }}<label for="{{ form.tried_product.id_for_label }}">{{ form.tried_product.label }}</label>{{ form.tried_product.errors }}</div>
+  <div><label for="{{ form.comment.id_for_label }}">Komentar (opsional)</label>{{ form.comment }}{{ form.comment.errors }}</div>
+  <div class="checkbox-line">{{ form.rd_consent }}<label for="{{ form.rd_consent.id_for_label }}">{{ form.rd_consent.label }} Komentar dapat terlihat di dashboard R&D lokal tanpa nama, bersama kategori warna kulit dan undertone. Foto tidak disertakan.</label>{{ form.rd_consent.errors }}</div>
+  <button class="button" type="submit">Kirim feedback</button>
+</form>
+<script>
+  (() => {
+    const form = document.querySelector('#feedback-form');
+    const update = () => {
+      const wear = form.querySelector('input[name="feedback_type"]:checked')?.value === 'wear_feedback';
+      form.querySelectorAll('.wear-only').forEach(el => { el.hidden = !wear; });
+    };
+    form.querySelectorAll('input[name="feedback_type"]').forEach(el => el.addEventListener('change', update));
+    update();
+  })();
+</script>
+</section>
+{% endblock %}

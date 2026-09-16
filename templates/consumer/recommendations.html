@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Rekomendasi shade · FormuSense{% endblock %}
+{% block content %}
+<section class="page"><span class="eyebrow">Dari katalog demo yang tersedia</span><h1>Tiga cara memakai shade favoritmu</h1>
+<p class="lead">Pilihan diurutkan dari profil dan preferensimu. Kecocokan warna tetap perlu dicoba langsung.</p>
+<section class="card tryon" id="tryon" data-photo-scanned="{{ photo_scanned|yesno:'true,false' }}">
+  {{ lip_points|json_script:"lip-points-data" }}
+  <span class="eyebrow">Pratinjau virtual · simulasi warna</span><h2>Coba shade lipstik di fotomu</h2>
+  <p>Foto dari scan akan muncul di sini dalam tab browser ini. Jika titik bibir belum ditemukan, klik sisi kiri, atas, kanan, dan bawah bibir pada foto. Setelah itu kamu bisa mengganti warna. Tampilan ini adalah simulasi visual; warna akhir produk perlu dicoba langsung.</p>
+  <div class="tryon-layout">
+    <div>
+      <label for="tryon-upload">Kalau foto belum muncul, pilih selfie untuk pratinjau lokal</label>
+      <input id="tryon-upload" type="file" accept="image/jpeg,image/png">
+      <p class="fine-print">Foto yang dipilih di sini hanya diproses di browser untuk pratinjau dan tidak dikirim ke server.</p>
+      <div class="tryon-canvas-wrap"><canvas id="tryon-canvas" aria-label="Pratinjau foto dengan shade lipstik" hidden></canvas><p id="tryon-empty">Belum ada foto. Ambil foto pada langkah scan atau pilih selfie di atas.</p></div>
+      <p id="tryon-status" class="fine-print" role="status">Posisi bibir akan diperkirakan sebagai titik awal; gunakan “Atur posisi bibir” agar tepat.</p>
+      <div class="actions"><button class="button secondary" id="tryon-align" type="button" disabled>Atur posisi bibir</button><button class="button secondary" id="tryon-download" type="button" disabled>Simpan pratinjau</button><button class="button secondary" id="tryon-clear" type="button" disabled>Hapus foto</button></div>
+    </div>
+    <div>
+      <h3>Shade rekomendasi dari katalog demo</h3>
+      <div class="tryon-shades">{% for shade in picks %}<button type="button" class="tryon-shade {% if shade.role == 'energized' %}is-selected{% endif %}" data-tryon-shade data-hex="{{ shade.hex }}" data-name="{{ shade.shade_name }}"><span class="tryon-swatch" style="background:{{ shade.hex }}"></span><span>{{ shade.shade_name }}<small> · {{ shade.role_label }}</small></span></button>{% endfor %}</div>
+      <h3>Contoh swatch lipstik dari dataset publik</h3>
+      <p class="fine-print">Contoh warna terdekat secara RGB dari dataset Capstone Colors; ini bukan bukti kecocokan pada undertone atau ketersediaan produknya.</p>
+      <div class="tryon-shades">{% for shade in public_examples %}<button type="button" class="tryon-shade" data-tryon-shade data-hex="{{ shade.hex }}" data-name="{{ shade.brand }} · {{ shade.shade }}"><span class="tryon-swatch" style="background:{{ shade.hex }}"></span><span>{{ shade.brand|title }} · {{ shade.shade|title }}<small> · swatch publik</small></span></button>{% endfor %}</div>
+      <label for="tryon-opacity">Kekuatan warna <output id="tryon-opacity-value">55%</output></label><input id="tryon-opacity" type="range" min="20" max="90" value="55">
+    </div>
+  </div>
+</section>
+<script src="{% static 'js/tryon.js' %}" defer></script>
+<div class="shade-grid">
+{% for shade in picks %}<article class="shade-card">
+  <div class="shade-color" style="background: {{ shade.hex }}"></div>
+  <div class="shade-body"><small>{{ shade.role_label }}</small><h2>{{ shade.shade_name }}</h2>
+  <dl><dt>Keluarga warna</dt><dd>{{ shade.color_family }}</dd><dt>Hasil akhir</dt><dd>{{ shade.finish }}</dd><dt>Intensitas</dt><dd>{{ shade.intensity }}</dd></dl>
+  <p class="affinity-line">{% if shade.affinity.sample %}{{ shade.affinity.positive }} dari {{ shade.affinity.sample }} tertarik{% if shade.affinity.cohort %} pada profil warna serupa{% else %} di semua profil{% endif %} <small>· {{ shade.affinity.demo_sample }} demo, {{ shade.affinity.local_sample }} lokal</small>{% else %}Belum ada penilaian minat untuk shade ini.{% endif %}</p>
+  <p>{{ shade.reason }}</p><a class="button full" href="{% url 'consumer:feedback' shade.shade_id %}">Lihat & beri feedback</a></div>
+</article>{% endfor %}
+</div>
+<div class="card note"><span class="eyebrow">{{ note_source }}</span><p>{{ personal_note }}</p></div>
+<div class="card"><h2>Spektrum minat profil serupa</h2><p>Jumlah sinyal positif sebelum pemakaian. Sebagian besar berasal dari data simulasi; jumlah kecil ini belum mewakili konsumen Indonesia.</p>
+  {% if spectrum %}<div class="spectrum-list">{% for item in spectrum %}<div class="spectrum-row"><span>{{ item.family|title }}</span><div class="bar-track"><span class="bar-fill" style="width: {{ item.width }}%"></span></div><b>{{ item.count }}</b></div>{% endfor %}</div>{% else %}<p>Belum ada sinyal pada kelompok profil ini.</p>{% endif %}
+</div>
+</section>
+{% endblock %}

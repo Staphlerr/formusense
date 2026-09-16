@@ -1,0 +1,31 @@
+feedback_id,profile_id,shade_id,feedback_type,color_response,texture_response,finish_response,rating,comment,source_type
+FB001,USR001,SHD009,color_interest,love_it,,,5,"Looks energetic but still wearable.",demo_simulation
+FB002,USR001,SHD009,wear_feedback,just_right,comfortable,just_right,4,"Color is good, texture feels comfortable.",demo_simulation
+FB003,USR003,SHD009,color_interest,love_it,,,5,"Terracotta looks warmer on my skin.",demo_simulation
+FB004,USR003,SHD010,wear_feedback,too_pale,comfortable,just_right,3,"Nice texture but the color disappears on my lips.",demo_simulation
+FB005,USR004,SHD008,color_interest,like_it,,,4,"Muted coral feels fresh.",demo_simulation
+FB006,USR005,SHD004,wear_feedback,just_right,too_dry,too_matte,3,"Color is pretty but matte feels dry.",demo_simulation
+FB007,USR006,SHD017,color_interest,like_it,,,4,"Caramel brown looks safe for daily use.",demo_simulation
+FB008,USR006,SHD011,wear_feedback,too_dark,comfortable,just_right,3,"A bit too dark for daytime.",demo_simulation
+FB009,USR007,SHD019,color_interest,love_it,,,5,"Deep berry suits bold looks.",demo_simulation
+FB010,USR008,SHD006,wear_feedback,just_right,too_sticky,too_glossy,3,"Shade is cute but too sticky.",demo_simulation
+FB011,USR009,SHD009,color_interest,love_it,,,5,"This is exactly the warm terracotta I want.",demo_simulation
+FB012,USR009,SHD023,color_interest,like_it,,,4,"Olive rose is interesting but less energetic.",demo_simulation
+FB013,USR010,SHD005,wear_feedback,just_right,comfortable,just_right,4,"Dusty pink works for my undertone.",demo_simulation
+FB014,USR011,SHD024,color_interest,love_it,,,5,"Glossy terracotta would be perfect.",demo_simulation
+FB015,USR011,SHD011,wear_feedback,too_dark,comfortable,too_matte,3,"I like terracotta but want it less matte.",demo_simulation
+FB016,USR012,SHD001,wear_feedback,too_pale,comfortable,just_right,3,"Warm nude looks too pale on my lips.",demo_simulation
+FB017,USR001,SHD010,color_interest,like_it,,,4,"Nice daily terracotta nude.",demo_simulation
+FB018,USR003,SHD024,color_interest,love_it,,,5,"Deep glossy terracotta looks exciting.",demo_simulation
+FB019,USR004,SHD021,wear_feedback,just_right,too_sticky,too_glossy,3,"Fresh color, but gloss feels sticky.",demo_simulation
+FB020,USR009,SHD009,wear_feedback,just_right,comfortable,just_right,5,"The warmth balances my lip pigmentation.",demo_simulation
+FB021,USR011,SHD009,wear_feedback,just_right,comfortable,just_right,4,"Good balance, maybe slightly more glossy.",demo_simulation
+FB022,USR006,SHD009,color_interest,like_it,,,4,"Terracotta seems more lively than brown.",demo_simulation
+FB023,USR012,SHD009,color_interest,love_it,,,5,"Looks fresh and still professional.",demo_simulation
+FB024,USR002,SHD003,wear_feedback,just_right,comfortable,just_right,4,"Rose nude is safe for work.",demo_simulation
+FB025,USR005,SHD018,color_interest,like_it,,,4,"Berry soft looks elegant.",demo_simulation
+FB026,USR007,SHD020,wear_feedback,just_right,comfortable,just_right,4,"Plum rose gives enough depth.",demo_simulation
+FB027,USR008,SHD007,color_interest,not_sure,,,3,"Coral might be too bright.",demo_simulation
+FB028,USR010,SHD004,color_interest,love_it,,,5,"Muted mauve matches my cool undertone.",demo_simulation
+FB029,USR001,SHD024,color_interest,like_it,,,4,"Gloss terracotta sounds fun.",demo_simulation
+FB030,USR003,SHD009,wear_feedback,just_right,too_sticky,just_right,4,"Color is right, texture could be less sticky.",demo_simulation

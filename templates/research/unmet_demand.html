@@ -1,0 +1,12 @@
+{% extends 'research/base_research.html' %}
+{% block title %}Unmet Demand · FormuSense{% endblock %}
+{% block research_content %}
+<h1>Unmet Demand</h1><p class="lead">Tiga konsep peluang berasal dari CSV demo. Hitungan di bawah diperbarui dari feedback yang dikirim melalui aplikasi lokal.</p>
+<div class="stack">{% for item in opportunities %}<article class="card"><span class="eyebrow">{{ item.opportunity_id }} · konsep R&D</span>
+<h2>{{ item.target_shade_name }}</h2><p>Segmen sasaran: {{ item.target_segment }} · Finish sasaran: {{ item.preferred_finish }}</p>
+<div class="signal-grid"><div><strong>{{ item.demo_interest }}</strong><small>minat positif demo pada konsep</small></div><div><strong>{{ item.local_requests }}</strong><small>permintaan baru pengguna lokal</small></div><div><strong>{{ item.related_issues }}</strong><small>feedback pemakaian bermasalah pada keluarga warna</small></div></div>
+<p class="fine-print">Klaim “{{ item.demand_signal }} demand”, portfolio match {{ item.portfolio_match }}, dan angka {{ item.unsuccessful_match_rate }} adalah metadata simulasi; bukan hasil perhitungan di halaman ini.</p>
+{% if summary_opportunity_id == item.opportunity_id %}<div class="card note"><span class="eyebrow">{{ summary_source }}</span><p>{{ ai_summary }}</p></div>{% endif %}
+<div class="actions"><a class="button secondary" href="{% url 'research:evidence' %}?opportunity={{ item.opportunity_id }}">Lihat bukti</a><a class="button" href="{% url 'research:formula_lab' %}?opportunity={{ item.opportunity_id }}">Buat brief formula</a>
+<form method="post">{% csrf_token %}<input type="hidden" name="opportunity" value="{{ item.opportunity_id }}"><button class="button secondary" type="submit">Ringkas dengan AI</button></form></div></article>{% endfor %}</div>
+{% endblock %}

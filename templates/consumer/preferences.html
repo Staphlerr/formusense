@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% block title %}Preferensi · FormuSense{% endblock %}
+{% block content %}
+<section class="page narrow"><span class="eyebrow">Langkah 3 dari 4</span><h1>Gaya yang kamu suka</h1>
+<p class="lead">Boleh pilih “Belum tahu”. Preferensi ini membantu mengurutkan shade.</p>
+<form method="post" class="card form-card">{% csrf_token %}{{ form.as_div }}<button class="button" type="submit">Lanjut</button></form>
+</section>
+{% endblock %}

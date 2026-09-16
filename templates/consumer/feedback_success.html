@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block title %}Terima kasih · FormuSense{% endblock %}
+{% block content %}
+<section class="page narrow center"><span class="eyebrow">Feedback tersimpan</span><h1>Masukanmu membantu menentukan langkah berikutnya.</h1>
+<p class="lead">Penilaian {{ last_feedback.shade_name }} tersimpan sebagai {% if last_feedback.feedback_type == 'color_interest' %}minat warna{% else %}pengalaman pemakaian{% endif %}. {% if last_feedback.desired_color_family %}Permintaan warna {{ last_feedback.desired_color_family }} juga masuk ke ringkasan peluang.{% endif %}</p>
+<p>Pengembangan shade baru tetap memerlukan peninjauan formulator dan pengujian lab.</p>
+<div class="actions center"><a class="button" href="{% url 'research:overview' %}">Lihat dampak di R&D</a><a class="button secondary" href="{% url 'consumer:recommendations' %}">Lihat shade lain</a></div>
+</section>
+{% endblock %}

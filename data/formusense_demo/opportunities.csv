@@ -1,0 +1,4 @@
+opportunity_id,target_shade_name,target_family,target_segment,demand_signal,portfolio_match,unsuccessful_match_rate,preferred_finish,main_complaints,recommendation_status,source_type
+OPP001,Energized Terracotta,terracotta,medium_to_tan_warm_olive,high,low,38%,satin,"too_pale nude; too_dark brick; too_sticky gloss",primary_demo_opportunity,demo_simulation
+OPP002,Olive Rose,mauve_rose,medium_olive,medium,low,31%,satin,"cool mauve looks dull; nude too pale",secondary_opportunity,demo_simulation
+OPP003,Deep Terracotta Gloss,terracotta,tan_to_deep_warm_olive,medium,low,29%,glossy,"matte too dry; brick too dark",secondary_opportunity,demo_simulation

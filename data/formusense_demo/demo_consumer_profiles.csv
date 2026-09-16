@@ -1,0 +1,13 @@
+profile_id,region,skin_tone,undertone,lip_pigmentation,visible_lip_condition,preference_color,preference_intensity,preference_finish,source_type
+USR001,West Java,medium,warm,medium_high,slightly_dry_two_toned,terracotta,medium,satin,demo_simulation
+USR002,Jakarta,light_medium,neutral,medium,normal,nude,natural,satin,demo_simulation
+USR003,East Java,tan,warm_olive,high,two_toned,terracotta,medium_high,satin,demo_simulation
+USR004,Central Java,medium,warm,medium,slightly_dry,coral,medium,glowy,demo_simulation
+USR005,Banten,medium,cool,medium,normal,mauve,medium,matte,demo_simulation
+USR006,South Sulawesi,tan,warm,high,slightly_dry,brown,medium_high,satin,demo_simulation
+USR007,North Sumatra,deep,neutral,high,two_toned,berry,bold,cream,demo_simulation
+USR008,Bali,light,warm,low,normal,pink,natural,glossy,demo_simulation
+USR009,West Kalimantan,medium,olive,medium_high,two_toned,terracotta,medium,satin,demo_simulation
+USR010,Yogyakarta,light_medium,cool,medium,slightly_dry,rose,medium,cream,demo_simulation
+USR011,West Java,tan,warm_olive,high,slightly_dry,terracotta,bold,glossy,demo_simulation
+USR012,Jakarta,medium,warm,medium_high,normal,nude,medium,satin,demo_simulation
