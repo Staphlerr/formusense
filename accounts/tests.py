@@ -86,6 +86,7 @@ class RoleAccessTests(TestCase):
         session = self.client.session
         session["lip_profile"] = {"skin_tone": "medium"}
         session["basic_profile"] = {"nickname": "Ani"}
+        session["photo_ai_consent"] = True
         session.save()
         response = self.client.post(reverse("accounts:rd_login"), {
             "username": "formulator", "password": "StrongDemoPass123!",
@@ -93,6 +94,7 @@ class RoleAccessTests(TestCase):
         self.assertRedirects(response, reverse("research:overview"))
         self.assertNotIn("lip_profile", self.client.session)
         self.assertNotIn("basic_profile", self.client.session)
+        self.assertNotIn("photo_ai_consent", self.client.session)
 
     def test_logout_requires_post_and_revokes_access(self):
         self.client.force_login(self.rd_user)

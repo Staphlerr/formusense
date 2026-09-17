@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% block title %}Profil saya · LipXMatch{% endblock %}
+{% block content %}
+<section class="page account-page">
+  <div class="account-hero">
+    <div>
+      <span class="eyebrow">Ruang pribadimu</span>
+      <h1>Halo, {{ display_name }}.</h1>
+      <p class="lead">Simpan shade favorit dan foto hasil percobaanmu di satu tempat.</p>
+    </div>
+    <a class="button" href="{% url 'consumer:profile_start' %}">Cari shade baru</a>
+  </div>
+
+  <div class="account-summary">
+    <div class="card"><small>Akun</small><strong>{{ user.username }}</strong><span>Profil konsumen</span></div>
+    <div class="card"><small>Shade tersimpan</small><strong>{{ saved_shades|length }}</strong><span>Tersimpan di akunmu</span></div>
+    <div class="card"><small>Riwayat foto</small><strong>{{ saved_photos|length }} / {{ photo_limit }}</strong><span>Hanya dapat dibuka oleh akunmu</span></div>
+  </div>
+
+  {% if color_profile %}
+  <div class="card account-color-profile">
+    <div><span class="eyebrow">Profil warna terakhir</span><h2>{{ color_profile.skin_tone|default:'Belum diisi'|title }} · {{ color_profile.undertone|default:'Belum diisi'|title }}</h2><p>Hasil ini berasal dari sesi saat ini dan dapat diperbarui lewat analisis berikutnya.</p></div>
+    <a class="button secondary" href="{% url 'consumer:profile_result' %}">Lihat profil warna</a>
+  </div>
+  {% endif %}
+
+  <section class="account-section" aria-labelledby="saved-shades-title">
+    <div class="account-section-head"><div><span class="eyebrow">Koleksi pribadi</span><h2 id="saved-shades-title">Shade tersimpan</h2></div><a href="{% url 'consumer:recommendations' %}">Lihat rekomendasi →</a></div>
+    {% if saved_shades %}
+    <div class="account-shade-grid">
+      {% for item in saved_shades %}
+      <article class="card account-shade-card">
+        <div class="account-shade-swatch" style="background:{{ item.shade.hex }}" aria-hidden="true"></div>
+        <div class="account-shade-body">
+          <small>{{ item.shade.brand|default:'Katalog shade' }}</small>
+          <h3>{{ item.shade.shade_name }}</h3>
+          <p>{{ item.shade.color_family|title }} · {{ item.shade.finish|title }}</p>
+          <form method="post" action="{% url 'consumer:save_shade' %}">{% csrf_token %}<input type="hidden" name="shade_id" value="{{ item.shade.shade_id }}"><input type="hidden" name="action" value="remove"><input type="hidden" name="from_profile" value="1"><button class="button secondary" type="submit">Hapus dari simpanan</button></form>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="card account-empty"><p>Belum ada shade tersimpan. Buka detail shade lalu tekan “Simpan shade”.</p><a class="button secondary" href="{% url 'consumer:profile_start' %}">Mulai cari shade</a></div>
+    {% endif %}
+  </section>
+
+  <section class="account-section" aria-labelledby="saved-photos-title">
+    <div class="account-section-head"><div><span class="eyebrow">Riwayat pratinjau</span><h2 id="saved-photos-title">Foto hasil shade</h2></div></div>
+    <p class="fine-print">Foto hanya masuk riwayat saat kamu memilih “Simpan foto hasil ke profil” di halaman rekomendasi. Foto asli yang dipakai untuk analisis tidak otomatis disimpan.</p>
+    {% if saved_photos %}
+    <div class="account-photo-grid">
+      {% for photo in saved_photos %}
+      <article class="card account-photo-card">
+        <img src="{% url 'consumer:profile_photo' photo.pk %}" alt="Foto hasil mencoba shade {{ photo.shade_name }}" loading="lazy">
+        <div><strong>{{ photo.shade_name }}</strong><small>{{ photo.created_at|date:'d M Y, H:i' }}</small>
+          <form method="post" action="{% url 'consumer:delete_photo' photo.pk %}">{% csrf_token %}<button class="button secondary" type="submit">Hapus foto</button></form>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="card account-empty"><p>Belum ada foto hasil yang disimpan.</p><a class="button secondary" href="{% url 'consumer:profile_start' %}">Coba shade dengan foto</a></div>
+    {% endif %}
+  </section>
+</section>
+<form id="profile-import-token" hidden>{% csrf_token %}</form>
+<script>
+(() => {
+  const key = `formusense_saved_shades_${document.body.dataset.userId}`;
+  let legacy = [];
+  try { legacy = JSON.parse(localStorage.getItem(key) || '[]'); }
+  catch (error) { return; }
+  if (!Array.isArray(legacy) || !legacy.length) return;
+  const token = document.querySelector('#profile-import-token [name="csrfmiddlewaretoken"]')?.value || '';
+  (async () => {
+    for (const id of legacy) {
+      if (typeof id !== 'string') continue;
+      const response = await fetch("{% url 'consumer:save_shade' %}", {
+        method: 'POST', credentials: 'same-origin',
+        headers: { 'X-CSRFToken': token, 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ shade_id: id, action: 'save' }),
+      });
+      if (!response.ok) return;
+    }
+    localStorage.removeItem(key);
+    window.location.reload();
+  })().catch(() => {});
+})();
+</script>
+{% endblock %}

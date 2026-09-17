@@ -1,13 +1,15 @@
 """Shade recommendation: deterministic, research-grounded scoring.
 
-No AI call happens in this module. Every scoring signal below is either
+No AI call happens in the deterministic ranking. Every scoring signal below is either
 (a) the wearer's own stated preference (color/finish/intensity from
 PreferenceForm -- just applying what they told us, not a research claim),
 or (b) a numeric color-science metric computed from measured CIELAB values
 when available, grounded in the references below -- or (c) the existing
 "undertone_fit" categorical rule, explicitly disclosed as an INDUSTRY
 CONVENTION (personal color analysis / "seasonal color theory"), not a
-peer-reviewed, empirically validated causal claim. All three kinds of
+peer-reviewed, empirically validated causal claim, or (d) a small, shrunken
+bonus from the team's synthetic hedonic and historical-style review CSVs.
+These CSVs are demo signals, not real-world validation. All four kinds of
 signal are kept because a 24-hour prototype should use what's available,
 but they must not be presented to judges as equally rigorous -- they are not.
 
@@ -52,7 +54,7 @@ from __future__ import annotations
 import math
 
 from services.color_science import lab_from_hex
-from services.data import shades
+from services.team_data import catalog_shades, shade_evidence
 
 
 def _hue_angle(a: float, b: float) -> float:
@@ -135,7 +137,23 @@ def _harmony_score(hue_diff: float, role: str) -> float:
 _ADJACENT_UNDERTONES = {"warm": {"olive"}, "olive": {"warm"}, "cool": {"neutral"}, "neutral": {"cool"}}
 
 
-def _score(shade: dict, profile: dict, preference: dict, role: str) -> float:
+def _color_preference_score(shade: dict, requested: str) -> float:
+    if not requested:
+        return 0
+    family = shade["color_family"]
+    name = shade["shade_name"].lower()
+    if family == requested or requested in name:
+        return 5
+    approximate = {
+        "terracotta": {"brown", "orange"},
+        "coral": {"orange", "peach"},
+        "berry": {"red", "pink"},
+        "mauve": {"pink"},
+    }
+    return 2 if family in approximate.get(requested, set()) else 0
+
+
+def _score(shade: dict, profile: dict, preference: dict, role: str, evidence: dict | None = None) -> float:
     score = 0.0
     undertone = profile.get("undertone", "neutral")
     fit = shade["undertone_fit"]
@@ -156,8 +174,7 @@ def _score(shade: dict, profile: dict, preference: dict, role: str) -> float:
         if metrics["hue_diff"] is not None:
             score += _harmony_score(metrics["hue_diff"], role)
 
-    if shade["color_family"] == preference.get("color", ""):
-        score += 5
+    score += _color_preference_score(shade, preference.get("color", ""))
     if shade["finish"] == preference.get("finish", ""):
         score += 2
     # shade["intensity"] is the real catalog's own 3-tier depth label
@@ -187,17 +204,25 @@ def _score(shade: dict, profile: dict, preference: dict, role: str) -> float:
         # "glasting" are this app's closest real equivalents for a finish
         # that reads as more comfortable on dry lips than matte.
         score += 2 if shade["finish"] in {"glossy", "glasting"} else -2 if shade["finish"] == "matte" else 0
+
+    evidence = evidence or shade_evidence(shade, profile)
+    if evidence["hedonic_sample"]:
+        score += (evidence["hedonic_mean"] - 5.5) * 0.55 * evidence["hedonic_sample"] / (evidence["hedonic_sample"] + 5)
+    if evidence["review_sample"]:
+        positive_rate = evidence["review_positive"] / evidence["review_sample"]
+        score += (positive_rate - 0.5) * 2 * evidence["review_sample"] / (evidence["review_sample"] + 5)
+
     family = shade["color_family"]
     intensity = shade["intensity"]
     if role == "daily":
-        score += 6 if family == "nude" else 0
+        score += 6 if family == "nude" else 3 if family in {"brown", "peach"} else 0
         score += 2 if intensity in {"soft", "medium"} else 0
     elif role == "energized":
         # The real catalog's color_family set (brown/nude/orange/peach/
         # pink/red -- see services/data.py) doesn't currently include
         # "terracotta" or "coral"; those branches are kept (harmless, no
         # match today) in case the catalog grows to include them later.
-        score += 6 if family == "terracotta" else 5 if family in {"coral", "pink"} else 0
+        score += 6 if family == "terracotta" else 5 if family in {"coral", "orange", "peach", "pink"} else 0
         score += 2 if intensity == "medium" else 0
     else:
         score += 6 if intensity == "deep" else 0
@@ -211,25 +236,27 @@ def top_candidates(pool: list[dict], profile: dict, preference: dict, role: str,
     This is the deterministic shortlist that the optional AI personalization
     layer (personalize() below) is allowed to choose from -- and ONLY from.
     """
-    scored = [
-        {**shade, "role": role, "score": round(_score(shade, profile, preference, role), 2),
-         "metrics": _metrics(shade, profile)}
-        for shade in pool
-    ]
+    scored = []
+    for shade in pool:
+        evidence = shade_evidence(shade, profile)
+        scored.append({**shade, "role": role,
+                       "score": round(_score(shade, profile, preference, role, evidence), 2),
+                       "metrics": _metrics(shade, profile), "hedonic": evidence})
     scored.sort(key=lambda item: item["score"], reverse=True)
     return scored[:n]
 
 
 def recommend(profile: dict, preference: dict) -> list[dict]:
-    """Return three distinct, currently available demo shades, ranked by
-    the deterministic color-science score above. No AI call happens here.
+    """Return three distinct team-catalog shades, ranked by a transparent
+    score of profile, preference, color metrics, and labelled demo evidence.
+    No AI call happens here.
 
     Each returned pick also carries a "candidates" key (its top-3
     shortlist with scores/metrics) so an optional call to personalize()
     afterwards can personalize the final pick without re-deriving any
-    color science -- see personalize()'s docstring.
+    scoring -- see personalize()'s docstring.
     """
-    pool = shades(available_only=True)
+    pool = catalog_shades()
     results = []
     chosen_ids = set()
     for role, label in [
@@ -295,10 +322,15 @@ def personalize(picks: list[dict], profile: dict, preference: dict) -> list[dict
 
 def _reason(shade: dict, profile: dict, preference: dict, metrics: dict | None = None) -> str:
     parts = [f"Warna {shade['color_family']} dengan hasil {shade['finish']}."]
+    if _color_preference_score(shade, preference.get("color", "")) == 5:
+        parts.append("Keluarga atau nama shade-nya sesuai warna yang kamu pilih.")
     if shade["undertone_fit"] == profile.get("undertone"):
         parts.append("Arah warnanya sesuai konvensi personal color analysis untuk undertone yang terukur.")
     if shade["finish"] == preference.get("finish"):
         parts.append("Hasil akhirnya sesuai preferensimu.")
     if metrics and metrics.get("contrast") is not None:
         parts.append(f"Kontras terukur dengan kulitmu sekitar {metrics['contrast']} unit L* (CIELAB).")
+    hedonic = shade.get("hedonic")
+    if hedonic and hedonic["hedonic_sample"]:
+        parts.append(f"Nilai kesukaan sintetis {hedonic['hedonic_mean']}/9 dari {hedonic['hedonic_sample']} profil ({hedonic['hedonic_cohort']}).")
     return " ".join(parts)

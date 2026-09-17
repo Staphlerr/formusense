@@ -1,35 +1,12 @@
 {% extends 'research/base_research.html' %}
 {% block title %}Consumer Evidence · FormuSense{% endblock %}
 {% block research_content %}
-<div><h1>Consumer Evidence</h1><p class="lead">Keluhan pemakaian dan komentar konsumen dirangkum di satu tempat supaya tim formulasi cepat menindaklanjuti.</p></div>
-
+<h1>Consumer Evidence</h1><p class="lead">Keluhan pemakaian dihitung terpisah dari minat warna. Komentar internal dan masukan lokal juga dipisahkan agar asal datanya jelas.</p>
 <form method="get" class="filter-form"><label for="opportunity">Lihat keluarga warna</label><select id="opportunity" name="opportunity"><option value="">Semua shade</option>{% for item in opportunities %}<option value="{{ item.opportunity_id }}" {% if selected_opportunity.opportunity_id == item.opportunity_id %}selected{% endif %}>{{ item.target_shade_name }}</option>{% endfor %}</select><button class="button secondary" type="submit">Terapkan</button></form>
-
-{% if selected_opportunity %}<div class="card manifesto" style="padding:20px 24px">
-    <span class="rd-kicker" style="color:rgba(253,249,246,.65)">{{ selected_opportunity.family|title }} · {{ selected_opportunity.preferred_finish|title }}</span>
-    <h2 style="color:var(--paper);font-size:1.5rem">{{ selected_opportunity.target_shade_name }}</h2>
-    <div class="signal-grid" style="margin:10px 0 0">
-        <div style="background:rgba(255,255,255,.1)"><strong style="color:var(--paper)">{{ selected_opportunity.demo_interest }}</strong><small style="color:rgba(253,249,246,.65)">minat positif</small></div>
-        <div style="background:rgba(255,255,255,.1)"><strong style="color:var(--paper)">{{ selected_opportunity.local_requests }}</strong><small style="color:rgba(253,249,246,.65)">permintaan lokal</small></div>
-        <div style="background:rgba(255,255,255,.1)"><strong style="color:var(--gold)">{{ selected_opportunity.related_issues }}</strong><small style="color:rgba(253,249,246,.65)">feedback bermasalah</small></div>
-    </div>
-</div>{% endif %}
-
-<div class="two-column">
-    <div class="card"><h2>Keluhan pemakaian · total</h2>
-        {% if demo_issues %}<div class="spectrum-list">{% for issue, count in demo_issues %}<div class="spectrum-row"><span>{{ issue|title }}</span><div class="bar-track"><span class="bar-fill" style="width:{% widthratio count demo_issues.0.1 100 %}%;background:var(--terracotta)"></span></div><b>{{ count }}</b></div>{% endfor %}</div>
-        {% else %}<div class="message rd-empty">Belum ada keluhan tercatat untuk pilihan ini.</div>{% endif %}
-    </div>
-    <div class="card"><h2>Keluhan pemakaian · baru</h2>
-        {% if local_issues %}<div class="spectrum-list">{% for issue, count in local_issues %}<div class="spectrum-row"><span>{{ issue|title }}</span><div class="bar-track"><span class="bar-fill" style="width:{% widthratio count local_issues.0.1 100 %}%;background:var(--wine)"></span></div><b>{{ count }}</b></div>{% endfor %}</div>
-        {% else %}<div class="message rd-empty">Belum ada keluhan lokal. Coba kirim feedback pemakaian dari sisi konsumen.</div>{% endif %}
-    </div>
-</div>
-
-<div class="card"><h2>Apa kata konsumen</h2><p class="fine-print">Kutipan asli dari konsumen, bukan ringkasan buatan.</p>
-    {% if all_comments %}<div class="testimonial-list" style="margin-top:10px">{% for row in all_comments %}<div class="testimonial-card"><span class="testimonial-mark">&ldquo;</span><p class="testimonial-text">{{ row.comment }}</p><div class="testimonial-meta"><span class="testimonial-profile">{{ row.shade_name }} · {{ row.skin_tone }} / {{ row.undertone }}</span></div></div>{% endfor %}</div>
-    {% else %}<div class="message rd-empty">Belum ada komentar untuk pilihan ini.</div>{% endif %}
-</div>
-
+{% if selected_opportunity %}<div class="card note"><strong>{{ selected_opportunity.target_shade_name }}</strong><p>{{ selected_opportunity.demo_interest }} minat positif pada konsep · {{ selected_opportunity.local_requests }} permintaan warna baru dari feedback lokal.</p></div>{% endif %}
+<div class="two-column"><div class="card"><h2>Keluhan pemakaian · internal</h2><ul>{% for issue, count in demo_issues %}<li>{{ issue|title }} · {{ count }}</li>{% empty %}<li>Belum ada keluhan pada pilihan ini.</li>{% endfor %}</ul></div>
+    <div class="card"><h2>Keluhan pemakaian · lokal</h2><ul>{% for issue, count in local_issues %}<li>{{ issue|title }} · {{ count }}</li>{% empty %}<li>Belum ada keluhan lokal. Coba kirim feedback pemakaian.</li>{% endfor %}</ul></div></div>
+<div class="two-column"><div class="card"><h2>Komentar internal</h2><ul class="comment-list">{% for row in demo_comments %}<li>“{{ row.comment }}”<small>{{ row.shade_name }} · {{ row.skin_tone }} / {{ row.undertone }}</small></li>{% empty %}<li>Belum ada.</li>{% endfor %}</ul></div>
+    <div class="card"><h2>Komentar pengguna lokal</h2><ul class="comment-list">{% for row in local_comments %}<li>“{{ row.comment }}”<small>{{ row.shade_name }} · {{ row.skin_tone }} / {{ row.undertone }}</small></li>{% empty %}<li>Belum ada komentar lokal.</li>{% endfor %}</ul></div></div>
 {% if selected_opportunity %}<a class="button" href="{% url 'research:formula_lab' %}?opportunity={{ selected_opportunity.opportunity_id }}">Buat brief formulasi</a>{% else %}<a class="button" href="{% url 'research:unmet_demand' %}">Pilih peluang shade</a>{% endif %}
 {% endblock %}

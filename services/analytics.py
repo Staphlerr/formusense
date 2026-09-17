@@ -4,6 +4,7 @@ from collections import Counter
 
 from consumer.models import Feedback
 from services.data import read_demo_csv, shades
+from services.team_data import catalog_shades, shade_evidence
 
 
 POSITIVE_INTEREST = {"love_it", "like_it"}
@@ -27,7 +28,7 @@ def _undertone_group(value):
 
 
 def signals():
-    catalog = {row["shade_id"]: row for row in shades()}
+    catalog = {row["shade_id"]: row for row in [*shades(), *catalog_shades()]}
     profiles = {row["profile_id"]: row for row in read_demo_csv("demo_consumer_profiles.csv")}
     rows = []
     for row in read_demo_csv("demo_feedback.csv"):
@@ -58,6 +59,23 @@ def signals():
 
 def affinity(shade_id, profile):
     """Report count and denominator, never a confidence/accuracy percentage."""
+    team_shade = next((row for row in catalog_shades() if row["shade_id"] == shade_id), None)
+    if team_shade:
+        historical = shade_evidence(team_shade, profile)
+        local = [row for row in signals() if row["source"] == "local"
+                 and row["shade_id"] == shade_id and row["feedback_type"] == Feedback.INTEREST]
+        local_cohort = [row for row in local
+                        if _tone_group(row["skin_tone"]) == _tone_group(profile.get("skin_tone"))
+                        and _undertone_group(row["undertone"]) == _undertone_group(profile.get("undertone"))]
+        selected_local = local_cohort if local_cohort else local
+        return {
+            "positive": historical["review_positive"] + sum(row["color_response"] in POSITIVE_INTEREST
+                                                         for row in selected_local),
+            "sample": historical["review_sample"] + len(selected_local),
+            "cohort": historical["review_cohort"] != "semua profil" or bool(local_cohort),
+            "historical_sample": historical["review_sample"],
+            "demo_sample": 0, "local_sample": len(selected_local),
+        }
     interest = [row for row in signals() if row["shade_id"] == shade_id
                 and row["feedback_type"] == Feedback.INTEREST]
     cohort = [row for row in interest
@@ -69,6 +87,7 @@ def affinity(shade_id, profile):
         "sample": len(selected),
         "cohort": bool(cohort),
         "demo_sample": sum(row["source"] == "demo" for row in selected),
+        "historical_sample": 0,
         "local_sample": sum(row["source"] == "local" for row in selected),
     }
 

@@ -64,7 +64,7 @@ class LipProfileForm(forms.Form):
 
 class FeedbackForm(forms.ModelForm):
     rd_consent = forms.BooleanField(
-        label="Saya setuju feedback dan profil warna saya disimpan untuk analisis R&D demo.",
+        label="Saya setuju penilaian dan profil warna saya disimpan untuk ringkasan R&D pada prototipe ini.",
         required=True,
     )
     desired_color_family = forms.ChoiceField(
@@ -82,7 +82,7 @@ class FeedbackForm(forms.ModelForm):
         choices=[
             ("", "Tidak ada / belum tahu"), ("satin", "Satin"),
             ("matte", "Matte"), ("cream", "Cream"),
-            ("glossy", "Glossy"),
+            ("glossy", "Glossy"), ("glasting", "Glasting"),
         ],
     )
     rating = forms.TypedChoiceField(

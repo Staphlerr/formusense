@@ -2,6 +2,8 @@
 
 This folder contains the working data for the 24-hour FormuSense lipstick shade prototype.
 
+Current app note: the three consumer recommendations now come from the five `ALL DATASET - *.csv` files in the parent `data/` folder. Files here remain as legacy opportunity cards, supplementary synthetic charts, and older demo feedback. Their IDs are not automatically joined to the new team CSVs.
+
 There are two dataset tracks in this folder:
 
 1. **Prototype UI track** - small, hand-curated data for the actual clickable demo.

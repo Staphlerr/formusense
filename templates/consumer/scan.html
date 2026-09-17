@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}Analisis foto · FormuSense{% endblock %}
+{% block title %}Analisis foto · LipXMatch{% endblock %}
 {% block content %}
 <section class="page narrow"><span class="eyebrow">Langkah 4 dari 4</span><h1>Kenali profil bibirmu</h1>
-  <p class="lead">Ambil foto langsung dengan kamera atau unggah foto. Hadapkan wajah ke depan, pastikan bibir terlihat, gunakan cahaya alami, dan hindari lipstik tebal. Kamu juga bisa memakai profil manual atau contoh demo.</p>
-  <p class="status-pill">{% if local_vision_available %}Deteksi wajah lokal siap · tanpa token AI untuk foto{% else %}Model deteksi lokal belum tersedia · profil manual dan demo siap dipakai{% endif %}</p>
+  <p class="lead">Ambil foto langsung dengan kamera atau unggah foto. Hadapkan wajah ke depan, pastikan bibir terlihat, gunakan cahaya alami, dan hindari lipstik tebal. Kamu juga bisa memakai profil manual atau profil contoh.</p>
+  <p class="status-pill">{% if local_vision_available %}Deteksi wajah lokal siap{% else %}Model deteksi lokal belum tersedia{% endif %}{% if photo_ai_consent and ai_available %} · AI cadangan diizinkan{% else %} · foto tidak dikirim ke AI eksternal{% endif %}</p>
   {% if photo_consent %}
   <form method="post" enctype="multipart/form-data" class="card form-card" id="scan-form">{% csrf_token %}
     <div><strong>1 · Buka kamera</strong>
@@ -24,14 +24,19 @@
       <div class="camera-capture-actions"><button class="button" id="capture-photo" type="button" hidden>2 · Ambil foto sekarang</button></div>
     </div>
     <div><label for="photo">Atau pilih foto JPG/PNG, maksimal 10 MB</label><input id="photo" name="photo" type="file" accept="image/jpeg,image/png" required></div>
-    <div id="photo-preview-wrap" hidden><strong id="photo-ready" class="photo-ready" role="status"></strong><img id="photo-preview" class="photo-preview" alt="Pratinjau foto yang akan dianalisis"><p id="photo-name"></p></div>
+    <div id="photo-preview-wrap" hidden>
+      <strong id="photo-ready" class="photo-ready" role="status"></strong>
+      <img id="photo-preview" class="photo-preview" alt="Pratinjau foto yang akan dianalisis">
+      <p id="photo-name"></p>
+      <button class="button secondary" id="retake-photo" type="button">↺ Ambil ulang gambar</button>
+    </div>
     <button class="button" id="analyze-button" name="action" value="analyze">3 · Analisis foto</button>
   </form>
   <div class="scan-loading" id="scan-loading" role="status" aria-live="polite" aria-label="Foto sedang diproses" hidden>
     <div class="scan-loading-inner">
-      <span class="eyebrow">Analisis foto lokal</span>
+      <span class="eyebrow">Analisis foto{% if photo_ai_consent and ai_available %} · AI cadangan diizinkan{% else %} · lokal saja{% endif %}</span>
       <h1>Mengenali profil bibirmu...</h1>
-      <p class="lead">Tunggu sebentar. Foto diproses di server demo dan hasilnya bisa kamu periksa sebelum melihat rekomendasi.</p>
+      <p class="lead">Tunggu sebentar. Foto diproses di server aplikasi ini dan hasilnya bisa kamu periksa sebelum melihat rekomendasi.</p>
       <div class="scan-progress" aria-hidden="true"><span></span></div>
       <ol class="scan-loading-steps">
         <li id="loading-photo" class="is-active"><span class="scan-step-icon">1</span><span>Menyiapkan foto</span><small>Sedang diproses</small></li>
@@ -42,7 +47,47 @@
     </div>
   </div>
   <script type="module" src="{% static 'js/camera.js' %}"></script>
+  <script>
+    (() => {
+      const retakeBtn = document.querySelector('#retake-photo');
+      const startBtn = document.querySelector('#start-camera');
+      if (retakeBtn && startBtn) {
+        retakeBtn.addEventListener('click', () => {
+          startBtn.click();
+          startBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+      }
+
+      // Belt-and-suspenders: make sure the full-screen loading overlay
+      // (already styled in app.css) actually appears the instant the form
+      // is submitted, and that its steps keep visibly progressing while the
+      // server works — so the page never *looks* stuck even during a long
+      // photo analysis. This runs alongside whatever camera.js already does.
+      const form = document.querySelector('#scan-form');
+      const loading = document.querySelector('#scan-loading');
+      if (form && loading) {
+        form.addEventListener('submit', () => {
+          document.documentElement.classList.add('scan-is-loading');
+          loading.hidden = false;
+          const steps = [...loading.querySelectorAll('.scan-loading-steps li')];
+          let i = steps.findIndex((li) => li.classList.contains('is-active'));
+          if (i === -1) i = 0;
+          steps.forEach((li, idx) => {
+            li.classList.toggle('is-active', idx === i);
+            li.classList.toggle('is-done', idx < i);
+          });
+          setInterval(() => {
+            if (i >= steps.length - 1) return; // hold on the last step until the page navigates
+            steps[i].classList.remove('is-active');
+            steps[i].classList.add('is-done');
+            i += 1;
+            steps[i].classList.add('is-active');
+          }, 2200);
+        });
+      }
+    })();
+  </script>
   {% endif %}
-  <form method="post" class="actions">{% csrf_token %}<button class="button secondary" name="action" value="manual">Isi profil manual</button><button class="button secondary" name="action" value="demo">Gunakan profil demo</button></form>
+  <form method="post" class="actions">{% csrf_token %}<button class="button secondary" name="action" value="manual">Isi profil manual</button><button class="button secondary" name="action" value="demo">Gunakan profil contoh</button></form>
 </section>
 {% endblock %}

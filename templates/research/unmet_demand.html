@@ -1,32 +1,11 @@
 {% extends 'research/base_research.html' %}
-{% block title %}Peluang Shade · FormuSense{% endblock %}
+{% block title %}Unmet Demand · FormuSense{% endblock %}
 {% block research_content %}
-<div><h1>Peluang Shade</h1><p class="lead">Konsep shade yang diminati tapi belum ada di katalog. Angka di setiap konsep diperbarui dari feedback yang masuk lewat aplikasi.</p></div>
-
-<div class="stack">{% for item in opportunities %}<article class="card">
-    <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start">
-        {% if item.target_hex %}<span class="mini-swatch" style="width:64px;height:64px;border-radius:16px;flex:none;background:{{ item.target_hex }}"></span>{% endif %}
-        <div style="flex:1;min-width:220px">
-            <p class="fine-print" style="text-transform:uppercase;letter-spacing:.04em;font-weight:600;color:var(--outline);margin:0 0 4px">{{ item.opportunity_id }}{% if item.target_hex %} · {{ item.target_hex }}{% endif %}</p>
-            <h2 style="margin-bottom:2px">{{ item.target_shade_name }}</h2>
-            <p class="fine-print" style="margin:0">Target: {{ item.family|title }} · {{ item.preferred_finish|title }} · Segmen: {{ item.target_segment_label }}</p>
-        </div>
-    </div>
-
-    <div class="signal-grid" style="margin-top:18px">
-        <div><strong style="color:var(--wine)">{{ item.demo_interest }}</strong><small>minat positif pada konsep</small></div>
-        <div><strong style="color:var(--terracotta)">{{ item.local_requests }}</strong><small>permintaan baru pengguna lokal</small></div>
-        <div><strong style="color:var(--gap)">{{ item.related_issues }}</strong><small>feedback pemakaian bermasalah pada keluarga warna</small></div>
-    </div>
-
-    {% if item.sample_comment %}<div class="testimonial-card" style="margin:16px 0 0">
-    <span class="testimonial-mark">&ldquo;</span>
-    <p class="testimonial-text">{{ item.sample_comment.comment }}</p>
-    <div class="testimonial-meta"><span class="testimonial-profile">{{ item.sample_comment.shade_name }} · {{ item.sample_comment.skin_tone }} / {{ item.sample_comment.undertone }}</span></div>
-</div>{% else %}<div class="message rd-empty" style="margin:16px 0 0">Belum ada komentar konsumen yang tercatat untuk keluarga warna ini.</div>{% endif %}
-
-    <details style="margin-top:14px"><summary style="cursor:pointer;font-weight:600;color:var(--muted)">Catatan riset awal</summary><p class="fine-print">Klaim tingkat permintaan &ldquo;{{ item.demand_signal_label }}&rdquo;, kecocokan portofolio &ldquo;{{ item.portfolio_match_label }}&rdquo;, dan angka {{ item.unsuccessful_match_rate }} berasal dari catatan riset pasar awal, belum dihitung ulang di halaman ini.</p></details>
-    {% if summary_opportunity_id == item.opportunity_id %}<div class="card note"><p class="fine-print" style="text-transform:uppercase;letter-spacing:.05em;font-weight:700;color:var(--terracotta);margin:0 0 6px">{{ summary_source }}</p><p style="margin:0">{{ ai_summary }}</p></div>{% endif %}
+<h1>Unmet Demand</h1><p class="lead">Hitungan di bawah diperbarui dari feedback yang dikirim melalui aplikasi.</p>
+<div class="stack">{% for item in opportunities %}<article class="card"><span class="eyebrow">{{ item.opportunity_id }} · konsep R&D</span>
+    <h2>{{ item.target_shade_name }}</h2><p>Segmen sasaran: {{ item.target_segment }} · Finish sasaran: {{ item.preferred_finish }}</p>
+    <div class="signal-grid"><div><strong>{{ item.demo_interest }}</strong><small>minat positif pada konsep</small></div><div><strong>{{ item.local_requests }}</strong><small>permintaan baru pengguna lokal</small></div><div><strong>{{ item.related_issues }}</strong><small>feedback pemakaian bermasalah pada keluarga warna</small></div></div>
+    {% if summary_opportunity_id == item.opportunity_id %}<div class="card note"><span class="eyebrow">{{ summary_source }}</span><p>{{ ai_summary }}</p></div>{% endif %}
     <div class="actions"><a class="button secondary" href="{% url 'research:evidence' %}?opportunity={{ item.opportunity_id }}">Lihat bukti</a><a class="button" href="{% url 'research:formula_lab' %}?opportunity={{ item.opportunity_id }}">Buat brief formula</a>
-        <form method="post">{% csrf_token %}<input type="hidden" name="opportunity" value="{{ item.opportunity_id }}"><button class="button secondary" type="submit" data-loading-text="Meringkas...">Ringkas dengan AI</button></form></div></article>{% endfor %}</div>
+        <form method="post">{% csrf_token %}<input type="hidden" name="opportunity" value="{{ item.opportunity_id }}"><button class="button secondary" type="submit">Ringkas dengan AI</button></form></div></article>{% endfor %}</div>
 {% endblock %}

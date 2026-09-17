@@ -232,7 +232,11 @@ def refine_shade_pick(role_label, candidates, profile, preference):
                 "shade_id": c["shade_id"], "shade_name": c["shade_name"],
                 "color_family": c["color_family"], "finish": c["finish"],
                 "intensity": c["intensity"],
-                "color_science_score": c.get("score"),
+                "deterministic_score": c.get("score"),
+                "hedonic_mean_1_to_9": (c.get("hedonic") or {}).get("hedonic_mean"),
+                "hedonic_sample": (c.get("hedonic") or {}).get("hedonic_sample"),
+                "review_positive": (c.get("hedonic") or {}).get("review_positive"),
+                "review_sample": (c.get("hedonic") or {}).get("review_sample"),
                 "measured_contrast_L_star": (c.get("metrics") or {}).get("contrast"),
                 "measured_hue_difference_degrees": (c.get("metrics") or {}).get("hue_diff"),
             }
@@ -242,17 +246,19 @@ def refine_shade_pick(role_label, candidates, profile, preference):
     result = _json_completion(
         "You personalize a lipstick shade pick for one wearer. You are given a "
         "SHORT LIST of candidate shades that have ALREADY been scored by a "
-        "deterministic color-science calculation (facial-contrast and "
-        "hue-harmony metrics) -- that scoring is final; do not re-derive or "
+        "deterministic calculation using the wearer's preferences, photo color metrics "
+        "when available, and small bonuses from labelled hedonic and review data "
+        "-- that scoring is final; do not re-derive or "
         "second-guess it with your own color theory. Your only job: pick the "
         "ONE shade_id from the given candidates whose qualitative details "
         "(visible lip condition, stated preference) best match this wearer, "
-        "or return the candidate with the highest color_science_score if "
+        "or return the candidate with the highest deterministic_score if "
         "nothing else distinguishes them. You must choose a shade_id that is "
         "EXACTLY one of the given candidates -- never invent one, never "
         "return a shade not in the list. Return JSON only: "
         '{"shade_id": "...", "reason": "one short Indonesian sentence, no '
-        'invented facts, no health or performance claims"}.',
+        'invented facts, no health or performance claims; do not mention the '
+        'origin or collection method of any data"}.',
         facts, max_tokens=150,
     )
     valid_ids = {c["shade_id"] for c in candidates}
@@ -273,13 +279,13 @@ def generate_opportunity_summary(opportunity):
         "related_wear_issue_count": opportunity["related_issues"],
     }
     return _text_completion(
-        "Write two short Indonesian sentences for a cosmetics R&D team, as a production "
-        "system reporting on real consumer signal (not a prototype or test environment). "
-        "Explain the provided numbers as one integrated view of consumer interest and "
-        "suggest a lab review. Never use the words 'demo', 'pilot', 'sintetis', 'simulasi', "
-        "'contoh', or any other wording that implies the data is a placeholder or a test "
-        "run. Do not claim statistical significance, future trend prediction, product "
-        "safety, clinical evidence, or a validated formula. Do not invent numbers.",
+        "Write two short Indonesian sentences for a cosmetics R&D team. Explain "
+        "the provided numbers as one integrated view of consumer interest and "
+        "suggest a lab review. Do not mention the origin or collection method of "
+        "the data. Never use the words 'demo', 'pilot', 'sintetis', 'simulasi', "
+        "or 'contoh'. Do not claim statistical significance, future trend "
+        "prediction, product safety, clinical evidence, or a validated formula. "
+        "Do not invent numbers.",
         facts,
     )
 
@@ -327,8 +333,8 @@ def generate_formula_rationale(brief):
         "percentage, a full recipe, or ingredient safety claims. Make clear a "
         "formulator and laboratory must validate any change, and that this "
         "baseline is reference data awaiting lab validation, not a finished formula. "
-        "Never use the words 'demo', 'pilot', 'sintetis', 'simulasi', 'contoh', or any "
-        "other wording that implies the data is a placeholder or a test run. "
+        "Do not mention the origin or collection method of the data. Never use the "
+        "words 'demo', 'pilot', 'sintetis', 'simulasi', or 'contoh'. "
         "Do not invent study results or numbers not supplied.",
         facts,
     )

@@ -25,7 +25,7 @@ import numpy as np
 from django.conf import settings
 from PIL import Image, ImageOps, UnidentifiedImageError
 
-from services.color_science import classify_skin_tone
+from services.color_science import classify_skin_tone, classify_undertone
 
 
 # Same file you already downloaded per services/color_science.py's earlier
@@ -57,6 +57,18 @@ class LocalVisionError(Exception):
 
 def model_available() -> bool:
     return MODEL_PATH.is_file() and MODEL_PATH.stat().st_size > 1_000_000
+
+
+def create_face_landmarker():
+    """Create one detector; batch callers may reuse it within a context manager."""
+    options = mp.tasks.vision.FaceLandmarkerOptions(
+        base_options=mp.tasks.BaseOptions(model_asset_path=str(MODEL_PATH)),
+        running_mode=mp.tasks.vision.RunningMode.IMAGE,
+        num_faces=2,
+        min_face_detection_confidence=0.6,
+        min_face_presence_confidence=0.6,
+    )
+    return mp.tasks.vision.FaceLandmarker.create_from_options(options)
 
 
 def _read_photo(photo_bytes: bytes) -> np.ndarray:
@@ -108,20 +120,16 @@ def _lip_mask(shape: tuple[int, ...], landmarks) -> np.ndarray:
     return mask
 
 
-def _undertone_from_lab(a_star: float, b_star: float) -> str:
-    # Only strong yellow/red balance is labelled. Most photos stay uncertain
-    # because white balance and illumination change these values substantially.
-    # Kept local rather than calling color_science.classify_undertone: that
-    # function never returns "uncertain", which this app's forms expect as a
-    # valid fallback category -- see color_science.py's docstring note.
-    if a_star <= 0 or b_star <= 0:
-        return "uncertain"
-    ratio = b_star / a_star
-    if ratio >= 1.85 and b_star >= 18:
-        return "warm"
-    if ratio <= 0.78 and a_star >= 15:
-        return "cool"
-    return "uncertain"
+# Undertone classification now delegates to services.color_science.classify_undertone
+# (b*/a* hue-ratio rule, referenced to Van Song et al. 2026 / the personal
+# color analysis literature -- see that function's docstring) instead of
+# keeping a second, ad-hoc local threshold set. That function never returns
+# "uncertain" -- it resolves low-chroma cases to "neutral" instead, which is
+# both a real category in this app's form choices and a more literature-
+# grounded outcome than an unexplained "uncertain". The exposure/chroma
+# guards below (skin_l range, chroma < 3) still run first and independently
+# decide when a photo is unreliable enough to skip color classification
+# altogether -- that's a data-quality check, not an undertone rule.
 
 
 def _pigmentation_from_contrast(skin_l: float, lip_l: float) -> str:
@@ -137,7 +145,7 @@ def _pigmentation_from_contrast(skin_l: float, lip_l: float) -> str:
     return "high"
 
 
-def analyze_photo_local(photo_bytes: bytes, mime_type: str) -> dict:
+def analyze_photo_local(photo_bytes: bytes, mime_type: str, *, face_landmarker=None) -> dict:
     """Return editable estimates and normalized lip contours; never store a photo."""
     if mime_type not in {"image/jpeg", "image/png"}:
         raise LocalVisionError("Gunakan foto JPG atau PNG.")
@@ -148,16 +156,13 @@ def analyze_photo_local(photo_bytes: bytes, mime_type: str) -> dict:
     if min(height, width) < 240:
         raise LocalVisionError("Resolusi foto terlalu kecil untuk mendeteksi bibir.")
 
-    options = mp.tasks.vision.FaceLandmarkerOptions(
-        base_options=mp.tasks.BaseOptions(model_asset_path=str(MODEL_PATH)),
-        running_mode=mp.tasks.vision.RunningMode.IMAGE,
-        num_faces=2,
-        min_face_detection_confidence=0.6,
-        min_face_presence_confidence=0.6,
-    )
     try:
-        with mp.tasks.vision.FaceLandmarker.create_from_options(options) as landmarker:
-            result = landmarker.detect(mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb))
+        image = mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb)
+        if face_landmarker is None:
+            with create_face_landmarker() as landmarker:
+                result = landmarker.detect(image)
+        else:
+            result = face_landmarker.detect(image)
     except Exception as error:
         raise LocalVisionError("Analisis lokal belum berhasil. Gunakan profil manual atau foto lain.") from error
     if not result.face_landmarks:
@@ -180,7 +185,7 @@ def analyze_photo_local(photo_bytes: bytes, mime_type: str) -> dict:
         "visible_lip_condition": "",
         "confidence": "local_low",
         "lip_contours": contours,
-        "analysis_note": "Kontur bibir terdeteksi lokal. Warna dapat berubah karena cahaya dan kamera; periksa profil ini.",
+        "analysis_note": "Kontur bibir terdeteksi. Sesuaikan nilai warna di bawah bila diperlukan.",
     }
     lab = cv2.cvtColor(rgb.astype(np.float32) / 255.0, cv2.COLOR_RGB2LAB)
     try:
@@ -193,16 +198,20 @@ def analyze_photo_local(photo_bytes: bytes, mime_type: str) -> dict:
     lip_l, lip_a, lip_b = (float(value) for value in lips)
     # Reject severely under/overexposed photos instead of inventing colour labels.
     if not 18 <= skin_l <= 88:
-        profile["analysis_note"] = "Kontur terdeteksi, tetapi pencahayaan membuat warna sulit diperkirakan. Isi profil manual."
+        profile["analysis_note"] = "Pencahayaan foto membuat warna sulit diperkirakan. Isi warna secara manual."
+        return profile
+    if (skin_a ** 2 + skin_b ** 2) ** 0.5 < 3:
+        profile["analysis_note"] = "Foto ini nyaris tidak memuat informasi warna. Isi warna secara manual."
         return profile
 
     skin_tone_label, mst_index, mst_distance = classify_skin_tone((skin_l, skin_a, skin_b))
+    undertone_label = classify_undertone((skin_l, skin_a, skin_b))
     profile.update({
         "skin_tone": skin_tone_label,
-        "undertone": _undertone_from_lab(skin_a, skin_b),
+        "undertone": undertone_label,
         "lip_pigmentation": _pigmentation_from_contrast(skin_l, lip_l),
         "confidence": "local_estimate",
-        "analysis_note": "Perkiraan dari warna area pipi dan kontras bibir-kulit pada foto ini. Periksa dan koreksi jika meleset.",
+        "analysis_note": "Estimasi warna dari foto ini. Sesuaikan bila kurang tepat.",
         # Raw numbers behind the categorical labels above, for transparency /
         # evidence display -- "not a black box" is only true if these are
         # actually shown somewhere (e.g. profile_result.html).

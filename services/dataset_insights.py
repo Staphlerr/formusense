@@ -37,12 +37,21 @@ def public_lipstick_swatches():
     return result
 
 
+@lru_cache(maxsize=1)
+def public_lipstick_stats():
+    rows = public_lipstick_swatches()
+    return {
+        "swatches": len(rows),
+        "brands": len({row["brand"].casefold() for row in rows}),
+    }
+
+
 def _rgb(color):
     return tuple(int(color[index:index + 2], 16) for index in (1, 3, 5))
 
 
-def public_swatches_near(picks):
-    """Give two color-near source examples per demo pick; no product matching claim."""
+def public_swatches_near(picks, per_pick=1):
+    """Return color-near public swatches grouped by demo shade, not suitability."""
     used = set()
     examples = []
     for pick in picks:
@@ -51,12 +60,16 @@ def public_swatches_near(picks):
             enumerate(public_lipstick_swatches()),
             key=lambda item: sum((a - b) ** 2 for a, b in zip(target, _rgb(item[1]["hex"]))),
         )
+        picked = 0
         for index, row in candidates:
             if index in used:
                 continue
             used.add(index)
-            examples.append({**row, "near_demo_shade": pick["shade_name"]})
-            break
+            examples.append({**row, "near_demo_shade": pick["shade_name"],
+                             "near_demo_shade_id": pick["shade_id"]})
+            picked += 1
+            if picked >= per_pick:
+                break
     return examples
 
 

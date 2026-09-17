@@ -1,68 +1,23 @@
 {% extends 'research/base_research.html' %}
-{% block title %}Overview · FormuSense{% endblock %}
+{% block title %}R&D Overview · FormuSense{% endblock %}
 {% block research_content %}
-<div><h1>R&D Intelligence Overview</h1><p class="lead">Sinyal minat, permintaan, dan keluhan konsumen dirangkum di satu tempat supaya tim formulasi tahu ke mana harus fokus.</p></div>
-
-<div class="metric-grid">
-    <div class="card metric"><small>Total feedback</small><strong>{{ demo_feedback_count }}</strong></div>
-    <div class="card metric"><small>Feedback baru</small><strong>{{ local_feedback_count }}</strong></div>
-    <div class="card metric"><small>Rating pemakaian rata-rata</small><strong style="color:{% if average_wear_rating >= 4 %}var(--ok){% elif average_wear_rating >= 3 %}var(--review){% elif average_wear_rating %}var(--gap){% else %}var(--wine){% endif %}">{{ average_wear_rating|default:'—' }}<span style="font-family:var(--font-body);font-size:1rem;font-weight:600;color:var(--muted)">/5</span></strong></div>
-    <div class="card metric" style="background:var(--wine)"><small style="color:rgba(253,249,246,.75)">Peluang belum terpenuhi</small><strong style="color:var(--paper)">{{ opportunity_count }}</strong></div>
-</div>
-
-<div class="card manifesto">
-    <span class="rd-kicker" style="color:rgba(253,249,246,.65)">Ringkasan R&D</span>
-    <h2 style="color:var(--paper)">{{ opportunity_count }} peluang shade siap ditinjau</h2>
-    <p>Setiap peluang menggabungkan minat konsumen, permintaan lokal, dan keluhan pemakaian pada keluarga warna terkait — bukan tebakan tren.</p>
-    <div class="signal-grid" style="margin:16px 0 0">
-        <div style="background:rgba(255,255,255,.1)"><strong style="color:var(--paper)">{{ interest_count }}</strong><small style="color:rgba(253,249,246,.65)">total sinyal minat</small></div>
-        <div style="background:rgba(255,255,255,.1)"><strong style="color:var(--paper)">{{ wear_count }}</strong><small style="color:rgba(253,249,246,.65)">total sinyal pemakaian</small></div>
-        <div style="background:rgba(255,255,255,.1)"><strong style="color:var(--gold)">{{ opportunity_count }}</strong><small style="color:rgba(253,249,246,.65)">peluang belum terpenuhi</small></div>
-    </div>
-    <div class="actions"><a class="button" style="background:var(--paper);color:var(--wine);border-color:var(--paper)" href="{% url 'research:unmet_demand' %}">Lihat peluang shade →</a></div>
-</div>
-
-<div class="two-column">
-    <div class="card"><h2>Peringkat minat warna</h2><p class="fine-print">Keluarga warna diurutkan dari minat positif terbanyak (bukan tren waktu — belum ada tanggal pengiriman di data ini).</p>
-        {% if family_trend.markers %}<svg viewBox="0 0 {{ family_trend.width }} {{ family_trend.height }}" preserveAspectRatio="none" style="width:100%;height:130px;display:block;margin-top:8px" role="img" aria-label="Peringkat minat warna">
-            <polygon points="{{ family_trend.area }}" fill="var(--surface-container)"></polygon>
-            <polyline points="{{ family_trend.points }}" fill="none" stroke="var(--wine)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></polyline>
-            {% for m in family_trend.markers %}<circle cx="{{ m.x|stringformat:'.1f' }}" cy="{{ m.y|stringformat:'.1f' }}" r="5" fill="{{ m.hex|default:'var(--terracotta)' }}" stroke="var(--paper)" stroke-width="2"></circle>{% endfor %}
-        </svg>
-        <div style="display:flex;justify-content:space-between;gap:4px;margin-top:2px">{% for m in family_trend.markers %}<div style="text-align:center;flex:1;min-width:0">
-            <span style="display:block;width:8px;height:8px;border-radius:50%;background:{{ m.hex|default:'var(--terracotta)' }};margin:0 auto 4px"></span>
-            <span class="fine-print" style="display:block;font-size:.7rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ m.label|title }}</span>
-            <b style="font-size:.8rem;color:var(--wine)">{{ m.value }}</b>
-        </div>{% endfor %}</div>
-        {% else %}<div class="message rd-empty" style="margin-top:8px">Belum ada sinyal minat warna.</div>{% endif %}
-    </div>
-    <div class="card"><h2>Minat warna teratas</h2><p class="fine-print">Keluarga warna dengan penilaian positif terbanyak, dari seluruh feedback konsumen.</p>
-        <table style="width:100%;border-collapse:collapse;margin-top:6px">
-            <thead><tr><th class="fine-print" style="text-align:left;font-weight:700;padding-bottom:9px;border-bottom:1px solid var(--line)">Keluarga warna</th><th class="fine-print" style="text-align:right;font-weight:700;padding-bottom:9px;border-bottom:1px solid var(--line)">Minat</th><th class="fine-print" style="text-align:right;font-weight:700;padding-bottom:9px;border-bottom:1px solid var(--line)">Porsi</th></tr></thead>
-            <tbody>{% for row in shade_family_rows %}<tr><td style="padding:11px 0;border-bottom:1px solid var(--line)"><span style="display:inline-flex;align-items:center;gap:9px"><span style="width:9px;height:9px;border-radius:50%;flex:none;background:{{ row.hex|default:'var(--wine)' }}"></span>{{ row.family|title }}</span></td><td style="padding:11px 0;border-bottom:1px solid var(--line);text-align:right;color:var(--wine)">{{ row.count }}</td><td style="padding:11px 0;border-bottom:1px solid var(--line);text-align:right;color:var(--muted);font-size:.8rem">{{ row.share }}%</td></tr>{% empty %}<tr><td class="fine-print" style="padding:11px 0" colspan="3">Belum ada sinyal.</td></tr>{% endfor %}</tbody>
-        </table>
-    </div>
-</div>
-
-<div class="two-column">
-    <div class="card"><h2>Permintaan warna baru</h2><p class="fine-print">Warna yang diminta pengguna lokal tapi belum tersedia di katalog.</p>
-        {% if local_request_rows %}<div class="spectrum-list" style="margin-top:6px">{% for row in local_request_rows %}<div class="spectrum-row"><span style="display:inline-flex;align-items:center;gap:8px;overflow:hidden"><span style="width:8px;height:8px;border-radius:50%;flex:none;background:{{ row.hex|default:'var(--terracotta)' }}"></span><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ row.family|title }}</span></span><div class="bar-track"><span class="bar-fill" style="width:{{ row.width }}%;background:{{ row.hex|default:'var(--terracotta)' }}"></span></div><b>{{ row.count }}</b></div>{% endfor %}</div>
-        {% else %}<div class="message rd-empty" style="margin-top:8px">Belum ada. Coba kirim feedback dari sisi konsumen.</div>{% endif %}
-    </div>
-    <div class="card"><h2>Kesukaan per keluarga warna</h2>
-        <p class="fine-print">Skala 1–9, dari panel riset preferensi 500 responden (bukan hanya produk di katalog) — dipasangkan lewat ID S001–S500 di `shade_data.csv` dan `hedonic_data.csv`.</p>
-        <div class="spectrum-list" style="margin-top:6px">{% for item in datasets.hedonic_by_family %}<div class="spectrum-row dataset-spectrum"><span>{{ item.family }}</span><div class="bar-track"><span class="bar-fill" style="width:{% widthratio item.mean 9 100 %}%;background:{% cycle 'var(--wine)' 'var(--terracotta)' 'var(--gold)' 'var(--review)' 'var(--gap)' 'var(--outline)' 'var(--muted)' %}"></span></div><b>{{ item.mean }}</b><small>n={{ item.count }}</small></div>{% empty %}<div class="message rd-empty">Belum ada data.</div>{% endfor %}</div>
-    </div>
-</div>
-
-<section class="card dataset-section">
-    <h2>Dataset yang dipakai</h2>
-    <p class="fine-print">Angka di bawah dihitung langsung dari file yang ada di proyek. Sumber yang berbeda tidak digabung sebagai bukti preferensi konsumen yang sama.</p>
-    <div class="dataset-grid"><div><strong>{{ datasets.public_lipstick_count }}</strong><span>swatch lipstik publik</span></div><div><strong>{{ datasets.synthetic_hedonic_count }}</strong><span>penilaian kesukaan konsumen</span></div><div><strong>{{ datasets.synthetic_shade_count }}</strong><span>shade dalam panel riset</span></div><div><strong>{{ datasets.synthetic_formula_count }}</strong><span>formula dalam panel riset</span></div></div>
-    <details><summary style="cursor:pointer;font-weight:700;color:var(--wine);margin:10px 0">Referensi eksternal &amp; keluaran prediksi awal</summary>
-        <p>Panel riset ini juga memuat {{ datasets.synthetic_formula_output_count }} keluaran prediksi untuk formula F001–F200: rata-rata hardness {{ datasets.synthetic_mean_hardness }} dan payoff {{ datasets.synthetic_mean_payoff }}. Ini angka hasil model prediksi awal, bukan hasil pengukuran laboratorium atau rekomendasi formula produksi.</p>
-        <p>{{ datasets.foundation_reference_count }} swatch foundation dari The Pudding hanya referensi ruang warna. {{ datasets.shampoo_reference_count }} formulasi cair dari publikasi Nature/Figshare hanya contoh struktur data R&D. Keduanya tidak dipakai untuk merekomendasikan lipstik atau menentukan resepnya.</p>
-        <p class="fine-print">Sumber produk: <a href="https://github.com/ConstanzaSchibber/capstone_colors" target="_blank" rel="noopener noreferrer">Capstone Colors</a>. Sumber foundation: <a href="https://github.com/the-pudding/data/tree/master/makeup-shades" target="_blank" rel="noopener noreferrer">The Pudding</a>. Sumber formulasi cair: <a href="https://www.nature.com/articles/s41597-024-03573-w" target="_blank" rel="noopener noreferrer">Scientific Data</a>. Detail pemakaian sumber tercatat di `data/DATASET_MANIFEST.md`.</p>
-    </details>
+<h1>R&D Intelligence Overview</h1><p class="lead">Ringkasan data dan feedback baru dari aplikasi lokal.</p>
+<div class="metric-grid"><div class="card metric"><small>Feedback internal</small><strong>{{ demo_feedback_count }}</strong></div>
+    <div class="card metric"><small>Feedback lokal baru</small><strong>{{ local_feedback_count }}</strong></div>
+    <div class="card metric"><small>Minat warna / uji pakai</small><strong>{{ interest_count }} / {{ wear_count }}</strong></div>
+    <div class="card metric"><small>Rating pemakaian (1–5)</small><strong>{{ average_wear_rating|default:'—' }}</strong></div></div>
+<div class="two-column"><div class="card"><h2>Minat positif per keluarga warna</h2><p>Gabungan sinyal internal dan lokal, hanya penilaian sebelum mencoba.</p>
+    <div class="spectrum-list">{% for family, count in shade_families %}<div class="spectrum-row dataset-spectrum"><span>{{ family|title }}</span><div class="bar-track"><span class="bar-fill" style="width:{% widthratio count max_family_count 100 %}%"></span></div><b>{{ count }}</b><small>sinyal</small></div>{% endfor %}</div></div>
+    <div class="card"><h2>Permintaan warna baru dari pengguna lokal</h2>
+        {% if local_requests %}<div class="spectrum-list">{% for family, count in local_requests %}<div class="spectrum-row dataset-spectrum"><span>{{ family|title }}</span><div class="bar-track"><span class="bar-fill" style="width:{% widthratio count max_request_count 100 %}%"></span></div><b>{{ count }}</b><small>permintaan</small></div>{% endfor %}</div>{% else %}<p>Belum ada. Coba kirim feedback dari sisi konsumen.</p>{% endif %}</div></div>
+<a class="button" href="{% url 'research:unmet_demand' %}">Lihat unmet demand</a>
+<section class="card dataset-section"><h2>Ringkasan dataset</h2>
+    <p>Angka di bawah dihitung langsung dari file lokal. Sumber yang berbeda tidak digabung sebagai bukti preferensi konsumen yang sama.</p>
+    <div class="dataset-grid"><div><strong>{{ datasets.public_lipstick_count }}</strong><span>swatch lipstik publik untuk pratinjau</span></div><div><strong>{{ datasets.synthetic_hedonic_count }}</strong><span>penilaian hedonik</span></div><div><strong>{{ datasets.synthetic_shade_count }}</strong><span>shade · pasangan data hedonik</span></div><div><strong>{{ datasets.synthetic_formula_count }}</strong><span>formula</span></div></div>
+    <h3>Rata-rata kesukaan per keluarga warna (skala 1–9)</h3><div class="spectrum-list">{% for item in datasets.hedonic_by_family %}<div class="spectrum-row dataset-spectrum"><span>{{ item.family }}</span><div class="bar-track"><span class="bar-fill" style="width:{% widthratio item.mean 9 100 %}%"></span></div><b>{{ item.mean }}</b><small>n={{ item.count }}</small></div>{% endfor %}</div>
+    <p class="fine-print">Perhitungan ini memakai pasangan ID S001–S500 dalam `shade_data.csv` dan `hedonic_data.csv`.</p>
+    <p>Dataset juga memuat {{ datasets.synthetic_formula_output_count }} keluaran prediksi untuk formula F001–F200: rata-rata angka hardness {{ datasets.synthetic_mean_hardness }} dan payoff {{ datasets.synthetic_mean_payoff }}.</p>
+    <h3>Referensi</h3><p>{{ datasets.foundation_reference_count }} swatch foundation dari The Pudding dipakai sebagai referensi ruang warna. {{ datasets.shampoo_reference_count }} formulasi cair dari publikasi Nature/Figshare dipakai sebagai referensi struktur data R&D.</p>
+    <p class="fine-print">Sumber produk: <a href="https://github.com/ConstanzaSchibber/capstone_colors" target="_blank" rel="noopener noreferrer">Capstone Colors</a>. Sumber foundation: <a href="https://github.com/the-pudding/data/tree/master/makeup-shades" target="_blank" rel="noopener noreferrer">The Pudding</a>. Sumber formulasi cair: <a href="https://www.nature.com/articles/s41597-024-03573-w" target="_blank" rel="noopener noreferrer">Scientific Data</a>.</p>
 </section>
 {% endblock %}
