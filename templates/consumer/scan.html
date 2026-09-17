@@ -61,6 +61,34 @@
           startBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
         });
       }
+
+      // Belt-and-suspenders: make sure the full-screen loading overlay
+      // (already styled in app.css) actually appears the instant the form
+      // is submitted, and that its steps keep visibly progressing while the
+      // server works — so the page never *looks* stuck even during a long
+      // photo analysis. This runs alongside whatever camera.js already does.
+      const form = document.querySelector('#scan-form');
+      const loading = document.querySelector('#scan-loading');
+      if (form && loading) {
+        form.addEventListener('submit', () => {
+          document.documentElement.classList.add('scan-is-loading');
+          loading.hidden = false;
+          const steps = [...loading.querySelectorAll('.scan-loading-steps li')];
+          let i = steps.findIndex((li) => li.classList.contains('is-active'));
+          if (i === -1) i = 0;
+          steps.forEach((li, idx) => {
+            li.classList.toggle('is-active', idx === i);
+            li.classList.toggle('is-done', idx < i);
+          });
+          setInterval(() => {
+            if (i >= steps.length - 1) return; // hold on the last step until the page navigates
+            steps[i].classList.remove('is-active');
+            steps[i].classList.add('is-done');
+            i += 1;
+            steps[i].classList.add('is-active');
+          }, 2200);
+        });
+      }
     })();
   </script>
   {% endif %}

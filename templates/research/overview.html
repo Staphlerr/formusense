@@ -1,48 +1,23 @@
 {% extends 'research/base_research.html' %}
 {% block title %}R&D Overview · LipXMatch{% endblock %}
 {% block research_content %}
-<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px">
-  <span class="badge badge-ok"><span class="dot"></span>Masukan dari aplikasi lokal aktif</span>
-</div>
-<h1>R&D Intelligence Overview</h1>
-<p class="lead">Ringkasan data simulasi dan feedback baru dari aplikasi lokal.</p>
-
-<div class="metric-grid">
-  <div class="card metric"><small>Penilaian simulasi</small><strong>{{ demo_feedback_count }}</strong></div>
-  <div class="card metric"><small>Feedback lokal baru</small><strong>{{ local_feedback_count }}</strong></div>
-  <div class="card metric"><small>Minat warna / uji pakai</small><strong>{{ interest_count }} / {{ wear_count }}</strong></div>
-  <div class="card metric"><small>Rating pemakaian (1–5)</small><strong>{{ average_wear_rating|default:'—' }}</strong></div>
-</div>
-
-<div class="two-column">
-  <div class="card">
-    <h2>Minat positif per keluarga warna</h2>
-    <p>Data simulasi dan masukan pengguna, hanya penilaian sebelum mencoba.</p>
-    <ul>{% for family, count in shade_families %}<li>{{ family|title }} · {{ count }} sinyal</li>{% endfor %}</ul>
-  </div>
-  <div class="card">
-    <h2>Permintaan warna baru dari pengguna lokal</h2>
-    <ul>{% for family, count in local_requests %}<li>{{ family|title }} · {{ count }} permintaan</li>{% empty %}<li>Belum ada. Coba kirim feedback dari sisi konsumen.</li>{% endfor %}</ul>
-  </div>
-</div>
+<h1>R&D Intelligence Overview</h1><p class="lead">Ringkasan data dan feedback baru dari aplikasi lokal.</p>
+<div class="metric-grid"><div class="card metric"><small>Feedback internal</small><strong>{{ demo_feedback_count }}</strong></div>
+    <div class="card metric"><small>Feedback lokal baru</small><strong>{{ local_feedback_count }}</strong></div>
+    <div class="card metric"><small>Minat warna / uji pakai</small><strong>{{ interest_count }} / {{ wear_count }}</strong></div>
+    <div class="card metric"><small>Rating pemakaian (1–5)</small><strong>{{ average_wear_rating|default:'—' }}</strong></div></div>
+<div class="two-column"><div class="card"><h2>Minat positif per keluarga warna</h2><p>Gabungan sinyal internal dan lokal, hanya penilaian sebelum mencoba.</p>
+    <div class="spectrum-list">{% for family, count in shade_families %}<div class="spectrum-row dataset-spectrum"><span>{{ family|title }}</span><div class="bar-track"><span class="bar-fill" style="width:{% widthratio count max_family_count 100 %}%"></span></div><b>{{ count }}</b><small>sinyal</small></div>{% endfor %}</div></div>
+    <div class="card"><h2>Permintaan warna baru dari pengguna lokal</h2>
+        {% if local_requests %}<div class="spectrum-list">{% for family, count in local_requests %}<div class="spectrum-row dataset-spectrum"><span>{{ family|title }}</span><div class="bar-track"><span class="bar-fill" style="width:{% widthratio count max_request_count 100 %}%"></span></div><b>{{ count }}</b><small>permintaan</small></div>{% endfor %}</div>{% else %}<p>Belum ada. Coba kirim feedback dari sisi konsumen.</p>{% endif %}</div></div>
 <a class="button" href="{% url 'research:unmet_demand' %}">Lihat unmet demand</a>
-
-<section class="card dataset-section">
-  <span class="eyebrow">Data yang benar-benar ada di proyek</span>
-  <h2>Ringkasan sumber data</h2>
-  <p>Angka di bawah dihitung langsung dari file lokal. Sumber yang berbeda tidak digabung sebagai bukti preferensi konsumen yang sama.</p>
-  <div class="dataset-grid">
-    <div><strong>{{ datasets.public_lipstick_count }}</strong><span>swatch lipstik publik · contoh warna untuk pratinjau</span></div>
-    <div><strong>{{ datasets.synthetic_hedonic_count }}</strong><span>penilaian hedonik sintetis · eksperimen</span></div>
-    <div><strong>{{ datasets.synthetic_shade_count }}</strong><span>shade sintetis · pasangan data hedonik</span></div>
-    <div><strong>{{ datasets.synthetic_formula_count }}</strong><span>formula sintetis · bukan hasil lab</span></div>
-  </div>
-  <h3>Rata-rata kesukaan per keluarga warna (data sintetis, skala 1–9)</h3>
-  <div class="spectrum-list">{% for item in datasets.hedonic_by_family %}<div class="spectrum-row dataset-spectrum"><span>{{ item.family }}</span><div class="bar-track"><span class="bar-fill" style="width:{% widthratio item.mean 9 100 %}%"></span></div><b>{{ item.mean }}</b><small>n={{ item.count }}</small></div>{% endfor %}</div>
-  <p class="fine-print">Perhitungan ini memakai pasangan warna dan penilaian yang dibuat untuk eksperimen; tidak dipakai untuk memberi skor rekomendasi konsumen.</p>
-  <p>Data eksperimen juga memuat {{ datasets.synthetic_formula_output_count }} keluaran prediksi sintetis untuk formula F001–F200: rata-rata angka hardness {{ datasets.synthetic_mean_hardness }} dan payoff {{ datasets.synthetic_mean_payoff }}. Ini angka simulasi, bukan hasil pengukuran laboratorium atau rekomendasi formula produksi.</p>
-  <h3>Referensi yang sengaja dipisahkan</h3>
-  <p>{{ datasets.foundation_reference_count }} swatch foundation dari The Pudding hanya referensi ruang warna. {{ datasets.shampoo_reference_count }} formulasi cair dari publikasi Nature/Figshare hanya contoh struktur data R&D. Keduanya tidak digunakan untuk merekomendasikan lipstik atau menentukan resepnya.</p>
-  <p class="fine-print">Sumber produk: <a href="https://github.com/ConstanzaSchibber/capstone_colors" target="_blank" rel="noopener noreferrer">Capstone Colors</a>. Sumber foundation: <a href="https://github.com/the-pudding/data/tree/master/makeup-shades" target="_blank" rel="noopener noreferrer">The Pudding</a>. Sumber formulasi cair: <a href="https://www.nature.com/articles/s41597-024-03573-w" target="_blank" rel="noopener noreferrer">Scientific Data</a>. Dokumentasi sumber disimpan bersama proyek.</p>
+<section class="card dataset-section"><h2>Ringkasan dataset</h2>
+    <p>Angka di bawah dihitung langsung dari file lokal. Sumber yang berbeda tidak digabung sebagai bukti preferensi konsumen yang sama.</p>
+    <div class="dataset-grid"><div><strong>{{ datasets.public_lipstick_count }}</strong><span>swatch lipstik publik untuk pratinjau</span></div><div><strong>{{ datasets.synthetic_hedonic_count }}</strong><span>penilaian hedonik</span></div><div><strong>{{ datasets.synthetic_shade_count }}</strong><span>shade · pasangan data hedonik</span></div><div><strong>{{ datasets.synthetic_formula_count }}</strong><span>formula</span></div></div>
+    <h3>Rata-rata kesukaan per keluarga warna (skala 1–9)</h3><div class="spectrum-list">{% for item in datasets.hedonic_by_family %}<div class="spectrum-row dataset-spectrum"><span>{{ item.family }}</span><div class="bar-track"><span class="bar-fill" style="width:{% widthratio item.mean 9 100 %}%"></span></div><b>{{ item.mean }}</b><small>n={{ item.count }}</small></div>{% endfor %}</div>
+    <p class="fine-print">Perhitungan ini memakai pasangan ID S001–S500 dalam `shade_data.csv` dan `hedonic_data.csv`.</p>
+    <p>Dataset juga memuat {{ datasets.synthetic_formula_output_count }} keluaran prediksi untuk formula F001–F200: rata-rata angka hardness {{ datasets.synthetic_mean_hardness }} dan payoff {{ datasets.synthetic_mean_payoff }}.</p>
+    <h3>Referensi</h3><p>{{ datasets.foundation_reference_count }} swatch foundation dari The Pudding dipakai sebagai referensi ruang warna. {{ datasets.shampoo_reference_count }} formulasi cair dari publikasi Nature/Figshare dipakai sebagai referensi struktur data R&D.</p>
+    <p class="fine-print">Sumber produk: <a href="https://github.com/ConstanzaSchibber/capstone_colors" target="_blank" rel="noopener noreferrer">Capstone Colors</a>. Sumber foundation: <a href="https://github.com/the-pudding/data/tree/master/makeup-shades" target="_blank" rel="noopener noreferrer">The Pudding</a>. Sumber formulasi cair: <a href="https://www.nature.com/articles/s41597-024-03573-w" target="_blank" rel="noopener noreferrer">Scientific Data</a>.</p>
 </section>
 {% endblock %}

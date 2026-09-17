@@ -17,16 +17,31 @@
 {% else %}
 <form method="post" class="card filter-form">{% csrf_token %}<label for="opportunity">Peluang shade</label><select id="opportunity" name="opportunity">{% for item in opportunities %}<option value="{{ item.opportunity_id }}" {% if selected_id == item.opportunity_id %}selected{% endif %}>{{ item.target_shade_name }}</option>{% endfor %}</select><button class="button" type="submit">Buat draf arah formulasi</button></form>
 {% if brief %}
-<div class="card note"><span class="eyebrow">Brief dari data simulasi dan penilaian lokal saat ini</span><h2>{{ brief.opportunity.target_shade_name }}</h2><p>Target: {{ brief.opportunity.family }} · {{ brief.opportunity.preferred_finish }} · {{ brief.opportunity.target_segment }}</p>
-<p>{{ brief.opportunity.demo_interest }} minat positif dari simulasi; {{ brief.opportunity.local_requests }} permintaan lokal; {{ brief.opportunity.related_issues }} penilaian pemakaian bermasalah pada keluarga warna.</p></div>
+<div class="card note"><span class="eyebrow">Brief dibuat dari data saat ini</span><h2>{{ brief.opportunity.target_shade_name }}</h2><p>Target: {{ brief.opportunity.family }} · {{ brief.opportunity.preferred_finish }} · {{ brief.opportunity.target_segment }}</p>
+    <p>{{ brief.opportunity.demo_interest }} minat positif pada konsep; {{ brief.opportunity.local_requests }} permintaan lokal; {{ brief.opportunity.related_issues }} feedback pemakaian bermasalah pada keluarga warna.</p></div>
+{% if brief.needs_target_color %}
+<div class="card note"><span class="eyebrow">{{ rationale_source }}</span><p>Konsep ini belum punya warna target (swatch) yang dipilih tim, jadi belum bisa dibuatkan draf formulasi. Tentukan warna target untuk konsep ini dulu.</p></div>
+{% elif brief.needs_reference %}
+<div class="card note"><span class="eyebrow">{{ rationale_source }}</span><p>Tidak ada formula referensi yang warnanya cukup dekat untuk dijadikan titik awal yang valid (referensi terdekat berjarak {{ brief.nearest_formulas.0.distance }} dE dari target).</p></div>
+{% else %}
 <div class="card note"><span class="eyebrow">{{ rationale_source }}</span><p>{{ formula_rationale }}</p></div>
-<div class="two-column"><div class="card"><h2>Arah pigmen untuk dicoba</h2><ul>{% for direction in brief.pigment_direction %}<li>{{ direction }}</li>{% endfor %}</ul></div>
-<div class="card"><h2>Basis & tekstur</h2><p>{{ brief.base_direction }}</p>{% if brief.top_issue %}<p>Keluhan paling sering pada kelompok terkait: <strong>{{ brief.top_issue }}</strong> ({{ brief.issues_sample }} penyebutan keluhan).</p>{% else %}<p>Belum ada keluhan pemakaian pada kelompok terkait.</p>{% endif %}</div></div>
-{% if brief.illustrative_composition %}<div class="card"><h2>Contoh angka komposisi sintetis · {{ brief.illustrative_composition.draft_id }}</h2><p>Angka ini ditampilkan sebagai contoh struktur draf yang sudah disiapkan untuk hackathon. Tombol di atas tidak menghitung rasio pigmen baru.</p><dl class="formula-list">
-<dt>Red oxide</dt><dd>{{ brief.illustrative_composition.pigment_red_oxide }}%</dd><dt>Yellow oxide</dt><dd>{{ brief.illustrative_composition.pigment_yellow_oxide }}%</dd>
-<dt>Titanium dioxide</dt><dd>{{ brief.illustrative_composition.pigment_titanium_dioxide }}%</dd><dt>D&C Red</dt><dd>{{ brief.illustrative_composition.pigment_dc_red }}%</dd>
-<dt>Black oxide</dt><dd>{{ brief.illustrative_composition.pigment_black_oxide }}%</dd><dt>Basis/binder</dt><dd>{{ brief.illustrative_composition.base_binder_adjustment }}%</dd>
-<dt>Total</dt><dd>{{ brief.illustrative_composition.total_formula_check }}%</dd></dl></div>{% endif %}
+<div class="two-column">
+    <div class="card"><h2>Formula referensi terdekat</h2>
+        <p><strong>{{ brief.baseline.shade_name }}</strong> · {{ brief.baseline.color_family }} · {{ brief.baseline.finish }}</p>
+        <p>Jarak warna ke target: {{ brief.baseline.distance }} dE</p>
+    </div>
+    <div class="card"><h2>Keluhan terkait</h2>{% if brief.top_issue %}<p>Keluhan paling sering pada kelompok terkait: <strong>{{ brief.top_issue }}</strong> ({{ brief.issues_sample }} penyebutan keluhan).</p>{% else %}<p>Belum ada keluhan pemakaian pada kelompok terkait.</p>{% endif %}</div>
+</div>
+<div class="card"><h2>Komposisi formula referensi · {{ brief.baseline.shade_name }}</h2><p class="fine-print">Persentase dari formula referensi yang sudah ada; perlu validasi formulator sebelum dipakai.</p><dl class="formula-list">
+    <dt>Wax</dt><dd>{{ brief.baseline_composition.wax_pct }}%</dd>
+    <dt>Emollient oil</dt><dd>{{ brief.baseline_composition.emollient_oil_pct }}%</dd>
+    <dt>Mattifying agent</dt><dd>{{ brief.baseline_composition.mattifying_agent_pct }}%</dd>
+    <dt>Film former</dt><dd>{{ brief.baseline_composition.film_former_pct }}%</dd>
+    <dt>Pigment</dt><dd>{{ brief.baseline_composition.pigment_pct }}%</dd>
+    <dt>Additives</dt><dd>{{ brief.baseline_composition.additives_pct }}%</dd>
+</dl></div>
+{% if brief.nearest_formulas|length > 1 %}<div class="card"><h2>Alternatif referensi lain</h2><ul>{% for alt in brief.nearest_formulas %}<li>{{ alt.shade_name }} · {{ alt.color_family }} / {{ alt.finish }} · jarak {{ alt.distance }} dE</li>{% endfor %}</ul></div>{% endif %}
+{% endif %}
 <div class="card"><h2>Rencana validasi</h2><ol>{% for step in brief.validation_steps %}<li>{{ step }}</li>{% endfor %}</ol></div>
 {% else %}<div class="card"><h2>{{ selected_opportunity.target_shade_name }}</h2><p>Pilih peluang lalu klik tombol untuk membuat brief dari data saat ini.</p></div>{% endif %}
 {% endif %}

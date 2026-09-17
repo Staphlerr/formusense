@@ -12,7 +12,7 @@ DATA_DIR = Path(settings.BASE_DIR) / "data" / "formusense_demo"
 def read_demo_csv(filename):
     allowed = {
         "shade_catalog.csv", "demo_feedback.csv", "opportunities.csv",
-        "formula_draft_demo.csv", "demo_consumer_profiles.csv",
+        "opportunities_v2.csv", "formula_draft_demo.csv", "demo_consumer_profiles.csv",
     }
     if filename not in allowed:
         raise ValueError("Dataset tidak dikenal")
@@ -28,6 +28,13 @@ def shades(available_only=False):
 
 
 def shade_by_id(shade_id, available_only=False):
+    # Check the real team catalog first (services.team_data) -- this is the
+    # actual Shade_Catalog.csv-backed data used by shade_recommendation.py's
+    # scoring. Local import to avoid a circular import at module load time
+    # (team_data may import from this module too). Fall back to the demo
+    # CSV lookup below for shade_ids that only exist in the demo dataset
+    # (e.g. older fixtures, opportunities/feedback demo rows) so callers
+    # that still reference demo-only ids don't break.
     from services.team_data import catalog_shade_by_id
 
     team_shade = catalog_shade_by_id(shade_id)

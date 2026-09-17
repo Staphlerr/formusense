@@ -8,7 +8,7 @@
   </div>
   {% if analysis_note %}<p class="message">{{ analysis_note }}</p>{% endif %}
 
-  <form method="post" class="profile-result-form">{% csrf_token %}
+  <form method="post" class="profile-result-form" id="result-form">{% csrf_token %}
     <div class="profile-result-layout">
       <div class="profile-portrait">
         <div class="profile-photo-frame">
@@ -28,7 +28,7 @@
         </div>
         {% if form.visible_lip_condition.value %}<p class="profile-appearance"><strong>Ciri yang tampak:</strong> {{ form.visible_lip_condition.value }}</p>{% endif %}
         <p class="profile-result-disclaimer">Hasil foto dipengaruhi pencahayaan dan kamera; ciri bibir hanya deskripsi tampilan, bukan penilaian kesehatan.</p>
-        <div class="profile-result-actions"><button class="button" type="submit">Lihat 3 shade untukku <span aria-hidden="true">→</span></button><a class="button secondary" href="#profile-edit" id="profile-adjust-link">Ubah profil</a></div>
+        <div class="profile-result-actions"><button class="button" type="submit" id="result-submit">Lihat 3 shade untukku <span aria-hidden="true">→</span></button><a class="button secondary" href="#profile-edit" id="profile-adjust-link">Ubah profil</a></div>
       </div>
     </div>
 
@@ -49,6 +49,14 @@
 (() => {
   const edit = document.querySelector('#profile-edit');
   document.querySelector('#profile-adjust-link')?.addEventListener('click', () => { edit.open = true; });
+  document.querySelector('#result-form')?.addEventListener('submit', (event) => {
+    if (!event.currentTarget.checkValidity()) return;
+    const button = event.submitter;
+    if (!button) return;
+    button.disabled = true;
+    button.setAttribute('aria-busy', 'true');
+    button.textContent = 'Menyiapkan rekomendasi…';
+  });
   {% if photo_scanned %}
   try {
     const image = sessionStorage.getItem(`formusense_tryon_photo_v1_${document.body.dataset.userId}`);

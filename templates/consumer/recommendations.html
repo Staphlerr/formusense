@@ -72,9 +72,10 @@
     <div class="card note"><span class="eyebrow" id="selected-note-source">{{ picks.0.display_note_source }}</span><p id="selected-note-text">{{ picks.0.display_note }}</p></div>
 
     <div class="card spectrum-card">
-      <h2>Spektrum minat profil serupa</h2>
-      <p class="fine-print">Jumlah sinyal positif sebelum pemakaian untuk profilmu secara keseluruhan, bukan untuk shade yang sedang dipilih. Sebagian besar berasal dari data simulasi dan belum mewakili konsumen Indonesia.</p>
+      <h2>Warna favorit dari orang dengan profil mirip kamu</h2>
+      <p class="fine-print">Grafik ini menunjukkan keluarga warna yang paling disukai oleh pengguna lain dengan warna kulit, undertone, dan pigmentasi bibir mirip kamu (bukan tentang shade yang sedang kamu pilih di atas). Titik tertinggi kurva adalah warna yang paling banyak diminati kelompok itu. Data sebagian besar masih simulasi dan belum mewakili konsumen Indonesia secara luas.</p>
       {{ spectrum|json_script:"spectrum-data" }}
+      <p class="fine-print" style="margin-bottom:6px"><strong>Pilih kemiripan yang ingin dibandingkan:</strong></p>
       <div class="spectrum-filters" id="spectrum-filters">
         <button type="button" aria-pressed="true">Warna kulit serupa</button>
         <button type="button" aria-pressed="true">Undertone serupa</button>

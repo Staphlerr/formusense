@@ -118,8 +118,8 @@ def scan(request):
                 request.session["lip_profile"] = analyze_photo_local(photo_bytes, photo.content_type)
                 messages.info(
                     request,
-                    "Kontur wajah/bibir terdeteksi secara lokal dan warna diukur langsung dari "
-                    "foto (bukan AI). Periksa dan koreksi hasilnya jika perlu.",
+                    "Kontur wajah dan bibir berhasil terdeteksi; warna diukur langsung dari foto "
+                    "tanpa AI. Sesuaikan nilainya di bawah bila hasilnya kurang tepat.",
                 )
             except LocalVisionError as error:
                 if request.session.get("photo_ai_consent") and _ai_vision_available():
@@ -127,8 +127,8 @@ def scan(request):
                         request.session["lip_profile"] = analyze_photo(photo_bytes, photo.content_type)
                         messages.info(
                             request,
-                            f"{error} Menggunakan perkiraan AI vision sebagai cadangan; "
-                            "periksa dan koreksi hasilnya jika perlu.",
+                            f"{error} Menggunakan estimasi AI vision sebagai cadangan. "
+                            "Sesuaikan nilainya di bawah bila hasilnya kurang tepat.",
                         )
                     except AIUnavailable:
                         request.session["lip_profile"] = MANUAL_PROFILE.copy()
@@ -137,8 +137,8 @@ def scan(request):
                     request.session["lip_profile"] = MANUAL_PROFILE.copy()
                     messages.warning(
                         request,
-                        f"{error} Silakan isi profil secara manual; "
-                        "foto tetap bisa dipakai untuk mencoba shade.",
+                        f"{error} Silakan lengkapi profil secara manual; "
+                        "foto yang sudah diambil tetap bisa dipakai untuk mencoba shade.",
                     )
             return redirect("consumer:profile_result")
     return render(request, "consumer/scan.html", {
@@ -317,7 +317,7 @@ def recommendations(request):
         "note_source": note_source, "spectrum": hedonic_spectrum(profile),
         "finish_gap": (preference.get("finish")
                        if preference.get("finish")
-                       and preference["finish"] not in {row["finish"] for row in catalog_shades()}
+                          and preference["finish"] not in {row["finish"] for row in catalog_shades()}
                        else None),
         "public_examples": public_swatches_near(picks, per_pick=3),
         "public_lipstick_stats": public_lipstick_stats(),

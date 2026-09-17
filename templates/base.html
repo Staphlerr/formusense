@@ -8,75 +8,80 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{% static 'css/app.css' %}?v=20260918-photo-tags">
+  <link rel="stylesheet" href="{% static 'css/app.css' %}?v=20260918-aline-merge">
 </head>
 <body class="{% if request.resolver_match.namespace == 'research' %}rd-app{% else %}consumer-app{% endif %}" data-user-id="{% if user.is_authenticated %}{{ user.pk }}{% endif %}">
-  <header class="site-header">
-    <nav class="container nav" aria-label="Navigasi utama">
-      <a class="brand" href="{% if can_research and not can_consumer %}{% url 'research:overview' %}{% else %}{% url 'consumer:home' %}{% endif %}"><span class="brand-logo" aria-hidden="true"></span><span class="sr-only">LipXMatch</span></a>
-      <div class="nav-links">
-        {% if can_consumer %}
-          <a href="{% url 'consumer:home' %}">Home</a>
-          <a href="{% url 'consumer:profile_start' %}">Discover</a>
-          <a href="{% url 'consumer:account_profile' %}">Profil saya</a>
-          <a href="{% url 'consumer:how_it_works' %}">How it works</a>
-        {% elif can_research %}
-          <a href="{% url 'research:overview' %}">Dashboard R&D</a>
-        {% else %}
-          <a href="{% url 'consumer:home' %}">Home</a>
-          <a href="{% url 'consumer:how_it_works' %}">How it works</a>
-          <a href="{% url 'accounts:consumer_login' %}">Masuk konsumen</a>
-          <a href="{% url 'accounts:rd_login' %}">Masuk R&D</a>
-        {% endif %}
-        {% if user.is_authenticated %}
-          <span class="nav-user">{{ user.username }}</span>
-          <form method="post" action="{% url 'accounts:logout' %}" data-logout-form>
-            {% csrf_token %}<button class="nav-logout" type="submit">Keluar</button>
-          </form>
-        {% endif %}
+<header class="site-header">
+  <nav class="container nav" aria-label="Navigasi utama">
+    <a class="brand" href="{% if can_research and not can_consumer %}{% url 'research:overview' %}{% else %}{% url 'consumer:home' %}{% endif %}"><span class="brand-logo" aria-hidden="true"></span><span class="sr-only">LipXMatch</span></a>
+    <div class="nav-links">
+      {% if can_consumer %}
+      <a href="{% url 'consumer:home' %}">Home</a>
+      <a href="{% url 'consumer:profile_start' %}">Discover</a>
+      <a href="{% url 'consumer:account_profile' %}">Profil saya</a>
+      <a href="{% url 'consumer:how_it_works' %}">How it works</a>
+      {% elif can_research %}
+      <a href="{% url 'research:overview' %}">Dashboard R&D</a>
+      {% else %}
+      <a href="{% url 'consumer:home' %}">Home</a>
+      <a href="{% url 'consumer:how_it_works' %}">How it works</a>
+      <a href="{% url 'accounts:consumer_login' %}">Masuk konsumen</a>
+      <a href="{% url 'accounts:rd_login' %}">Masuk R&D</a>
+      {% endif %}
+      {% if user.is_authenticated %}
+      <div class="nav-account">
+            <span class="nav-user" aria-label="Masuk sebagai {{ user.username }}">
+              <span class="nav-user-avatar" aria-hidden="true">{{ user.username|slice:":1"|upper }}</span>
+              <span class="nav-user-name">{{ user.username }}</span>
+            </span>
+        <form method="post" action="{% url 'accounts:logout' %}" data-logout-form>
+          {% csrf_token %}<button class="nav-logout" type="submit">Keluar</button>
+        </form>
       </div>
-    </nav>
-  </header>
-  <main class="container">
-    {% if messages %}
-      <div class="messages" aria-live="polite">
-        {% for message in messages %}<p class="message {{ message.tags }}">{{ message }}</p>{% endfor %}
-      </div>
-    {% endif %}
-    {% block content %}{% endblock %}
-  </main>
+      {% endif %}
+    </div>
+  </nav>
+</header>
+<main class="container">
+  {% if messages %}
+  <div class="messages" aria-live="polite">
+    {% for message in messages %}<p class="message {{ message.tags }}">{{ message }}</p>{% endfor %}
+  </div>
+  {% endif %}
+  {% block content %}{% endblock %}
+</main>
 
-  <footer class="site-footer-full">
-    <div class="container">
-      <div class="footer-grid">
-        <div class="footer-brand">
-          <span class="footer-brand-mark" aria-hidden="true">✦</span>
-          <div class="footer-brand-text">
-            <strong class="footer-wordmark">Lip<span>X</span>Match</strong>
-            <p>Platform intelijen kecantikan closed-loop — dari rekomendasi shade konsumen sampai draf arah formulasi untuk tim R&amp;D.</p>
-          </div>
-        </div>
-
-        <div class="footer-col">
-          <h4>Jelajahi</h4>
-          <a href="{% url 'consumer:home' %}">Home</a>
-          <a href="{% url 'consumer:how_it_works' %}">How it works</a>
-        </div>
-
-        <div class="footer-col">
-          <h4>Tentang data</h4>
-          <p>Prototipe hackathon.</p>
-          <p>Data komunitas dan R&amp;D bersifat simulasi.</p>
+<footer class="site-footer-full">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <span class="footer-brand-mark" aria-hidden="true">✦</span>
+        <div class="footer-brand-text">
+          <strong class="footer-wordmark">Lip<span>X</span>Match</strong>
+          <p>Platform intelijen kecantikan closed loop, dari rekomendasi shade konsumen sampai draf arah formulasi untuk tim R&amp;D.</p>
         </div>
       </div>
 
-      <div class="footer-bottom">
-        <span>&copy; 2026 LipXMatch</span>
-        <span>Prototipe hackathon — belum menjadi produk komersial.</span>
+      <div class="footer-col">
+        <h4>Jelajahi</h4>
+        <a href="{% url 'consumer:home' %}">Home</a>
+        <a href="{% url 'consumer:how_it_works' %}">How it works</a>
+      </div>
+
+      <div class="footer-col">
+        <h4>Tentang data</h4>
+        <p>Prototipe hackathon.</p>
+        <p>Data komunitas dan R&amp;D bersifat simulasi.</p>
       </div>
     </div>
-  </footer>
 
-  <script src="{% static 'js/auth.js' %}" defer></script>
+    <div class="footer-bottom">
+      <span>&copy; 2026 LipXMatch</span>
+      <span>Prototipe hackathon, belum menjadi produk komersial.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="{% static 'js/auth.js' %}" defer></script>
 </body>
 </html>

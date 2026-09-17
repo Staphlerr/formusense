@@ -20,10 +20,10 @@ from services.team_data import (
     build_gap_formula_brief, catalog_shades, gap_candidates,
     same_brand_shades, shade_evidence, shade_feedback_examples, team_dataset_summary,
 )
-from services.color_science import classify_skin_tone
+from services.color_science import classify_skin_tone, classify_undertone
 from services.local_vision import (
     LocalVisionError, _pigmentation_from_contrast,
-    _undertone_from_lab, analyze_photo_local, model_available,
+    analyze_photo_local, model_available,
 )
 
 
@@ -44,7 +44,7 @@ class DemoFlowTests(TestCase):
             "nickname": "Ani", "age_range": "25_34", "region": "West Java",
         })
         self.client.post(reverse("consumer:consent"), {"choice": "manual"})
-        self.client.post(reverse("consumer:preferences"), {"color": "terracotta", "finish": "satin"})
+        self.client.post(reverse("consumer:preferences"), {"color": "orange", "finish": "matte"})
         response = self.client.post(reverse("consumer:scan"), {"action": "demo"})
         self.assertRedirects(response, reverse("consumer:profile_result"))
         response = self.client.post(reverse("consumer:profile_result"), {
@@ -131,7 +131,9 @@ class DemoFlowTests(TestCase):
         response = self.client.post(reverse("research:formula_lab"), {"opportunity": "OPP001"})
         self.assertContains(response, "Keluhan paling sering")
         self.assertEqual(build_formula_brief("OPP001")["brief"]["opportunity"]["local_requests"], 1)
-        self.assertIsNone(build_formula_brief("OPP002")["brief"]["illustrative_composition"])
+        reference_brief = build_formula_brief("OPP002")["brief"]
+        self.assertFalse(reference_brief["needs_reference"])
+        self.assertAlmostEqual(sum(reference_brief["baseline_composition"].values()), 100, places=1)
 
     def test_interest_affinity_is_count_not_claimed_accuracy(self):
         before = affinity("SHD001", {"skin_tone": "medium", "undertone": "warm"})
@@ -279,7 +281,7 @@ class LocalVisionTests(SimpleTestCase):
         with self.assertRaisesRegex(LocalVisionError, "Wajah tidak terdeteksi"):
             analyze_photo_local(image.getvalue(), "image/png")
 
-    def test_colour_rules_are_provisional_and_leave_ambiguous_undertone_unknown(self):
+    def test_colour_rules_follow_current_provisional_heuristics(self):
         import cv2
         import numpy as np
 
@@ -287,7 +289,7 @@ class LocalVisionTests(SimpleTestCase):
                                 cv2.COLOR_RGB2LAB)[0, 0]
         self.assertEqual(classify_skin_tone(tuple(float(v) for v in skin_lab))[0], "medium")
         self.assertEqual(_pigmentation_from_contrast(70, 58), "medium_high")
-        self.assertEqual(_undertone_from_lab(15, 18), "uncertain")
+        self.assertEqual(classify_undertone((70, 15, 18)), "neutral")
 
 
 class AIAdapterTests(SimpleTestCase):
@@ -475,7 +477,9 @@ class TeamDataFlowTests(TestCase):
         satin = next(item for item in gap_page.context["finish_coverage"] if item["finish"] == "satin")
         self.assertEqual(satin["catalog_count"], 0)
         self.assertEqual(satin["local_requests"], 1)
-        self.assertContains(self.client.get(reverse("research:evidence")), "300 penilaian contoh")
+        evidence_page = self.client.get(reverse("research:evidence"))
+        self.assertContains(evidence_page, "Keluhan pemakaian · internal")
+        self.assertGreater(evidence_page.context["team_feedback"]["count"], 0)
         brief_page = self.client.post(reverse("research:formula_lab"), {"gap": "0"})
         self.assertContains(brief_page, "Komposisi awal untuk diuji")
         self.assertEqual(brief_page.context["team_brief"]["total"], 100)
