@@ -1,0 +1,601 @@
+profile_id,region,shade,skin_tone,undertone,lip_pigmentation,lip_condition,hedonic_scale,preference
+P001,Jawa Barat,Caramel,Light,Olive,Dark / Hyperpigmented,Dry,5,Color: Coral | Intensity: Natural | Finish: Satin | Mood: Soft | Occasion: Everyday
+P002,Sulawesi Selatan,Caramel,Light,Warm,Light,Chapped,5,Color: Terracotta | Intensity: Natural | Finish: Matte | Mood: Fresh | Occasion: Campus / Work
+P003,Jawa Tengah,Caramel,Medium,Neutral,Light,Textured / Lines,6,Color: Nude | Intensity: Bold | Finish: Satin | Mood: Bold | Occasion: Special occasion
+P004,DI Yogyakarta,Caramel,Medium,Warm,Light,Normal,5,Color: Mauve | Intensity: Bold | Finish: Glossy | Mood: Fresh | Occasion: Campus / Work
+P005,DI Yogyakarta,Caramel,Light,Cool,Medium,Normal,8,Color: Coral | Intensity: Natural | Finish: Satin | Mood: Energetic | Occasion: Everyday
+P006,Jawa Barat,Caramel,Medium,Warm,Medium,Normal,7,Color: Pink | Intensity: Medium | Finish: Glossy | Mood: Elegant | Occasion: Date
+P007,DKI Jakarta,Caramel,Light,Neutral,Light,Dry,5,Color: Pink | Intensity: Medium | Finish: Matte | Mood: Elegant | Occasion: Date
+P008,Kalimantan Timur,Caramel,Medium,Warm,Medium,Normal,5,Color: Brown | Intensity: Bold | Finish: Matte | Mood: Fresh | Occasion: Campus / Work
+P009,Banten,Caramel,Fair,Olive,Two-Toned,Chapped,6,Color: Brown | Intensity: Natural | Finish: Glowy | Mood: Energetic | Occasion: Party
+P010,Sumatera Utara,Caramel,Light,Warm,Dark / Hyperpigmented,Dry,6,Color: Berry | Intensity: Medium | Finish: Satin | Mood: Bold | Occasion: Date
+P011,Jawa Barat,Caramel,Fair,Cool,Light,Textured / Lines,8,Color: Red | Intensity: Bold | Finish: Satin | Mood: Soft | Occasion: Party
+P012,DI Yogyakarta,Caramel,Light,Neutral,Medium,Dry,4,Color: Brown | Intensity: Bold | Finish: Glossy | Mood: Fresh | Occasion: Campus / Work
+P013,DKI Jakarta,Caramel,Medium,Warm,Two-Toned,Chapped,7,Color: Terracotta | Intensity: Medium | Finish: Matte | Mood: Soft | Occasion: Special occasion
+P014,Sumatera Utara,Caramel,Tan,Neutral,Medium,Textured / Lines,6,Color: Mauve | Intensity: Medium | Finish: Glowy | Mood: Soft | Occasion: Date
+P015,Jawa Timur,Caramel,Fair,Warm,Light,Normal,7,Color: Coral | Intensity: Bold | Finish: Glowy | Mood: Elegant | Occasion: Party
+P016,Sumatera Utara,Caramel,Light,Warm,Dark / Hyperpigmented,Normal,5,Color: Red | Intensity: Bold | Finish: Glowy | Mood: Fresh | Occasion: Everyday
+P017,Jawa Barat,Caramel,Light,Cool,Light,Chapped,9,Color: Red | Intensity: Bold | Finish: Glowy | Mood: Elegant | Occasion: Everyday
+P018,DI Yogyakarta,Caramel,Fair,Olive,Dark / Hyperpigmented,Normal,5,Color: Mauve | Intensity: Bold | Finish: Glossy | Mood: Elegant | Occasion: Everyday
+P019,Jawa Barat,Caramel,Fair,Neutral,Dark / Hyperpigmented,Dry,5,Color: Coral | Intensity: Bold | Finish: Glossy | Mood: Fresh | Occasion: Date
+P020,DI Yogyakarta,Caramel,Medium,Warm,Medium,Normal,5,Color: Mauve | Intensity: Natural | Finish: Glossy | Mood: Elegant | Occasion: Campus / Work
+P021,Sulawesi Selatan,Peach,Tan,Cool,Medium,Normal,6,Color: Coral | Intensity: Bold | Finish: Satin | Mood: Soft | Occasion: Date
+P022,Jawa Timur,Peach,Light,Warm,Dark / Hyperpigmented,Dry,5,Color: Nude | Intensity: Bold | Finish: Glossy | Mood: Fun | Occasion: Everyday
+P023,Jawa Barat,Peach,Tan,Cool,Light,Dry,8,Color: Coral | Intensity: Natural | Finish: Matte | Mood: Soft | Occasion: Special occasion
+P024,Jawa Barat,Peach,Medium,Cool,Dark / Hyperpigmented,Dry,2,Color: Mauve | Intensity: Natural | Finish: Satin | Mood: Soft | Occasion: Party
+P025,Sulawesi Selatan,Peach,Fair,Warm,Light,Dry,7,Color: Coral | Intensity: Bold | Finish: Glowy | Mood: Soft | Occasion: Special occasion
+P026,Jawa Tengah,Peach,Light,Cool,Two-Toned,Normal,8,Color: Terracotta | Intensity: Bold | Finish: Glossy | Mood: Fun | Occasion: Special occasion
+P027,Bali,Peach,Light,Warm,Medium,Normal,5,Color: Brown | Intensity: Natural | Finish: Matte | Mood: Energetic | Occasion: Everyday
+P028,Kalimantan Timur,Peach,Tan,Neutral,Medium,Chapped,5,Color: Brown | Intensity: Bold | Finish: Satin | Mood: Fresh | Occasion: Everyday
+P029,DKI Jakarta,Peach,Tan,Cool,Dark / Hyperpigmented,Chapped,6,Color: Pink | Intensity: Natural | Finish: Glossy | Mood: Fresh | Occasion: Special occasion
+P030,Jawa Tengah,Peach,Light,Warm,Light,Dry,6,Color: Mauve | Intensity: Natural | Finish: Satin | Mood: Bold | Occasion: Special occasion
+P031,Kalimantan Timur,Peach,Fair,Cool,Medium,Normal,6,Color: Brown | Intensity: Medium | Finish: Glowy | Mood: Soft | Occasion: Everyday
+P032,Jawa Barat,Peach,Fair,Warm,Two-Toned,Normal,8,Color: Berry | Intensity: Medium | Finish: Glowy | Mood: Fun | Occasion: Everyday
+P033,Jawa Barat,Peach,Light,Olive,Two-Toned,Normal,6,Color: Terracotta | Intensity: Bold | Finish: Glossy | Mood: Fresh | Occasion: Campus / Work
+P034,Jawa Tengah,Peach,Light,Warm,Medium,Normal,6,Color: Mauve | Intensity: Natural | Finish: Glowy | Mood: Soft | Occasion: Date
+P035,Bali,Peach,Fair,Warm,Two-Toned,Normal,9,Color: Pink | Intensity: Medium | Finish: Matte | Mood: Fresh | Occasion: Special occasion
+P036,DKI Jakarta,Peach,Fair,Cool,Two-Toned,Normal,7,Color: Brown | Intensity: Natural | Finish: Glowy | Mood: Fun | Occasion: Party
+P037,Jawa Tengah,Peach,Light,Neutral,Medium,Dry,7,Color: Nude | Intensity: Natural | Finish: Glowy | Mood: Fresh | Occasion: Party
+P038,Banten,Peach,Medium,Cool,Light,Chapped,4,Color: Coral | Intensity: Medium | Finish: Glowy | Mood: Soft | Occasion: Campus / Work
+P039,Banten,Peach,Fair,Cool,Dark / Hyperpigmented,Normal,5,Color: Nude | Intensity: Bold | Finish: Matte | Mood: Bold | Occasion: Date
+P040,DKI Jakarta,Peach,Medium,Warm,Medium,Normal,5,Color: Mauve | Intensity: Bold | Finish: Satin | Mood: Fresh | Occasion: Special occasion
+P041,Jawa Barat,Maple,Tan,Warm,Medium,Normal,8,Color: Pink | Intensity: Bold | Finish: Matte | Mood: Bold | Occasion: Campus / Work
+P042,DI Yogyakarta,Maple,Tan,Neutral,Medium,Dry,6,Color: Brown | Intensity: Bold | Finish: Matte | Mood: Elegant | Occasion: Everyday
+P043,DI Yogyakarta,Maple,Medium,Warm,Light,Chapped,7,Color: Berry | Intensity: Medium | Finish: Satin | Mood: Bold | Occasion: Date
+P044,Jawa Tengah,Maple,Tan,Cool,Medium,Normal,6,Color: Terracotta | Intensity: Natural | Finish: Glossy | Mood: Fun | Occasion: Date
+P045,Jawa Barat,Maple,Tan,Neutral,Medium,Normal,6,Color: Mauve | Intensity: Bold | Finish: Matte | Mood: Fresh | Occasion: Special occasion
+P046,Jawa Tengah,Maple,Light,Neutral,Medium,Normal,6,Color: Coral | Intensity: Natural | Finish: Glossy | Mood: Fresh | Occasion: Campus / Work
+P047,Sumatera Utara,Maple,Fair,Warm,Medium,Dry,5,Color: Red | Intensity: Medium | Finish: Glossy | Mood: Elegant | Occasion: Special occasion
+P048,DKI Jakarta,Maple,Medium,Warm,Dark / Hyperpigmented,Normal,7,Color: Coral | Intensity: Bold | Finish: Matte | Mood: Soft | Occasion: Date
+P049,Jawa Barat,Maple,Medium,Neutral,Dark / Hyperpigmented,Dry,5,Color: Red | Intensity: Medium | Finish: Glossy | Mood: Elegant | Occasion: Campus / Work
+P050,Sumatera Utara,Maple,Fair,Warm,Medium,Normal,6,Color: Coral | Intensity: Bold | Finish: Glowy | Mood: Energetic | Occasion: Everyday
+P051,Jawa Barat,Maple,Tan,Cool,Dark / Hyperpigmented,Dry,6,Color: Coral | Intensity: Natural | Finish: Matte | Mood: Energetic | Occasion: Campus / Work
+P052,Banten,Maple,Medium,Cool,Light,Dry,4,Color: Mauve | Intensity: Bold | Finish: Glowy | Mood: Elegant | Occasion: Everyday
+P053,Jawa Barat,Maple,Tan,Olive,Two-Toned,Normal,6,Color: Red | Intensity: Bold | Finish: Matte | Mood: Energetic | Occasion: Special occasion
+P054,Sulawesi Selatan,Maple,Fair,Olive,Medium,Textured / Lines,5,Color: Terracotta | Intensity: Natural | Finish: Matte | Mood: Energetic | Occasion: Date
+P055,DKI Jakarta,Maple,Tan,Warm,Light,Dry,4,Color: Brown | Intensity: Bold | Finish: Satin | Mood: Bold | Occasion: Everyday
+P056,Sumatera Utara,Maple,Tan,Neutral,Medium,Normal,6,Color: Terracotta | Intensity: Bold | Finish: Satin | Mood: Soft | Occasion: Campus / Work
+P057,Jawa Timur,Maple,Tan,Neutral,Dark / Hyperpigmented,Dry,4,Color: Nude | Intensity: Natural | Finish: Glossy | Mood: Fun | Occasion: Campus / Work
+P058,Banten,Maple,Light,Warm,Dark / Hyperpigmented,Chapped,6,Color: Pink | Intensity: Medium | Finish: Matte | Mood: Fun | Occasion: Campus / Work
+P059,Jawa Tengah,Maple,Medium,Cool,Dark / Hyperpigmented,Chapped,9,Color: Berry | Intensity: Medium | Finish: Satin | Mood: Soft | Occasion: Everyday
+P060,Jawa Tengah,Maple,Tan,Warm,Medium,Normal,5,Color: Berry | Intensity: Medium | Finish: Matte | Mood: Energetic | Occasion: Date
+P061,Sulawesi Selatan,Berry,Light,Cool,Medium,Dry,6,Color: Berry | Intensity: Natural | Finish: Matte | Mood: Energetic | Occasion: Campus / Work
+P062,Kalimantan Timur,Berry,Fair,Warm,Dark / Hyperpigmented,Normal,6,Color: Nude | Intensity: Natural | Finish: Glowy | Mood: Energetic | Occasion: Date
+P063,DI Yogyakarta,Berry,Medium,Warm,Medium,Normal,4,Color: Pink | Intensity: Medium | Finish: Satin | Mood: Energetic | Occasion: Everyday
+P064,DI Yogyakarta,Berry,Fair,Cool,Medium,Dry,3,Color: Brown | Intensity: Medium | Finish: Glowy | Mood: Fresh | Occasion: Date
+P065,Kalimantan Timur,Berry,Medium,Warm,Medium,Normal,6,Color: Pink | Intensity: Bold | Finish: Glossy | Mood: Elegant | Occasion: Date
+P066,DI Yogyakarta,Berry,Fair,Olive,Dark / Hyperpigmented,Dry,4,Color: Terracotta | Intensity: Bold | Finish: Glossy | Mood: Elegant | Occasion: Campus / Work
+P067,Jawa Tengah,Berry,Light,Warm,Medium,Dry,5,Color: Terracotta | Intensity: Bold | Finish: Satin | Mood: Elegant | Occasion: Special occasion
+P068,Banten,Berry,Medium,Warm,Two-Toned,Dry,8,Color: Nude | Intensity: Medium | Finish: Glossy | Mood: Soft | Occasion: Party
+P069,Kalimantan Timur,Berry,Light,Warm,Medium,Chapped,7,Color: Berry | Intensity: Medium | Finish: Glowy | Mood: Fun | Occasion: Campus / Work
+P070,Sulawesi Selatan,Berry,Fair,Warm,Light,Normal,6,Color: Red | Intensity: Bold | Finish: Matte | Mood: Energetic | Occasion: Special occasion
+P071,Kalimantan Timur,Berry,Light,Warm,Medium,Dry,7,Color: Pink | Intensity: Natural | Finish: Glossy | Mood: Soft | Occasion: Campus / Work
+P072,Jawa Timur,Berry,Light,Warm,Medium,Dry,5,Color: Nude | Intensity: Natural | Finish: Glowy | Mood: Elegant | Occasion: Everyday
+P073,Bali,Berry,Light,Cool,Medium,Chapped,6,Color: Brown | Intensity: Bold | Finish: Glowy | Mood: Fun | Occasion: Party
+P074,Jawa Tengah,Berry,Medium,Warm,Light,Dry,6,Color: Nude | Intensity: Natural | Finish: Glowy | Mood: Soft | Occasion: Campus / Work
+P075,Sulawesi Selatan,Berry,Tan,Cool,Medium,Dry,5,Color: Nude | Intensity: Bold | Finish: Satin | Mood: Fresh | Occasion: Party
+P076,Jawa Timur,Berry,Light,Cool,Two-Toned,Normal,6,Color: Berry | Intensity: Medium | Finish: Glowy | Mood: Elegant | Occasion: Party
+P077,Jawa Timur,Berry,Fair,Warm,Dark / Hyperpigmented,Normal,5,Color: Mauve | Intensity: Medium | Finish: Satin | Mood: Bold | Occasion: Date
+P078,Sulawesi Selatan,Berry,Medium,Warm,Light,Dry,7,Color: Brown | Intensity: Medium | Finish: Glowy | Mood: Fresh | Occasion: Date
+P079,Jawa Tengah,Berry,Medium,Neutral,Medium,Normal,6,Color: Berry | Intensity: Medium | Finish: Matte | Mood: Soft | Occasion: Campus / Work
+P080,Jawa Tengah,Berry,Medium,Neutral,Two-Toned,Dry,7,Color: Red | Intensity: Bold | Finish: Satin | Mood: Fresh | Occasion: Party
+P081,DI Yogyakarta,Red,Light,Olive,Dark / Hyperpigmented,Dry,5,Color: Mauve | Intensity: Medium | Finish: Matte | Mood: Soft | Occasion: Party
+P082,DI Yogyakarta,Red,Medium,Neutral,Light,Textured / Lines,7,Color: Nude | Intensity: Bold | Finish: Glowy | Mood: Fun | Occasion: Everyday
+P083,Sumatera Utara,Red,Light,Neutral,Medium,Normal,6,Color: Terracotta | Intensity: Medium | Finish: Satin | Mood: Fun | Occasion: Campus / Work
+P084,Banten,Red,Tan,Warm,Medium,Textured / Lines,6,Color: Mauve | Intensity: Natural | Finish: Glowy | Mood: Energetic | Occasion: Party
+P085,Jawa Timur,Red,Medium,Warm,Medium,Normal,6,Color: Red | Intensity: Bold | Finish: Matte | Mood: Fun | Occasion: Special occasion
+P086,Kalimantan Timur,Red,Medium,Neutral,Dark / Hyperpigmented,Chapped,6,Color: Pink | Intensity: Bold | Finish: Glowy | Mood: Soft | Occasion: Party
+P087,Jawa Timur,Red,Fair,Cool,Medium,Chapped,5,Color: Coral | Intensity: Medium | Finish: Glossy | Mood: Soft | Occasion: Party
+P088,Sumatera Utara,Red,Light,Warm,Light,Chapped,5,Color: Terracotta | Intensity: Medium | Finish: Glowy | Mood: Energetic | Occasion: Everyday
+P089,Bali,Red,Fair,Neutral,Light,Chapped,6,Color: Nude | Intensity: Medium | Finish: Satin | Mood: Bold | Occasion: Everyday
+P090,DKI Jakarta,Red,Medium,Warm,Light,Textured / Lines,4,Color: Brown | Intensity: Natural | Finish: Matte | Mood: Elegant | Occasion: Campus / Work
+P091,Jawa Tengah,Red,Medium,Olive,Two-Toned,Chapped,4,Color: Mauve | Intensity: Bold | Finish: Matte | Mood: Elegant | Occasion: Campus / Work
+P092,Bali,Red,Light,Warm,Dark / Hyperpigmented,Dry,7,Color: Berry | Intensity: Natural | Finish: Matte | Mood: Soft | Occasion: Date
+P093,Jawa Barat,Red,Fair,Cool,Light,Dry,5,Color: Nude | Intensity: Medium | Finish: Glowy | Mood: Fun | Occasion: Campus / Work
+P094,Jawa Barat,Red,Fair,Warm,Light,Dry,6,Color: Brown | Intensity: Natural | Finish: Glossy | Mood: Bold | Occasion: Special occasion
+P095,Jawa Barat,Red,Deep,Warm,Medium,Chapped,8,Color: Nude | Intensity: Medium | Finish: Glowy | Mood: Bold | Occasion: Date
+P096,Jawa Barat,Red,Light,Olive,Light,Textured / Lines,6,Color: Berry | Intensity: Natural | Finish: Glowy | Mood: Fun | Occasion: Everyday
+P097,DI Yogyakarta,Red,Fair,Cool,Two-Toned,Dry,6,Color: Mauve | Intensity: Bold | Finish: Satin | Mood: Fun | Occasion: Campus / Work
+P098,Sulawesi Selatan,Red,Medium,Neutral,Medium,Dry,7,Color: Mauve | Intensity: Medium | Finish: Glowy | Mood: Bold | Occasion: Special occasion
+P099,Banten,Red,Fair,Warm,Two-Toned,Chapped,6,Color: Brown | Intensity: Natural | Finish: Glossy | Mood: Fun | Occasion: Campus / Work
+P100,Bali,Red,Light,Cool,Medium,Normal,3,Color: Terracotta | Intensity: Medium | Finish: Matte | Mood: Fun | Occasion: Date
+P101,Jawa Timur,Nude Peach,Medium,Warm,Two-Toned,Textured / Lines,5,Color: Brown | Intensity: Medium | Finish: Glossy | Mood: Energetic | Occasion: Date
+P102,Kalimantan Timur,Nude Peach,Medium,Cool,Medium,Chapped,5,Color: Nude | Intensity: Bold | Finish: Satin | Mood: Fresh | Occasion: Campus / Work
+P103,DI Yogyakarta,Nude Peach,Tan,Neutral,Two-Toned,Dry,6,Color: Brown | Intensity: Bold | Finish: Glowy | Mood: Bold | Occasion: Party
+P104,Bali,Nude Peach,Medium,Warm,Two-Toned,Chapped,7,Color: Pink | Intensity: Medium | Finish: Satin | Mood: Fun | Occasion: Campus / Work
+P105,Banten,Nude Peach,Deep,Warm,Medium,Normal,5,Color: Berry | Intensity: Medium | Finish: Glossy | Mood: Fun | Occasion: Special occasion
+P106,Sumatera Utara,Nude Peach,Deep,Neutral,Dark / Hyperpigmented,Dry,4,Color: Mauve | Intensity: Medium | Finish: Glossy | Mood: Energetic | Occasion: Campus / Work
+P107,Jawa Barat,Nude Peach,Fair,Neutral,Dark / Hyperpigmented,Textured / Lines,5,Color: Berry | Intensity: Natural | Finish: Satin | Mood: Soft | Occasion: Campus / Work
+P108,Bali,Nude Peach,Deep,Cool,Dark / Hyperpigmented,Textured / Lines,5,Color: Coral | Intensity: Natural | Finish: Satin | Mood: Energetic | Occasion: Campus / Work
+P109,Sumatera Utara,Nude Peach,Light,Warm,Two-Toned,Dry,7,Color: Coral | Intensity: Natural | Finish: Satin | Mood: Energetic | Occasion: Everyday
+P110,DKI Jakarta,Nude Peach,Light,Neutral,Medium,Normal,6,Color: Coral | Intensity: Bold | Finish: Satin | Mood: Bold | Occasion: Party
+P111,Jawa Barat,Nude Peach,Medium,Neutral,Medium,Chapped,5,Color: Coral | Intensity: Medium | Finish: Glowy | Mood: Fun | Occasion: Date
+P112,Jawa Timur,Nude Peach,Medium,Cool,Dark / Hyperpigmented,Dry,7,Color: Coral | Intensity: Medium | Finish: Matte | Mood: Fresh | Occasion: Party
+P113,Bali,Nude Peach,Medium,Warm,Light,Normal,7,Color: Nude | Intensity: Natural | Finish: Satin | Mood: Elegant | Occasion: Date
+P114,Jawa Barat,Nude Peach,Light,Cool,Medium,Dry,5,Color: Pink | Intensity: Bold | Finish: Glowy | Mood: Elegant | Occasion: Special occasion
+P115,Kalimantan Timur,Nude Peach,Medium,Neutral,Medium,Dry,7,Color: Terracotta | Intensity: Medium | Finish: Glowy | Mood: Energetic | Occasion: Special occasion
+P116,DI Yogyakarta,Nude Peach,Tan,Olive,Light,Textured / Lines,3,Color: Nude | Intensity: Bold | Finish: Matte | Mood: Soft | Occasion: Campus / Work
+P117,Banten,Nude Peach,Light,Olive,Medium,Normal,6,Color: Red | Intensity: Natural | Finish: Satin | Mood: Elegant | Occasion: Everyday
+P118,Jawa Timur,Nude Peach,Medium,Warm,Light,Normal,6,Color: Terracotta | Intensity: Medium | Finish: Glowy | Mood: Energetic | Occasion: Everyday
+P119,Jawa Tengah,Nude Peach,Light,Warm,Dark / Hyperpigmented,Dry,4,Color: Coral | Intensity: Bold | Finish: Glowy | Mood: Fresh | Occasion: Campus / Work
+P120,Banten,Nude Peach,Medium,Warm,Light,Normal,5,Color: Brown | Intensity: Medium | Finish: Matte | Mood: Elegant | Occasion: Campus / Work
+P121,Jawa Timur,Pink Blush,Light,Warm,Light,Dry,5,Color: Red | Intensity: Natural | Finish: Matte | Mood: Soft | Occasion: Date
+P122,Kalimantan Timur,Pink Blush,Light,Warm,Medium,Dry,5,Color: Coral | Intensity: Medium | Finish: Matte | Mood: Fun | Occasion: Date
+P123,DI Yogyakarta,Pink Blush,Tan,Olive,Light,Normal,6,Color: Mauve | Intensity: Medium | Finish: Matte | Mood: Elegant | Occasion: Everyday
+P124,DI Yogyakarta,Pink Blush,Medium,Neutral,Light,Normal,5,Color: Coral | Intensity: Natural | Finish: Matte | Mood: Soft | Occasion: Special occasion
+P125,Kalimantan Timur,Pink Blush,Medium,Warm,Medium,Dry,3,Color: Coral | Intensity: Bold | Finish: Matte | Mood: Soft | Occasion: Party
+P126,Sulawesi Selatan,Pink Blush,Fair,Warm,Dark / Hyperpigmented,Chapped,9,Color: Coral | Intensity: Natural | Finish: Glowy | Mood: Bold | Occasion: Party
+P127,Jawa Barat,Pink Blush,Fair,Warm,Medium,Normal,7,Color: Berry | Intensity: Medium | Finish: Glossy | Mood: Energetic | Occasion: Everyday
+P128,Jawa Timur,Pink Blush,Light,Warm,Light,Normal,5,Color: Terracotta | Intensity: Bold | Finish: Glowy | Mood: Energetic | Occasion: Party
+P129,Sulawesi Selatan,Pink Blush,Fair,Neutral,Medium,Dry,4,Color: Mauve | Intensity: Natural | Finish: Glossy | Mood: Energetic | Occasion: Date
+P130,Jawa Barat,Pink Blush,Medium,Cool,Light,Dry,8,Color: Nude | Intensity: Bold | Finish: Glowy | Mood: Fun | Occasion: Everyday
+P131,Jawa Tengah,Pink Blush,Light,Warm,Medium,Normal,6,Color: Berry | Intensity: Bold | Finish: Glowy | Mood: Bold | Occasion: Party
+P132,DKI Jakarta,Pink Blush,Medium,Cool,Medium,Textured / Lines,4,Color: Coral | Intensity: Bold | Finish: Satin | Mood: Energetic | Occasion: Party
+P133,Bali,Pink Blush,Fair,Warm,Light,Normal,6,Color: Nude | Intensity: Bold | Finish: Satin | Mood: Bold | Occasion: Campus / Work
+P134,Banten,Pink Blush,Light,Warm,Light,Chapped,6,Color: Nude | Intensity: Bold | Finish: Glowy | Mood: Fresh | Occasion: Campus / Work
+P135,Jawa Barat,Pink Blush,Light,Olive,Light,Normal,5,Color: Pink | Intensity: Bold | Finish: Satin | Mood: Fun | Occasion: Date
+P136,Sulawesi Selatan,Pink Blush,Deep,Neutral,Dark / Hyperpigmented,Normal,6,Color: Terracotta | Intensity: Medium | Finish: Glowy | Mood: Soft | Occasion: Party
+P137,Sulawesi Selatan,Pink Blush,Tan,Cool,Medium,Normal,4,Color: Terracotta | Intensity: Natural | Finish: Satin | Mood: Fresh | Occasion: Date
+P138,DI Yogyakarta,Pink Blush,Medium,Warm,Medium,Dry,4,Color: Coral | Intensity: Natural | Finish: Glossy | Mood: Bold | Occasion: Date
+P139,Kalimantan Timur,Pink Blush,Fair,Cool,Medium,Dry,6,Color: Mauve | Intensity: Natural | Finish: Glowy | Mood: Elegant | Occasion: Party
+P140,Sumatera Utara,Pink Blush,Light,Cool,Medium,Normal,5,Color: Terracotta | Intensity: Medium | Finish: Glossy | Mood: Soft | Occasion: Campus / Work
+P141,Kalimantan Timur,Pink Fun,Fair,Olive,Medium,Chapped,5,Color: Brown | Intensity: Medium | Finish: Matte | Mood: Energetic | Occasion: Party
+P142,DI Yogyakarta,Pink Fun,Light,Neutral,Dark / Hyperpigmented,Dry,2,Color: Red | Intensity: Medium | Finish: Matte | Mood: Soft | Occasion: Special occasion
+P143,Kalimantan Timur,Pink Fun,Light,Olive,Dark / Hyperpigmented,Textured / Lines,5,Color: Pink | Intensity: Medium | Finish: Matte | Mood: Elegant | Occasion: Party
+P144,DKI Jakarta,Pink Fun,Fair,Neutral,Two-Toned,Normal,6,Color: Terracotta | Intensity: Bold | Finish: Satin | Mood: Fresh | Occasion: Party
+P145,Banten,Pink Fun,Medium,Neutral,Light,Chapped,5,Color: Terracotta | Intensity: Bold | Finish: Matte | Mood: Energetic | Occasion: Special occasion
+P146,DI Yogyakarta,Pink Fun,Light,Warm,Light,Chapped,6,Color: Mauve | Intensity: Bold | Finish: Matte | Mood: Elegant | Occasion: Everyday
+P147,Jawa Tengah,Pink Fun,Light,Neutral,Medium,Chapped,8,Color: Brown | Intensity: Bold | Finish: Matte | Mood: Fun | Occasion: Everyday
+P148,Jawa Barat,Pink Fun,Light,Warm,Medium,Normal,6,Color: Red | Intensity: Bold | Finish: Glossy | Mood: Fresh | Occasion: Everyday
+P149,Sumatera Utara,Pink Fun,Light,Neutral,Medium,Dry,8,Color: Coral | Intensity: Medium | Finish: Glossy | Mood: Fun | Occasion: Campus / Work
+P150,Jawa Tengah,Pink Fun,Tan,Cool,Light,Textured / Lines,4,Color: Terracotta | Intensity: Bold | Finish: Satin | Mood: Soft | Occasion: Campus / Work
+P151,Jawa Barat,Pink Fun,Fair,Neutral,Medium,Dry,7,Color: Terracotta | Intensity: Bold | Finish: Satin | Mood: Fun | Occasion: Special occasion
+P152,Jawa Timur,Pink Fun,Tan,Neutral,Light,Normal,7,Color: Mauve | Intensity: Bold | Finish: Glossy | Mood: Fun | Occasion: Date
+P153,DKI Jakarta,Pink Fun,Fair,Cool,Dark / Hyperpigmented,Chapped,5,Color: Coral | Intensity: Bold | Finish: Satin | Mood: Fresh | Occasion: Party
+P154,Sumatera Utara,Pink Fun,Light,Neutral,Light,Chapped,5,Color: Coral | Intensity: Bold | Finish: Glowy | Mood: Bold | Occasion: Date
+P155,Bali,Pink Fun,Medium,Warm,Light,Dry,4,Color: Brown | Intensity: Medium | Finish: Glowy | Mood: Fresh | Occasion: Campus / Work
+P156,DI Yogyakarta,Pink Fun,Medium,Cool,Dark / Hyperpigmented,Dry,5,Color: Berry | Intensity: Bold | Finish: Glossy | Mood: Bold | Occasion: Date
+P157,DKI Jakarta,Pink Fun,Light,Olive,Medium,Dry,4,Color: Coral | Intensity: Natural | Finish: Matte | Mood: Elegant | Occasion: Party
+P158,Banten,Pink Fun,Light,Olive,Light,Dry,9,Color: Berry | Intensity: Natural | Finish: Satin | Mood: Elegant | Occasion: Date
+P159,Jawa Timur,Pink Fun,Fair,Neutral,Two-Toned,Dry,6,Color: Nude | Intensity: Medium | Finish: Glowy | Mood: Fresh | Occasion: Special occasion
+P160,Sumatera Utara,Pink Fun,Medium,Olive,Dark / Hyperpigmented,Normal,8,Color: Pink | Intensity: Medium | Finish: Glossy | Mood: Bold | Occasion: Party
+P161,Jawa Timur,Berry Pink,Light,Neutral,Two-Toned,Textured / Lines,7,Color: Red | Intensity: Bold | Finish: Glossy | Mood: Elegant | Occasion: Special occasion
+P162,Banten,Berry Pink,Light,Warm,Two-Toned,Chapped,6,Color: Coral | Intensity: Medium | Finish: Glossy | Mood: Bold | Occasion: Date
+P163,Jawa Barat,Berry Pink,Medium,Warm,Light,Normal,7,Color: Pink | Intensity: Natural | Finish: Satin | Mood: Bold | Occasion: Party
+P164,Sulawesi Selatan,Berry Pink,Medium,Warm,Medium,Normal,7,Color: Pink | Intensity: Medium | Finish: Matte | Mood: Energetic | Occasion: Special occasion
+P165,Jawa Barat,Berry Pink,Light,Warm,Dark / Hyperpigmented,Dry,6,Color: Berry | Intensity: Bold | Finish: Glossy | Mood: Elegant | Occasion: Party
+P166,Sumatera Utara,Berry Pink,Light,Cool,Light,Normal,2,Color: Brown | Intensity: Medium | Finish: Matte | Mood: Elegant | Occasion: Special occasion
+P167,Sumatera Utara,Berry Pink,Tan,Warm,Medium,Dry,6,Color: Brown | Intensity: Bold | Finish: Matte | Mood: Bold | Occasion: Party
+P168,Banten,Berry Pink,Fair,Neutral,Light,Textured / Lines,5,Color: Pink | Intensity: Natural | Finish: Matte | Mood: Fresh | Occasion: Date
+P169,Bali,Berry Pink,Fair,Olive,Medium,Dry,4,Color: Pink | Intensity: Natural | Finish: Satin | Mood: Fun | Occasion: Party
+P170,Sumatera Utara,Berry Pink,Fair,Neutral,Light,Chapped,5,Color: Terracotta | Intensity: Bold | Finish: Satin | Mood: Fun | Occasion: Everyday
+P171,Bali,Berry Pink,Fair,Cool,Medium,Normal,5,Color: Terracotta | Intensity: Medium | Finish: Matte | Mood: Bold | Occasion: Date
+P172,Jawa Tengah,Berry Pink,Medium,Cool,Medium,Dry,7,Color: Mauve | Intensity: Natural | Finish: Glossy | Mood: Fresh | Occasion: Date
+P173,Sulawesi Selatan,Berry Pink,Light,Warm,Dark / Hyperpigmented,Textured / Lines,3,Color: Nude | Intensity: Medium | Finish: Glossy | Mood: Soft | Occasion: Everyday
+P174,Bali,Berry Pink,Light,Warm,Medium,Dry,7,Color: Brown | Intensity: Bold | Finish: Matte | Mood: Fresh | Occasion: Date
+P175,Jawa Tengah,Berry Pink,Fair,Warm,Light,Dry,7,Color: Brown | Intensity: Natural | Finish: Satin | Mood: Elegant | Occasion: Campus / Work
+P176,Jawa Tengah,Berry Pink,Fair,Warm,Dark / Hyperpigmented,Normal,4,Color: Red | Intensity: Bold | Finish: Matte | Mood: Energetic | Occasion: Campus / Work
+P177,Jawa Timur,Berry Pink,Fair,Warm,Dark / Hyperpigmented,Chapped,7,Color: Coral | Intensity: Natural | Finish: Matte | Mood: Bold | Occasion: Everyday
+P178,Jawa Timur,Berry Pink,Medium,Warm,Dark / Hyperpigmented,Normal,6,Color: Berry | Intensity: Natural | Finish: Glossy | Mood: Fresh | Occasion: Campus / Work
+P179,Banten,Berry Pink,Fair,Warm,Light,Normal,5,Color: Red | Intensity: Bold | Finish: Glowy | Mood: Elegant | Occasion: Everyday
+P180,Jawa Barat,Berry Pink,Light,Cool,Medium,Chapped,5,Color: Mauve | Intensity: Medium | Finish: Matte | Mood: Fun | Occasion: Special occasion
+P181,Jawa Tengah,Cherry Berry,Light,Warm,Medium,Normal,7,Color: Nude | Intensity: Bold | Finish: Glossy | Mood: Fun | Occasion: Everyday
+P182,DKI Jakarta,Cherry Berry,Medium,Warm,Medium,Dry,6,Color: Terracotta | Intensity: Medium | Finish: Matte | Mood: Fun | Occasion: Party
+P183,Jawa Barat,Cherry Berry,Medium,Warm,Dark / Hyperpigmented,Dry,6,Color: Berry | Intensity: Bold | Finish: Satin | Mood: Fresh | Occasion: Campus / Work
+P184,Banten,Cherry Berry,Tan,Neutral,Medium,Normal,6,Color: Berry | Intensity: Medium | Finish: Glossy | Mood: Fun | Occasion: Special occasion
+P185,Kalimantan Timur,Cherry Berry,Medium,Warm,Light,Chapped,3,Color: Pink | Intensity: Bold | Finish: Matte | Mood: Bold | Occasion: Special occasion
+P186,Jawa Tengah,Cherry Berry,Deep,Cool,Light,Normal,6,Color: Mauve | Intensity: Natural | Finish: Glowy | Mood: Energetic | Occasion: Party
+P187,DI Yogyakarta,Cherry Berry,Light,Cool,Dark / Hyperpigmented,Chapped,4,Color: Pink | Intensity: Medium | Finish: Glowy | Mood: Energetic | Occasion: Date
+P188,Sumatera Utara,Cherry Berry,Light,Warm,Light,Textured / Lines,6,Color: Mauve | Intensity: Natural | Finish: Matte | Mood: Fresh | Occasion: Everyday
+P189,DI Yogyakarta,Cherry Berry,Medium,Neutral,Light,Textured / Lines,7,Color: Berry | Intensity: Natural | Finish: Matte | Mood: Elegant | Occasion: Special occasion
+P190,Sulawesi Selatan,Cherry Berry,Light,Warm,Medium,Normal,6,Color: Pink | Intensity: Medium | Finish: Glossy | Mood: Bold | Occasion: Party
+P191,DKI Jakarta,Cherry Berry,Fair,Cool,Light,Normal,5,Color: Coral | Intensity: Medium | Finish: Matte | Mood: Elegant | Occasion: Special occasion
+P192,Jawa Tengah,Cherry Berry,Light,Warm,Dark / Hyperpigmented,Normal,4,Color: Mauve | Intensity: Natural | Finish: Matte | Mood: Energetic | Occasion: Special occasion
+P193,Sumatera Utara,Cherry Berry,Medium,Olive,Dark / Hyperpigmented,Normal,9,Color: Coral | Intensity: Bold | Finish: Satin | Mood: Fun | Occasion: Special occasion
+P194,Kalimantan Timur,Cherry Berry,Fair,Warm,Medium,Normal,9,Color: Nude | Intensity: Bold | Finish: Glossy | Mood: Fresh | Occasion: Campus / Work
+P195,Banten,Cherry Berry,Light,Neutral,Light,Normal,6,Color: Berry | Intensity: Medium | Finish: Matte | Mood: Soft | Occasion: Campus / Work
+P196,Kalimantan Timur,Cherry Berry,Medium,Cool,Dark / Hyperpigmented,Dry,7,Color: Pink | Intensity: Natural | Finish: Matte | Mood: Fresh | Occasion: Special occasion
+P197,Jawa Tengah,Cherry Berry,Medium,Neutral,Medium,Dry,5,Color: Terracotta | Intensity: Medium | Finish: Glossy | Mood: Soft | Occasion: Date
+P198,Banten,Cherry Berry,Light,Warm,Two-Toned,Normal,6,Color: Pink | Intensity: Natural | Finish: Satin | Mood: Soft | Occasion: Special occasion
+P199,DKI Jakarta,Cherry Berry,Light,Cool,Dark / Hyperpigmented,Dry,7,Color: Coral | Intensity: Medium | Finish: Glowy | Mood: Fun | Occasion: Special occasion
+P200,Bali,Cherry Berry,Medium,Neutral,Dark / Hyperpigmented,Chapped,6,Color: Coral | Intensity: Natural | Finish: Matte | Mood: Energetic | Occasion: Party
+P201,Jawa Barat,Burnt Terracotta,Light,Olive,Two-Toned,Normal,4,Color: Mauve | Intensity: Bold | Finish: Glossy | Mood: Fresh | Occasion: Campus / Work
+P202,DI Yogyakarta,Burnt Terracotta,Medium,Olive,Light,Dry,4,Color: Nude | Intensity: Natural | Finish: Satin | Mood: Energetic | Occasion: Campus / Work
+P203,Jawa Timur,Burnt Terracotta,Tan,Olive,Two-Toned,Dry,7,Color: Coral | Intensity: Medium | Finish: Matte | Mood: Fresh | Occasion: Party
+P204,DI Yogyakarta,Burnt Terracotta,Tan,Neutral,Medium,Chapped,6,Color: Red | Intensity: Medium | Finish: Satin | Mood: Elegant | Occasion: Special occasion
+P205,Sumatera Utara,Burnt Terracotta,Light,Warm,Light,Dry,5,Color: Terracotta | Intensity: Bold | Finish: Matte | Mood: Fun | Occasion: Everyday
+P206,Bali,Burnt Terracotta,Light,Neutral,Light,Normal,8,Color: Berry | Intensity: Bold | Finish: Glowy | Mood: Elegant | Occasion: Party
+P207,DI Yogyakarta,Burnt Terracotta,Light,Cool,Dark / Hyperpigmented,Dry,6,Color: Pink | Intensity: Medium | Finish: Matte | Mood: Energetic | Occasion: Campus / Work
+P208,Kalimantan Timur,Burnt Terracotta,Light,Warm,Dark / Hyperpigmented,Normal,6,Color: Berry | Intensity: Natural | Finish: Glowy | Mood: Fresh | Occasion: Campus / Work
+P209,DI Yogyakarta,Burnt Terracotta,Tan,Neutral,Two-Toned,Normal,7,Color: Terracotta | Intensity: Bold | Finish: Matte | Mood: Fun | Occasion: Date
+P210,Sumatera Utara,Burnt Terracotta,Medium,Warm,Medium,Dry,5,Color: Berry | Intensity: Natural | Finish: Matte | Mood: Elegant | Occasion: Everyday
+P211,Sulawesi Selatan,Burnt Terracotta,Light,Neutral,Light,Normal,8,Color: Brown | Intensity: Medium | Finish: Glossy | Mood: Bold | Occasion: Campus / Work
+P212,Jawa Tengah,Burnt Terracotta,Light,Warm,Medium,Normal,6,Color: Red | Intensity: Medium | Finish: Satin | Mood: Soft | Occasion: Special occasion
+P213,Jawa Timur,Burnt Terracotta,Light,Neutral,Light,Textured / Lines,6,Color: Red | Intensity: Bold | Finish: Glowy | Mood: Fun | Occasion: Special occasion
+P214,Kalimantan Timur,Burnt Terracotta,Medium,Warm,Medium,Chapped,6,Color: Berry | Intensity: Bold | Finish: Glossy | Mood: Soft | Occasion: Party
+P215,Jawa Barat,Burnt Terracotta,Medium,Warm,Two-Toned,Normal,7,Color: Mauve | Intensity: Bold | Finish: Glossy | Mood: Energetic | Occasion: Special occasion
+P216,DKI Jakarta,Burnt Terracotta,Tan,Cool,Medium,Dry,5,Color: Pink | Intensity: Medium | Finish: Glowy | Mood: Fun | Occasion: Everyday
+P217,DKI Jakarta,Burnt Terracotta,Light,Warm,Dark / Hyperpigmented,Normal,5,Color: Coral | Intensity: Natural | Finish: Matte | Mood: Elegant | Occasion: Special occasion
+P218,Sulawesi Selatan,Burnt Terracotta,Fair,Olive,Dark / Hyperpigmented,Textured / Lines,8,Color: Mauve | Intensity: Bold | Finish: Matte | Mood: Fun | Occasion: Special occasion
+P219,Jawa Tengah,Burnt Terracotta,Medium,Warm,Dark / Hyperpigmented,Normal,5,Color: Mauve | Intensity: Bold | Finish: Satin | Mood: Fresh | Occasion: Party
+P220,Jawa Barat,Burnt Terracotta,Light,Cool,Medium,Dry,5,Color: Pink | Intensity: Bold | Finish: Satin | Mood: Fresh | Occasion: Campus / Work
+P221,Bali,Coral,Tan,Olive,Dark / Hyperpigmented,Chapped,5,Color: Red | Intensity: Medium | Finish: Glossy | Mood: Energetic | Occasion: Party
+P222,DI Yogyakarta,Coral,Medium,Cool,Light,Dry,4,Color: Nude | Intensity: Bold | Finish: Glossy | Mood: Fresh | Occasion: Date
+P223,Jawa Barat,Coral,Medium,Cool,Light,Normal,5,Color: Terracotta | Intensity: Medium | Finish: Glossy | Mood: Bold | Occasion: Special occasion
+P224,Jawa Timur,Coral,Medium,Warm,Dark / Hyperpigmented,Dry,9,Color: Pink | Intensity: Bold | Finish: Satin | Mood: Energetic | Occasion: Date
+P225,DI Yogyakarta,Coral,Medium,Warm,Dark / Hyperpigmented,Dry,5,Color: Pink | Intensity: Medium | Finish: Glowy | Mood: Bold | Occasion: Date
+P226,Jawa Timur,Coral,Light,Neutral,Dark / Hyperpigmented,Dry,7,Color: Pink | Intensity: Bold | Finish: Glowy | Mood: Elegant | Occasion: Date
+P227,DKI Jakarta,Coral,Medium,Neutral,Medium,Chapped,6,Color: Coral | Intensity: Natural | Finish: Satin | Mood: Energetic | Occasion: Party
+P228,Jawa Tengah,Coral,Light,Neutral,Dark / Hyperpigmented,Normal,5,Color: Red | Intensity: Natural | Finish: Matte | Mood: Energetic | Occasion: Everyday
+P229,Sulawesi Selatan,Coral,Light,Neutral,Light,Chapped,6,Color: Nude | Intensity: Bold | Finish: Glossy | Mood: Elegant | Occasion: Campus / Work
+P230,Kalimantan Timur,Coral,Medium,Cool,Light,Normal,6,Color: Red | Intensity: Natural | Finish: Satin | Mood: Bold | Occasion: Special occasion
+P231,Jawa Timur,Coral,Medium,Warm,Medium,Dry,6,Color: Nude | Intensity: Medium | Finish: Glossy | Mood: Bold | Occasion: Campus / Work
+P232,Bali,Coral,Medium,Warm,Dark / Hyperpigmented,Dry,6,Color: Coral | Intensity: Bold | Finish: Glowy | Mood: Soft | Occasion: Special occasion
+P233,Jawa Tengah,Coral,Medium,Olive,Light,Textured / Lines,6,Color: Mauve | Intensity: Natural | Finish: Glossy | Mood: Bold | Occasion: Special occasion
+P234,Bali,Coral,Medium,Warm,Medium,Dry,6,Color: Coral | Intensity: Medium | Finish: Glowy | Mood: Soft | Occasion: Campus / Work
+P235,Kalimantan Timur,Coral,Light,Cool,Light,Chapped,5,Color: Coral | Intensity: Natural | Finish: Glowy | Mood: Energetic | Occasion: Special occasion
+P236,Jawa Barat,Coral,Deep,Olive,Dark / Hyperpigmented,Normal,8,Color: Pink | Intensity: Medium | Finish: Matte | Mood: Soft | Occasion: Date
+P237,Bali,Coral,Medium,Warm,Medium,Textured / Lines,6,Color: Red | Intensity: Medium | Finish: Matte | Mood: Soft | Occasion: Party
+P238,Sumatera Utara,Coral,Light,Cool,Light,Chapped,4,Color: Terracotta | Intensity: Natural | Finish: Glowy | Mood: Elegant | Occasion: Date
+P239,Jawa Tengah,Coral,Fair,Neutral,Dark / Hyperpigmented,Normal,7,Color: Pink | Intensity: Medium | Finish: Satin | Mood: Fresh | Occasion: Date
+P240,Jawa Barat,Coral,Deep,Warm,Medium,Textured / Lines,8,Color: Red | Intensity: Natural | Finish: Matte | Mood: Energetic | Occasion: Party
+P241,Jawa Timur,Burgundy,Light,Warm,Two-Toned,Dry,4,Color: Mauve | Intensity: Bold | Finish: Matte | Mood: Fresh | Occasion: Everyday
+P242,Banten,Burgundy,Tan,Warm,Light,Normal,4,Color: Red | Intensity: Bold | Finish: Glowy | Mood: Fresh | Occasion: Date
+P243,Jawa Tengah,Burgundy,Tan,Cool,Two-Toned,Normal,8,Color: Pink | Intensity: Natural | Finish: Satin | Mood: Fun | Occasion: Special occasion
+P244,Bali,Burgundy,Tan,Neutral,Dark / Hyperpigmented,Chapped,7,Color: Pink | Intensity: Medium | Finish: Matte | Mood: Bold | Occasion: Special occasion
+P245,Kalimantan Timur,Burgundy,Fair,Warm,Two-Toned,Dry,7,Color: Red | Intensity: Medium | Finish: Glowy | Mood: Fresh | Occasion: Special occasion
+P246,Sumatera Utara,Burgundy,Medium,Cool,Light,Normal,5,Color: Terracotta | Intensity: Natural | Finish: Matte | Mood: Elegant | Occasion: Date
+P247,Jawa Barat,Burgundy,Light,Cool,Light,Dry,8,Color: Nude | Intensity: Medium | Finish: Glowy | Mood: Fresh | Occasion: Party
+P248,Sumatera Utara,Burgundy,Light,Neutral,Medium,Dry,5,Color: Nude | Intensity: Medium | Finish: Matte | Mood: Energetic | Occasion: Campus / Work
+P249,Jawa Barat,Burgundy,Medium,Warm,Dark / Hyperpigmented,Chapped,3,Color: Berry | Intensity: Natural | Finish: Matte | Mood: Energetic | Occasion: Special occasion
+P250,Sumatera Utara,Burgundy,Medium,Warm,Medium,Normal,6,Color: Mauve | Intensity: Bold | Finish: Glowy | Mood: Bold | Occasion: Campus / Work
+P251,Jawa Timur,Burgundy,Medium,Neutral,Medium,Normal,4,Color: Mauve | Intensity: Natural | Finish: Glossy | Mood: Soft | Occasion: Everyday
+P252,Jawa Tengah,Burgundy,Light,Cool,Light,Normal,4,Color: Berry | Intensity: Medium | Finish: Glowy | Mood: Elegant | Occasion: Party
+P253,Banten,Burgundy,Medium,Neutral,Dark / Hyperpigmented,Normal,5,Color: Brown | Intensity: Medium | Finish: Glossy | Mood: Fresh | Occasion: Date
+P254,Banten,Burgundy,Light,Warm,Medium,Dry,6,Color: Berry | Intensity: Medium | Finish: Glowy | Mood: Bold | Occasion: Party
+P255,DI Yogyakarta,Burgundy,Medium,Neutral,Dark / Hyperpigmented,Chapped,5,Color: Red | Intensity: Medium | Finish: Glowy | Mood: Energetic | Occasion: Special occasion
+P256,Banten,Burgundy,Light,Neutral,Light,Chapped,7,Color: Terracotta | Intensity: Natural | Finish: Glowy | Mood: Elegant | Occasion: Campus / Work
+P257,Sulawesi Selatan,Burgundy,Light,Cool,Medium,Dry,6,Color: Berry | Intensity: Natural | Finish: Matte | Mood: Energetic | Occasion: Date
+P258,Banten,Burgundy,Fair,Warm,Light,Normal,5,Color: Terracotta | Intensity: Natural | Finish: Glowy | Mood: Energetic | Occasion: Party
+P259,DKI Jakarta,Burgundy,Deep,Warm,Light,Chapped,6,Color: Terracotta | Intensity: Medium | Finish: Matte | Mood: Fresh | Occasion: Party
+P260,Sumatera Utara,Burgundy,Medium,Cool,Medium,Dry,6,Color: Red | Intensity: Natural | Finish: Satin | Mood: Elegant | Occasion: Party
+P261,DKI Jakarta,Cappucino,Light,Neutral,Light,Normal,6,Color: Pink | Intensity: Natural | Finish: Glossy | Mood: Energetic | Occasion: Party
+P262,Kalimantan Timur,Cappucino,Light,Cool,Dark / Hyperpigmented,Dry,5,Color: Red | Intensity: Bold | Finish: Glowy | Mood: Energetic | Occasion: Date
+P263,Bali,Cappucino,Light,Warm,Two-Toned,Normal,8,Color: Red | Intensity: Bold | Finish: Glossy | Mood: Fun | Occasion: Date
+P264,Banten,Cappucino,Tan,Cool,Medium,Dry,7,Color: Pink | Intensity: Natural | Finish: Satin | Mood: Fun | Occasion: Special occasion
+P265,DI Yogyakarta,Cappucino,Tan,Warm,Medium,Dry,6,Color: Pink | Intensity: Medium | Finish: Glossy | Mood: Bold | Occasion: Party
+P266,Jawa Tengah,Cappucino,Tan,Warm,Medium,Dry,5,Color: Coral | Intensity: Bold | Finish: Glowy | Mood: Soft | Occasion: Everyday
+P267,Jawa Timur,Cappucino,Medium,Olive,Light,Normal,6,Color: Mauve | Intensity: Natural | Finish: Glowy | Mood: Fresh | Occasion: Date
+P268,Sumatera Utara,Cappucino,Deep,Warm,Dark / Hyperpigmented,Dry,6,Color: Coral | Intensity: Medium | Finish: Satin | Mood: Bold | Occasion: Campus / Work
+P269,Sumatera Utara,Cappucino,Light,Cool,Medium,Dry,5,Color: Brown | Intensity: Natural | Finish: Satin | Mood: Soft | Occasion: Campus / Work
+P270,Bali,Cappucino,Light,Warm,Two-Toned,Normal,4,Color: Berry | Intensity: Bold | Finish: Glossy | Mood: Fun | Occasion: Special occasion
+P271,Jawa Timur,Cappucino,Medium,Warm,Two-Toned,Dry,7,Color: Pink | Intensity: Natural | Finish: Glossy | Mood: Fun | Occasion: Party
+P272,Sulawesi Selatan,Cappucino,Light,Warm,Light,Dry,7,Color: Terracotta | Intensity: Bold | Finish: Matte | Mood: Soft | Occasion: Date
+P273,Jawa Barat,Cappucino,Light,Warm,Medium,Dry,5,Color: Mauve | Intensity: Bold | Finish: Glossy | Mood: Soft | Occasion: Special occasion
+P274,Kalimantan Timur,Cappucino,Light,Warm,Light,Dry,5,Color: Red | Intensity: Medium | Finish: Matte | Mood: Fresh | Occasion: Special occasion
+P275,Jawa Timur,Cappucino,Medium,Neutral,Medium,Chapped,8,Color: Red | Intensity: Natural | Finish: Glossy | Mood: Bold | Occasion: Campus / Work
+P276,Sumatera Utara,Cappucino,Light,Warm,Medium,Normal,7,Color: Coral | Intensity: Natural | Finish: Glossy | Mood: Soft | Occasion: Special occasion
+P277,Banten,Cappucino,Fair,Warm,Medium,Textured / Lines,6,Color: Coral | Intensity: Bold | Finish: Matte | Mood: Elegant | Occasion: Campus / Work
+P278,Kalimantan Timur,Cappucino,Light,Cool,Light,Normal,7,Color: Red | Intensity: Natural | Finish: Glossy | Mood: Elegant | Occasion: Everyday
+P279,DKI Jakarta,Cappucino,Light,Cool,Medium,Dry,6,Color: Nude | Intensity: Bold | Finish: Glossy | Mood: Bold | Occasion: Campus / Work
+P280,Kalimantan Timur,Cappucino,Fair,Warm,Medium,Dry,6,Color: Nude | Intensity: Medium | Finish: Glossy | Mood: Bold | Occasion: Date
+P281,Bali,Jazz,Deep,Warm,Dark / Hyperpigmented,Dry,4,Color: Terracotta | Intensity: Medium | Finish: Glowy | Mood: Fresh | Occasion: Everyday
+P282,Jawa Timur,Jazz,Tan,Warm,Dark / Hyperpigmented,Chapped,6,Color: Terracotta | Intensity: Medium | Finish: Glowy | Mood: Soft | Occasion: Date
+P283,Kalimantan Timur,Jazz,Light,Cool,Dark / Hyperpigmented,Dry,6,Color: Berry | Intensity: Bold | Finish: Glossy | Mood: Bold | Occasion: Date
+P284,DI Yogyakarta,Jazz,Fair,Olive,Dark / Hyperpigmented,Dry,7,Color: Berry | Intensity: Bold | Finish: Matte | Mood: Energetic | Occasion: Campus / Work
+P285,Bali,Jazz,Light,Neutral,Light,Dry,4,Color: Coral | Intensity: Medium | Finish: Satin | Mood: Soft | Occasion: Everyday
+P286,DKI Jakarta,Jazz,Deep,Warm,Two-Toned,Dry,6,Color: Terracotta | Intensity: Bold | Finish: Glowy | Mood: Soft | Occasion: Campus / Work
+P287,Sumatera Utara,Jazz,Medium,Neutral,Dark / Hyperpigmented,Dry,6,Color: Berry | Intensity: Natural | Finish: Satin | Mood: Fun | Occasion: Special occasion
+P288,Bali,Jazz,Light,Neutral,Dark / Hyperpigmented,Chapped,5,Color: Coral | Intensity: Medium | Finish: Matte | Mood: Fresh | Occasion: Party
+P289,Sulawesi Selatan,Jazz,Medium,Warm,Medium,Normal,7,Color: Brown | Intensity: Natural | Finish: Glossy | Mood: Fresh | Occasion: Everyday
+P290,Banten,Jazz,Light,Warm,Medium,Dry,4,Color: Mauve | Intensity: Medium | Finish: Matte | Mood: Fresh | Occasion: Party
+P291,Jawa Timur,Jazz,Light,Warm,Light,Normal,3,Color: Berry | Intensity: Medium | Finish: Glossy | Mood: Fresh | Occasion: Party
+P292,DKI Jakarta,Jazz,Medium,Neutral,Medium,Dry,7,Color: Brown | Intensity: Medium | Finish: Glossy | Mood: Fresh | Occasion: Party
+P293,Sulawesi Selatan,Jazz,Medium,Cool,Light,Normal,5,Color: Coral | Intensity: Bold | Finish: Matte | Mood: Soft | Occasion: Everyday
+P294,DI Yogyakarta,Jazz,Light,Warm,Medium,Dry,7,Color: Berry | Intensity: Bold | Finish: Glossy | Mood: Soft | Occasion: Campus / Work
+P295,Kalimantan Timur,Jazz,Medium,Neutral,Two-Toned,Normal,6,Color: Terracotta | Intensity: Bold | Finish: Matte | Mood: Fresh | Occasion: Everyday
+P296,Jawa Timur,Jazz,Light,Warm,Medium,Chapped,6,Color: Mauve | Intensity: Bold | Finish: Glowy | Mood: Soft | Occasion: Special occasion
+P297,Sulawesi Selatan,Jazz,Fair,Olive,Medium,Normal,6,Color: Berry | Intensity: Bold | Finish: Glossy | Mood: Soft | Occasion: Party
+P298,Kalimantan Timur,Jazz,Light,Warm,Medium,Normal,6,Color: Berry | Intensity: Bold | Finish: Glowy | Mood: Bold | Occasion: Special occasion
+P299,Banten,Jazz,Light,Cool,Dark / Hyperpigmented,Normal,8,Color: Nude | Intensity: Medium | Finish: Glossy | Mood: Bold | Occasion: Everyday
+P300,DI Yogyakarta,Jazz,Light,Warm,Light,Dry,6,Color: Coral | Intensity: Bold | Finish: Matte | Mood: Elegant | Occasion: Party
+P301,Banten,Rose Pink,Medium,Warm,Medium,Normal,4,Color: Brown | Intensity: Bold | Finish: Matte | Mood: Elegant | Occasion: Party
+P302,Jawa Timur,Rose Pink,Deep,Cool,Dark / Hyperpigmented,Dry,6,Color: Terracotta | Intensity: Natural | Finish: Satin | Mood: Fresh | Occasion: Special occasion
+P303,Jawa Barat,Rose Pink,Deep,Cool,Dark / Hyperpigmented,Chapped,5,Color: Nude | Intensity: Medium | Finish: Glossy | Mood: Fun | Occasion: Campus / Work
+P304,DI Yogyakarta,Rose Pink,Light,Warm,Medium,Dry,4,Color: Terracotta | Intensity: Bold | Finish: Glowy | Mood: Bold | Occasion: Everyday
+P305,Jawa Timur,Rose Pink,Medium,Warm,Dark / Hyperpigmented,Dry,5,Color: Brown | Intensity: Bold | Finish: Glossy | Mood: Bold | Occasion: Party
+P306,Sulawesi Selatan,Rose Pink,Medium,Warm,Medium,Dry,4,Color: Berry | Intensity: Natural | Finish: Glowy | Mood: Elegant | Occasion: Date
+P307,Sulawesi Selatan,Rose Pink,Medium,Neutral,Light,Normal,6,Color: Coral | Intensity: Bold | Finish: Glowy | Mood: Soft | Occasion: Campus / Work
+P308,Banten,Rose Pink,Fair,Cool,Medium,Dry,5,Color: Coral | Intensity: Natural | Finish: Glossy | Mood: Energetic | Occasion: Campus / Work
+P309,Bali,Rose Pink,Medium,Cool,Two-Toned,Normal,4,Color: Mauve | Intensity: Medium | Finish: Glossy | Mood: Energetic | Occasion: Everyday
+P310,Kalimantan Timur,Rose Pink,Medium,Warm,Medium,Dry,6,Color: Terracotta | Intensity: Medium | Finish: Glossy | Mood: Soft | Occasion: Date
+P311,DKI Jakarta,Rose Pink,Light,Warm,Light,Chapped,8,Color: Pink | Intensity: Medium | Finish: Glowy | Mood: Bold | Occasion: Date
+P312,Bali,Rose Pink,Light,Warm,Light,Normal,6,Color: Brown | Intensity: Bold | Finish: Glossy | Mood: Elegant | Occasion: Date
+P313,Jawa Timur,Rose Pink,Fair,Neutral,Light,Dry,5,Color: Brown | Intensity: Natural | Finish: Matte | Mood: Bold | Occasion: Special occasion
+P314,Jawa Tengah,Rose Pink,Tan,Neutral,Medium,Normal,7,Color: Nude | Intensity: Natural | Finish: Glowy | Mood: Energetic | Occasion: Party
+P315,Jawa Barat,Rose Pink,Deep,Neutral,Medium,Dry,4,Color: Nude | Intensity: Bold | Finish: Satin | Mood: Fun | Occasion: Party
+P316,Bali,Rose Pink,Light,Warm,Medium,Textured / Lines,6,Color: Coral | Intensity: Medium | Finish: Glossy | Mood: Bold | Occasion: Everyday
+P317,Jawa Barat,Rose Pink,Light,Cool,Light,Dry,5,Color: Brown | Intensity: Bold | Finish: Matte | Mood: Soft | Occasion: Party
+P318,Jawa Timur,Rose Pink,Medium,Warm,Dark / Hyperpigmented,Chapped,4,Color: Terracotta | Intensity: Medium | Finish: Satin | Mood: Bold | Occasion: Date
+P319,DKI Jakarta,Rose Pink,Deep,Olive,Medium,Chapped,5,Color: Coral | Intensity: Bold | Finish: Matte | Mood: Energetic | Occasion: Date
+P320,Bali,Rose Pink,Medium,Cool,Light,Chapped,6,Color: Mauve | Intensity: Natural | Finish: Glowy | Mood: Energetic | Occasion: Campus / Work
+P321,Jawa Barat,Latte,Medium,Neutral,Light,Normal,6,Color: Red | Intensity: Bold | Finish: Glowy | Mood: Bold | Occasion: Date
+P322,Jawa Timur,Latte,Light,Warm,Light,Textured / Lines,3,Color: Berry | Intensity: Medium | Finish: Satin | Mood: Soft | Occasion: Special occasion
+P323,DI Yogyakarta,Latte,Light,Warm,Medium,Dry,6,Color: Berry | Intensity: Natural | Finish: Glowy | Mood: Bold | Occasion: Everyday
+P324,Jawa Timur,Latte,Tan,Cool,Two-Toned,Chapped,6,Color: Mauve | Intensity: Medium | Finish: Satin | Mood: Fresh | Occasion: Date
+P325,DI Yogyakarta,Latte,Light,Neutral,Dark / Hyperpigmented,Chapped,6,Color: Mauve | Intensity: Medium | Finish: Glossy | Mood: Energetic | Occasion: Special occasion
+P326,Kalimantan Timur,Latte,Medium,Warm,Light,Dry,6,Color: Coral | Intensity: Bold | Finish: Glossy | Mood: Bold | Occasion: Campus / Work
+P327,DKI Jakarta,Latte,Light,Olive,Medium,Chapped,5,Color: Mauve | Intensity: Medium | Finish: Satin | Mood: Fun | Occasion: Special occasion
+P328,Banten,Latte,Fair,Neutral,Two-Toned,Dry,8,Color: Coral | Intensity: Medium | Finish: Satin | Mood: Soft | Occasion: Campus / Work
+P329,Bali,Latte,Light,Cool,Medium,Normal,6,Color: Mauve | Intensity: Bold | Finish: Glossy | Mood: Fun | Occasion: Special occasion
+P330,Bali,Latte,Light,Warm,Light,Normal,6,Color: Brown | Intensity: Natural | Finish: Matte | Mood: Elegant | Occasion: Party
+P331,Sulawesi Selatan,Latte,Deep,Warm,Medium,Dry,6,Color: Pink | Intensity: Bold | Finish: Matte | Mood: Fresh | Occasion: Special occasion
+P332,Sulawesi Selatan,Latte,Light,Warm,Medium,Normal,8,Color: Red | Intensity: Natural | Finish: Glossy | Mood: Elegant | Occasion: Party
+P333,Jawa Barat,Latte,Light,Warm,Dark / Hyperpigmented,Dry,7,Color: Mauve | Intensity: Natural | Finish: Glowy | Mood: Fresh | Occasion: Party
+P334,Jawa Timur,Latte,Fair,Olive,Light,Dry,5,Color: Terracotta | Intensity: Medium | Finish: Matte | Mood: Elegant | Occasion: Party
+P335,Banten,Latte,Medium,Warm,Medium,Textured / Lines,5,Color: Terracotta | Intensity: Medium | Finish: Matte | Mood: Bold | Occasion: Campus / Work
+P336,Kalimantan Timur,Latte,Medium,Cool,Medium,Dry,2,Color: Nude | Intensity: Medium | Finish: Glossy | Mood: Bold | Occasion: Everyday
+P337,Sulawesi Selatan,Latte,Fair,Neutral,Medium,Normal,7,Color: Pink | Intensity: Medium | Finish: Matte | Mood: Energetic | Occasion: Party
+P338,Jawa Timur,Latte,Light,Warm,Dark / Hyperpigmented,Dry,5,Color: Terracotta | Intensity: Medium | Finish: Glowy | Mood: Fun | Occasion: Party
+P339,DI Yogyakarta,Latte,Fair,Warm,Dark / Hyperpigmented,Normal,2,Color: Red | Intensity: Bold | Finish: Glossy | Mood: Fresh | Occasion: Campus / Work
+P340,Sulawesi Selatan,Latte,Medium,Warm,Light,Normal,6,Color: Red | Intensity: Bold | Finish: Satin | Mood: Fresh | Occasion: Everyday
+P341,Banten,Dusty,Fair,Cool,Medium,Chapped,6,Color: Terracotta | Intensity: Bold | Finish: Glowy | Mood: Soft | Occasion: Campus / Work
+P342,Bali,Dusty,Fair,Cool,Light,Normal,5,Color: Red | Intensity: Medium | Finish: Satin | Mood: Bold | Occasion: Everyday
+P343,DKI Jakarta,Dusty,Light,Warm,Medium,Chapped,8,Color: Nude | Intensity: Natural | Finish: Satin | Mood: Fresh | Occasion: Everyday
+P344,Kalimantan Timur,Dusty,Tan,Olive,Dark / Hyperpigmented,Normal,5,Color: Mauve | Intensity: Bold | Finish: Matte | Mood: Soft | Occasion: Everyday
+P345,DI Yogyakarta,Dusty,Light,Neutral,Light,Textured / Lines,8,Color: Brown | Intensity: Bold | Finish: Satin | Mood: Fresh | Occasion: Campus / Work
+P346,Sulawesi Selatan,Dusty,Light,Cool,Dark / Hyperpigmented,Chapped,7,Color: Brown | Intensity: Bold | Finish: Glossy | Mood: Elegant | Occasion: Special occasion
+P347,Sumatera Utara,Dusty,Fair,Cool,Light,Dry,8,Color: Coral | Intensity: Natural | Finish: Satin | Mood: Fun | Occasion: Date
+P348,Banten,Dusty,Medium,Neutral,Light,Normal,5,Color: Red | Intensity: Bold | Finish: Glowy | Mood: Elegant | Occasion: Party
+P349,DKI Jakarta,Dusty,Fair,Warm,Two-Toned,Dry,6,Color: Terracotta | Intensity: Bold | Finish: Glossy | Mood: Bold | Occasion: Party
+P350,DI Yogyakarta,Dusty,Light,Warm,Medium,Chapped,4,Color: Coral | Intensity: Medium | Finish: Satin | Mood: Elegant | Occasion: Party
+P351,Jawa Tengah,Dusty,Light,Warm,Dark / Hyperpigmented,Chapped,6,Color: Coral | Intensity: Bold | Finish: Satin | Mood: Fun | Occasion: Everyday
+P352,Sulawesi Selatan,Dusty,Light,Warm,Light,Textured / Lines,7,Color: Terracotta | Intensity: Bold | Finish: Satin | Mood: Fun | Occasion: Campus / Work
+P353,Banten,Dusty,Medium,Warm,Light,Normal,5,Color: Berry | Intensity: Bold | Finish: Matte | Mood: Fun | Occasion: Date
+P354,Jawa Barat,Dusty,Medium,Neutral,Medium,Dry,5,Color: Brown | Intensity: Natural | Finish: Glossy | Mood: Fun | Occasion: Special occasion
+P355,Kalimantan Timur,Dusty,Deep,Cool,Medium,Dry,7,Color: Pink | Intensity: Natural | Finish: Satin | Mood: Fun | Occasion: Campus / Work
+P356,Sumatera Utara,Dusty,Medium,Neutral,Light,Normal,4,Color: Nude | Intensity: Natural | Finish: Satin | Mood: Bold | Occasion: Everyday
+P357,Bali,Dusty,Light,Cool,Two-Toned,Normal,3,Color: Brown | Intensity: Medium | Finish: Satin | Mood: Elegant | Occasion: Date
+P358,Banten,Dusty,Fair,Warm,Dark / Hyperpigmented,Dry,7,Color: Mauve | Intensity: Bold | Finish: Glossy | Mood: Energetic | Occasion: Date
+P359,Sumatera Utara,Dusty,Tan,Neutral,Two-Toned,Normal,5,Color: Mauve | Intensity: Medium | Finish: Matte | Mood: Bold | Occasion: Party
+P360,Sumatera Utara,Dusty,Medium,Cool,Dark / Hyperpigmented,Dry,7,Color: Berry | Intensity: Medium | Finish: Glowy | Mood: Fresh | Occasion: Special occasion
+P361,Jawa Tengah,Peachy,Light,Cool,Two-Toned,Textured / Lines,7,Color: Nude | Intensity: Medium | Finish: Glowy | Mood: Energetic | Occasion: Campus / Work
+P362,Jawa Tengah,Peachy,Fair,Warm,Light,Dry,5,Color: Brown | Intensity: Medium | Finish: Satin | Mood: Fun | Occasion: Special occasion
+P363,Sumatera Utara,Peachy,Medium,Neutral,Dark / Hyperpigmented,Dry,6,Color: Mauve | Intensity: Bold | Finish: Glowy | Mood: Fun | Occasion: Campus / Work
+P364,Sumatera Utara,Peachy,Medium,Cool,Medium,Dry,7,Color: Red | Intensity: Bold | Finish: Glowy | Mood: Soft | Occasion: Special occasion
+P365,DKI Jakarta,Peachy,Medium,Neutral,Light,Dry,6,Color: Nude | Intensity: Natural | Finish: Matte | Mood: Fresh | Occasion: Party
+P366,Jawa Timur,Peachy,Fair,Warm,Dark / Hyperpigmented,Textured / Lines,5,Color: Pink | Intensity: Bold | Finish: Satin | Mood: Fresh | Occasion: Campus / Work
+P367,Sulawesi Selatan,Peachy,Medium,Warm,Medium,Dry,5,Color: Berry | Intensity: Natural | Finish: Glowy | Mood: Bold | Occasion: Party
+P368,DKI Jakarta,Peachy,Medium,Warm,Medium,Chapped,6,Color: Terracotta | Intensity: Natural | Finish: Matte | Mood: Elegant | Occasion: Date
+P369,Sulawesi Selatan,Peachy,Medium,Warm,Dark / Hyperpigmented,Normal,6,Color: Nude | Intensity: Bold | Finish: Glowy | Mood: Soft | Occasion: Everyday
+P370,Jawa Barat,Peachy,Deep,Warm,Medium,Normal,7,Color: Red | Intensity: Natural | Finish: Satin | Mood: Elegant | Occasion: Special occasion
+P371,Banten,Peachy,Deep,Warm,Medium,Dry,5,Color: Coral | Intensity: Medium | Finish: Matte | Mood: Energetic | Occasion: Party
+P372,Bali,Peachy,Tan,Cool,Medium,Dry,4,Color: Brown | Intensity: Bold | Finish: Satin | Mood: Energetic | Occasion: Everyday
+P373,DKI Jakarta,Peachy,Medium,Warm,Medium,Dry,7,Color: Terracotta | Intensity: Medium | Finish: Glowy | Mood: Elegant | Occasion: Party
+P374,DKI Jakarta,Peachy,Medium,Warm,Medium,Dry,8,Color: Red | Intensity: Natural | Finish: Glowy | Mood: Fun | Occasion: Date
+P375,Kalimantan Timur,Peachy,Medium,Neutral,Medium,Chapped,7,Color: Nude | Intensity: Natural | Finish: Satin | Mood: Bold | Occasion: Special occasion
+P376,Bali,Peachy,Light,Warm,Light,Normal,7,Color: Nude | Intensity: Natural | Finish: Glossy | Mood: Elegant | Occasion: Special occasion
+P377,DKI Jakarta,Peachy,Medium,Cool,Medium,Normal,7,Color: Berry | Intensity: Natural | Finish: Satin | Mood: Elegant | Occasion: Campus / Work
+P378,DI Yogyakarta,Peachy,Light,Warm,Light,Normal,8,Color: Coral | Intensity: Natural | Finish: Satin | Mood: Elegant | Occasion: Party
+P379,Sulawesi Selatan,Peachy,Deep,Olive,Medium,Dry,7,Color: Terracotta | Intensity: Bold | Finish: Satin | Mood: Bold | Occasion: Everyday
+P380,Sulawesi Selatan,Peachy,Medium,Neutral,Light,Dry,5,Color: Nude | Intensity: Natural | Finish: Glowy | Mood: Soft | Occasion: Everyday
+P381,Sumatera Utara,Coral Pink,Medium,Cool,Light,Normal,7,Color: Terracotta | Intensity: Medium | Finish: Matte | Mood: Bold | Occasion: Date
+P382,Bali,Coral Pink,Light,Warm,Light,Chapped,6,Color: Brown | Intensity: Medium | Finish: Glowy | Mood: Fun | Occasion: Campus / Work
+P383,Kalimantan Timur,Coral Pink,Light,Olive,Medium,Dry,3,Color: Pink | Intensity: Bold | Finish: Glossy | Mood: Soft | Occasion: Everyday
+P384,Jawa Barat,Coral Pink,Tan,Neutral,Light,Chapped,4,Color: Red | Intensity: Medium | Finish: Satin | Mood: Bold | Occasion: Party
+P385,Sumatera Utara,Coral Pink,Fair,Warm,Dark / Hyperpigmented,Dry,2,Color: Pink | Intensity: Natural | Finish: Matte | Mood: Energetic | Occasion: Party
+P386,Sumatera Utara,Coral Pink,Light,Neutral,Dark / Hyperpigmented,Normal,4,Color: Pink | Intensity: Natural | Finish: Matte | Mood: Soft | Occasion: Party
+P387,Bali,Coral Pink,Medium,Neutral,Two-Toned,Normal,6,Color: Terracotta | Intensity: Natural | Finish: Matte | Mood: Fresh | Occasion: Date
+P388,Sulawesi Selatan,Coral Pink,Fair,Warm,Medium,Normal,5,Color: Berry | Intensity: Medium | Finish: Matte | Mood: Energetic | Occasion: Party
+P389,DI Yogyakarta,Coral Pink,Light,Neutral,Medium,Chapped,6,Color: Brown | Intensity: Bold | Finish: Satin | Mood: Bold | Occasion: Party
+P390,Jawa Timur,Coral Pink,Fair,Cool,Light,Normal,3,Color: Coral | Intensity: Medium | Finish: Glossy | Mood: Fun | Occasion: Campus / Work
+P391,Jawa Barat,Coral Pink,Light,Neutral,Light,Dry,7,Color: Terracotta | Intensity: Medium | Finish: Glowy | Mood: Energetic | Occasion: Party
+P392,Jawa Barat,Coral Pink,Deep,Cool,Two-Toned,Normal,4,Color: Coral | Intensity: Natural | Finish: Glowy | Mood: Elegant | Occasion: Special occasion
+P393,Jawa Tengah,Coral Pink,Medium,Olive,Medium,Dry,5,Color: Pink | Intensity: Natural | Finish: Glossy | Mood: Fresh | Occasion: Party
+P394,Sumatera Utara,Coral Pink,Light,Cool,Medium,Textured / Lines,4,Color: Terracotta | Intensity: Medium | Finish: Glowy | Mood: Energetic | Occasion: Party
+P395,Kalimantan Timur,Coral Pink,Fair,Warm,Light,Normal,7,Color: Coral | Intensity: Medium | Finish: Satin | Mood: Fun | Occasion: Date
+P396,Jawa Timur,Coral Pink,Tan,Cool,Medium,Normal,6,Color: Berry | Intensity: Medium | Finish: Glowy | Mood: Elegant | Occasion: Campus / Work
+P397,Sumatera Utara,Coral Pink,Fair,Neutral,Medium,Normal,7,Color: Coral | Intensity: Medium | Finish: Glossy | Mood: Fresh | Occasion: Special occasion
+P398,Jawa Tengah,Coral Pink,Light,Cool,Light,Textured / Lines,6,Color: Red | Intensity: Bold | Finish: Matte | Mood: Bold | Occasion: Party
+P399,Jawa Tengah,Coral Pink,Light,Warm,Dark / Hyperpigmented,Dry,7,Color: Coral | Intensity: Bold | Finish: Matte | Mood: Fun | Occasion: Party
+P400,Jawa Timur,Coral Pink,Fair,Cool,Dark / Hyperpigmented,Dry,5,Color: Brown | Intensity: Medium | Finish: Satin | Mood: Bold | Occasion: Party
+P401,DI Yogyakarta,Rust Red,Light,Warm,Dark / Hyperpigmented,Dry,5,Color: Mauve | Intensity: Bold | Finish: Glowy | Mood: Elegant | Occasion: Party
+P402,Sulawesi Selatan,Rust Red,Light,Neutral,Dark / Hyperpigmented,Chapped,5,Color: Terracotta | Intensity: Bold | Finish: Matte | Mood: Energetic | Occasion: Special occasion
+P403,Kalimantan Timur,Rust Red,Deep,Neutral,Light,Normal,4,Color: Pink | Intensity: Natural | Finish: Glossy | Mood: Soft | Occasion: Special occasion
+P404,DKI Jakarta,Rust Red,Light,Olive,Medium,Dry,6,Color: Terracotta | Intensity: Medium | Finish: Glowy | Mood: Fresh | Occasion: Everyday
+P405,Jawa Barat,Rust Red,Medium,Warm,Dark / Hyperpigmented,Textured / Lines,5,Color: Brown | Intensity: Bold | Finish: Satin | Mood: Fun | Occasion: Date
+P406,DI Yogyakarta,Rust Red,Light,Cool,Medium,Chapped,8,Color: Red | Intensity: Medium | Finish: Matte | Mood: Fun | Occasion: Everyday
+P407,Banten,Rust Red,Medium,Warm,Two-Toned,Dry,7,Color: Pink | Intensity: Natural | Finish: Satin | Mood: Energetic | Occasion: Date
+P408,Sumatera Utara,Rust Red,Light,Neutral,Dark / Hyperpigmented,Normal,5,Color: Brown | Intensity: Bold | Finish: Glowy | Mood: Energetic | Occasion: Party
+P409,Jawa Barat,Rust Red,Light,Neutral,Dark / Hyperpigmented,Normal,5,Color: Mauve | Intensity: Medium | Finish: Matte | Mood: Energetic | Occasion: Everyday
+P410,Jawa Barat,Rust Red,Light,Cool,Light,Chapped,6,Color: Berry | Intensity: Bold | Finish: Matte | Mood: Bold | Occasion: Campus / Work
+P411,Jawa Tengah,Rust Red,Deep,Warm,Two-Toned,Dry,8,Color: Red | Intensity: Bold | Finish: Satin | Mood: Energetic | Occasion: Special occasion
+P412,DI Yogyakarta,Rust Red,Medium,Warm,Dark / Hyperpigmented,Dry,7,Color: Brown | Intensity: Medium | Finish: Satin | Mood: Soft | Occasion: Party
+P413,DI Yogyakarta,Rust Red,Medium,Neutral,Light,Dry,9,Color: Brown | Intensity: Medium | Finish: Glowy | Mood: Fun | Occasion: Everyday
+P414,Jawa Tengah,Rust Red,Light,Neutral,Dark / Hyperpigmented,Dry,4,Color: Coral | Intensity: Bold | Finish: Matte | Mood: Elegant | Occasion: Everyday
+P415,Sulawesi Selatan,Rust Red,Light,Neutral,Medium,Normal,7,Color: Berry | Intensity: Medium | Finish: Satin | Mood: Fun | Occasion: Everyday
+P416,Banten,Rust Red,Light,Neutral,Medium,Normal,7,Color: Berry | Intensity: Bold | Finish: Glowy | Mood: Elegant | Occasion: Party
+P417,Kalimantan Timur,Rust Red,Fair,Warm,Light,Normal,6,Color: Berry | Intensity: Medium | Finish: Glowy | Mood: Elegant | Occasion: Campus / Work
+P418,Banten,Rust Red,Light,Neutral,Dark / Hyperpigmented,Dry,7,Color: Pink | Intensity: Bold | Finish: Satin | Mood: Energetic | Occasion: Everyday
+P419,Jawa Tengah,Rust Red,Light,Olive,Medium,Normal,5,Color: Pink | Intensity: Natural | Finish: Glossy | Mood: Bold | Occasion: Campus / Work
+P420,Sulawesi Selatan,Rust Red,Medium,Warm,Dark / Hyperpigmented,Normal,6,Color: Terracotta | Intensity: Bold | Finish: Satin | Mood: Elegant | Occasion: Party
+P421,DI Yogyakarta,Tomato Red,Light,Neutral,Medium,Dry,5,Color: Mauve | Intensity: Bold | Finish: Satin | Mood: Elegant | Occasion: Campus / Work
+P422,Bali,Tomato Red,Medium,Cool,Medium,Normal,6,Color: Red | Intensity: Natural | Finish: Glossy | Mood: Fun | Occasion: Special occasion
+P423,DKI Jakarta,Tomato Red,Tan,Neutral,Dark / Hyperpigmented,Dry,6,Color: Nude | Intensity: Medium | Finish: Satin | Mood: Soft | Occasion: Party
+P424,Sulawesi Selatan,Tomato Red,Light,Olive,Dark / Hyperpigmented,Dry,6,Color: Mauve | Intensity: Medium | Finish: Glowy | Mood: Fun | Occasion: Party
+P425,Bali,Tomato Red,Light,Neutral,Medium,Normal,4,Color: Pink | Intensity: Bold | Finish: Matte | Mood: Soft | Occasion: Date
+P426,DKI Jakarta,Tomato Red,Deep,Warm,Medium,Normal,6,Color: Brown | Intensity: Bold | Finish: Glossy | Mood: Soft | Occasion: Party
+P427,Kalimantan Timur,Tomato Red,Light,Neutral,Medium,Textured / Lines,6,Color: Pink | Intensity: Bold | Finish: Matte | Mood: Energetic | Occasion: Special occasion
+P428,Sumatera Utara,Tomato Red,Medium,Neutral,Light,Textured / Lines,4,Color: Nude | Intensity: Bold | Finish: Glowy | Mood: Elegant | Occasion: Campus / Work
+P429,DI Yogyakarta,Tomato Red,Medium,Warm,Dark / Hyperpigmented,Normal,7,Color: Brown | Intensity: Medium | Finish: Matte | Mood: Fun | Occasion: Date
+P430,Sumatera Utara,Tomato Red,Medium,Cool,Light,Normal,6,Color: Mauve | Intensity: Natural | Finish: Satin | Mood: Soft | Occasion: Special occasion
+P431,Sumatera Utara,Tomato Red,Light,Cool,Medium,Normal,5,Color: Terracotta | Intensity: Natural | Finish: Satin | Mood: Soft | Occasion: Campus / Work
+P432,DKI Jakarta,Tomato Red,Medium,Warm,Two-Toned,Chapped,7,Color: Berry | Intensity: Bold | Finish: Glossy | Mood: Elegant | Occasion: Special occasion
+P433,Jawa Timur,Tomato Red,Tan,Warm,Light,Normal,8,Color: Coral | Intensity: Medium | Finish: Glossy | Mood: Elegant | Occasion: Everyday
+P434,Jawa Timur,Tomato Red,Medium,Warm,Medium,Textured / Lines,6,Color: Nude | Intensity: Medium | Finish: Satin | Mood: Bold | Occasion: Campus / Work
+P435,Jawa Tengah,Tomato Red,Fair,Neutral,Medium,Normal,7,Color: Berry | Intensity: Natural | Finish: Glowy | Mood: Fun | Occasion: Campus / Work
+P436,Kalimantan Timur,Tomato Red,Fair,Olive,Dark / Hyperpigmented,Chapped,6,Color: Terracotta | Intensity: Medium | Finish: Glowy | Mood: Fresh | Occasion: Everyday
+P437,DI Yogyakarta,Tomato Red,Medium,Warm,Medium,Dry,7,Color: Coral | Intensity: Bold | Finish: Glossy | Mood: Fun | Occasion: Party
+P438,Sumatera Utara,Tomato Red,Medium,Cool,Dark / Hyperpigmented,Dry,8,Color: Nude | Intensity: Bold | Finish: Matte | Mood: Bold | Occasion: Party
+P439,Sumatera Utara,Tomato Red,Medium,Neutral,Light,Dry,7,Color: Terracotta | Intensity: Natural | Finish: Glowy | Mood: Soft | Occasion: Party
+P440,Banten,Tomato Red,Fair,Warm,Medium,Dry,6,Color: Coral | Intensity: Medium | Finish: Satin | Mood: Elegant | Occasion: Party
+P441,Sumatera Utara,Deep Berry,Medium,Cool,Medium,Normal,6,Color: Nude | Intensity: Natural | Finish: Glowy | Mood: Fresh | Occasion: Everyday
+P442,Jawa Timur,Deep Berry,Light,Warm,Medium,Normal,5,Color: Mauve | Intensity: Natural | Finish: Glowy | Mood: Soft | Occasion: Campus / Work
+P443,Banten,Deep Berry,Deep,Warm,Medium,Normal,5,Color: Coral | Intensity: Natural | Finish: Glossy | Mood: Energetic | Occasion: Everyday
+P444,Sumatera Utara,Deep Berry,Medium,Warm,Light,Dry,5,Color: Nude | Intensity: Medium | Finish: Glossy | Mood: Bold | Occasion: Campus / Work
+P445,DI Yogyakarta,Deep Berry,Medium,Cool,Medium,Normal,5,Color: Pink | Intensity: Natural | Finish: Satin | Mood: Fun | Occasion: Everyday
+P446,Jawa Timur,Deep Berry,Tan,Warm,Light,Dry,5,Color: Brown | Intensity: Bold | Finish: Glowy | Mood: Fresh | Occasion: Everyday
+P447,Sumatera Utara,Deep Berry,Medium,Neutral,Medium,Dry,5,Color: Terracotta | Intensity: Bold | Finish: Satin | Mood: Fun | Occasion: Everyday
+P448,Jawa Tengah,Deep Berry,Deep,Warm,Medium,Normal,3,Color: Pink | Intensity: Bold | Finish: Matte | Mood: Fresh | Occasion: Date
+P449,Sumatera Utara,Deep Berry,Tan,Neutral,Medium,Normal,4,Color: Red | Intensity: Medium | Finish: Satin | Mood: Bold | Occasion: Campus / Work
+P450,Jawa Barat,Deep Berry,Medium,Olive,Dark / Hyperpigmented,Normal,5,Color: Nude | Intensity: Bold | Finish: Satin | Mood: Fun | Occasion: Date
+P451,Jawa Tengah,Deep Berry,Light,Warm,Medium,Dry,6,Color: Terracotta | Intensity: Bold | Finish: Glowy | Mood: Soft | Occasion: Everyday
+P452,Jawa Barat,Deep Berry,Fair,Warm,Medium,Normal,5,Color: Pink | Intensity: Bold | Finish: Glowy | Mood: Energetic | Occasion: Party
+P453,Sumatera Utara,Deep Berry,Medium,Warm,Light,Normal,4,Color: Brown | Intensity: Medium | Finish: Matte | Mood: Soft | Occasion: Special occasion
+P454,Kalimantan Timur,Deep Berry,Tan,Neutral,Dark / Hyperpigmented,Normal,6,Color: Coral | Intensity: Bold | Finish: Matte | Mood: Bold | Occasion: Date
+P455,Jawa Tengah,Deep Berry,Medium,Olive,Medium,Chapped,6,Color: Brown | Intensity: Bold | Finish: Glowy | Mood: Energetic | Occasion: Everyday
+P456,Jawa Tengah,Deep Berry,Medium,Warm,Two-Toned,Normal,4,Color: Terracotta | Intensity: Natural | Finish: Satin | Mood: Fun | Occasion: Special occasion
+P457,Jawa Barat,Deep Berry,Fair,Warm,Medium,Dry,6,Color: Nude | Intensity: Medium | Finish: Glossy | Mood: Soft | Occasion: Party
+P458,Kalimantan Timur,Deep Berry,Medium,Warm,Light,Dry,7,Color: Berry | Intensity: Bold | Finish: Satin | Mood: Fun | Occasion: Everyday
+P459,DKI Jakarta,Deep Berry,Medium,Neutral,Dark / Hyperpigmented,Dry,5,Color: Pink | Intensity: Natural | Finish: Glossy | Mood: Soft | Occasion: Everyday
+P460,DKI Jakarta,Deep Berry,Medium,Warm,Medium,Chapped,8,Color: Coral | Intensity: Bold | Finish: Glowy | Mood: Fun | Occasion: Party
+P461,Jawa Barat,Terracotta,Medium,Neutral,Two-Toned,Dry,5,Color: Red | Intensity: Medium | Finish: Matte | Mood: Energetic | Occasion: Everyday
+P462,Sulawesi Selatan,Terracotta,Light,Cool,Medium,Dry,7,Color: Red | Intensity: Bold | Finish: Glossy | Mood: Fun | Occasion: Special occasion
+P463,Jawa Barat,Terracotta,Light,Warm,Medium,Normal,7,Color: Terracotta | Intensity: Bold | Finish: Satin | Mood: Fresh | Occasion: Campus / Work
+P464,Jawa Barat,Terracotta,Tan,Warm,Light,Normal,7,Color: Pink | Intensity: Medium | Finish: Matte | Mood: Energetic | Occasion: Campus / Work
+P465,Jawa Barat,Terracotta,Light,Warm,Medium,Normal,8,Color: Red | Intensity: Bold | Finish: Matte | Mood: Soft | Occasion: Party
+P466,Sumatera Utara,Terracotta,Medium,Cool,Medium,Normal,6,Color: Coral | Intensity: Natural | Finish: Glossy | Mood: Soft | Occasion: Date
+P467,Jawa Barat,Terracotta,Medium,Warm,Medium,Normal,6,Color: Berry | Intensity: Medium | Finish: Glossy | Mood: Elegant | Occasion: Everyday
+P468,Banten,Terracotta,Medium,Olive,Medium,Normal,6,Color: Pink | Intensity: Medium | Finish: Glowy | Mood: Elegant | Occasion: Date
+P469,DKI Jakarta,Terracotta,Light,Warm,Dark / Hyperpigmented,Dry,5,Color: Red | Intensity: Medium | Finish: Satin | Mood: Energetic | Occasion: Everyday
+P470,Kalimantan Timur,Terracotta,Light,Olive,Light,Textured / Lines,7,Color: Brown | Intensity: Bold | Finish: Matte | Mood: Fresh | Occasion: Everyday
+P471,Jawa Tengah,Terracotta,Medium,Neutral,Two-Toned,Normal,5,Color: Mauve | Intensity: Medium | Finish: Glowy | Mood: Soft | Occasion: Campus / Work
+P472,DKI Jakarta,Terracotta,Deep,Warm,Medium,Normal,4,Color: Terracotta | Intensity: Natural | Finish: Glossy | Mood: Soft | Occasion: Party
+P473,Sumatera Utara,Terracotta,Medium,Cool,Dark / Hyperpigmented,Chapped,6,Color: Pink | Intensity: Bold | Finish: Glossy | Mood: Fresh | Occasion: Special occasion
+P474,DKI Jakarta,Terracotta,Light,Warm,Medium,Normal,5,Color: Brown | Intensity: Bold | Finish: Matte | Mood: Fun | Occasion: Everyday
+P475,Bali,Terracotta,Light,Olive,Medium,Normal,5,Color: Coral | Intensity: Medium | Finish: Matte | Mood: Elegant | Occasion: Party
+P476,DKI Jakarta,Terracotta,Medium,Warm,Medium,Dry,2,Color: Brown | Intensity: Medium | Finish: Glossy | Mood: Bold | Occasion: Special occasion
+P477,Jawa Tengah,Terracotta,Deep,Neutral,Medium,Dry,5,Color: Berry | Intensity: Bold | Finish: Glowy | Mood: Soft | Occasion: Special occasion
+P478,Jawa Tengah,Terracotta,Medium,Warm,Medium,Normal,9,Color: Nude | Intensity: Medium | Finish: Matte | Mood: Soft | Occasion: Special occasion
+P479,Sumatera Utara,Terracotta,Light,Olive,Two-Toned,Dry,4,Color: Berry | Intensity: Natural | Finish: Glowy | Mood: Bold | Occasion: Date
+P480,Jawa Barat,Terracotta,Medium,Neutral,Light,Chapped,6,Color: Brown | Intensity: Medium | Finish: Glowy | Mood: Fresh | Occasion: Campus / Work
+P481,Banten,Light Pink,Light,Neutral,Two-Toned,Normal,5,Color: Nude | Intensity: Natural | Finish: Glowy | Mood: Bold | Occasion: Date
+P482,Bali,Light Pink,Light,Olive,Medium,Chapped,3,Color: Pink | Intensity: Bold | Finish: Satin | Mood: Bold | Occasion: Party
+P483,Jawa Barat,Light Pink,Light,Warm,Dark / Hyperpigmented,Normal,7,Color: Nude | Intensity: Medium | Finish: Satin | Mood: Soft | Occasion: Date
+P484,Banten,Light Pink,Medium,Cool,Medium,Chapped,6,Color: Terracotta | Intensity: Bold | Finish: Glossy | Mood: Energetic | Occasion: Party
+P485,Banten,Light Pink,Medium,Neutral,Medium,Textured / Lines,6,Color: Pink | Intensity: Natural | Finish: Satin | Mood: Elegant | Occasion: Everyday
+P486,Jawa Timur,Light Pink,Light,Warm,Dark / Hyperpigmented,Dry,6,Color: Red | Intensity: Medium | Finish: Glowy | Mood: Energetic | Occasion: Party
+P487,Jawa Barat,Light Pink,Medium,Olive,Light,Dry,2,Color: Berry | Intensity: Natural | Finish: Glowy | Mood: Energetic | Occasion: Party
+P488,Banten,Light Pink,Medium,Neutral,Dark / Hyperpigmented,Normal,4,Color: Pink | Intensity: Natural | Finish: Glossy | Mood: Bold | Occasion: Special occasion
+P489,DKI Jakarta,Light Pink,Medium,Warm,Light,Textured / Lines,4,Color: Berry | Intensity: Natural | Finish: Matte | Mood: Bold | Occasion: Campus / Work
+P490,Sumatera Utara,Light Pink,Fair,Olive,Dark / Hyperpigmented,Chapped,7,Color: Nude | Intensity: Bold | Finish: Glossy | Mood: Energetic | Occasion: Campus / Work
+P491,DKI Jakarta,Light Pink,Medium,Warm,Dark / Hyperpigmented,Chapped,6,Color: Mauve | Intensity: Bold | Finish: Satin | Mood: Fresh | Occasion: Party
+P492,Jawa Barat,Light Pink,Medium,Neutral,Dark / Hyperpigmented,Dry,6,Color: Pink | Intensity: Natural | Finish: Matte | Mood: Soft | Occasion: Campus / Work
+P493,Jawa Tengah,Light Pink,Fair,Warm,Medium,Normal,5,Color: Berry | Intensity: Bold | Finish: Matte | Mood: Elegant | Occasion: Special occasion
+P494,Banten,Light Pink,Light,Warm,Dark / Hyperpigmented,Textured / Lines,3,Color: Nude | Intensity: Natural | Finish: Satin | Mood: Bold | Occasion: Party
+P495,Jawa Timur,Light Pink,Fair,Cool,Dark / Hyperpigmented,Dry,6,Color: Berry | Intensity: Natural | Finish: Matte | Mood: Fun | Occasion: Everyday
+P496,Jawa Timur,Light Pink,Fair,Warm,Medium,Normal,5,Color: Terracotta | Intensity: Bold | Finish: Glowy | Mood: Fun | Occasion: Everyday
+P497,DI Yogyakarta,Light Pink,Medium,Olive,Medium,Textured / Lines,4,Color: Red | Intensity: Medium | Finish: Satin | Mood: Soft | Occasion: Date
+P498,Banten,Light Pink,Light,Cool,Light,Dry,6,Color: Red | Intensity: Natural | Finish: Satin | Mood: Bold | Occasion: Date
+P499,Bali,Light Pink,Light,Cool,Light,Chapped,6,Color: Mauve | Intensity: Natural | Finish: Matte | Mood: Energetic | Occasion: Party
+P500,Jawa Timur,Light Pink,Medium,Warm,Medium,Dry,6,Color: Brown | Intensity: Bold | Finish: Satin | Mood: Bold | Occasion: Special occasion
+P501,DKI Jakarta,Plum,Light,Neutral,Dark / Hyperpigmented,Chapped,5,Color: Berry | Intensity: Medium | Finish: Glowy | Mood: Energetic | Occasion: Special occasion
+P502,Sulawesi Selatan,Plum,Medium,Cool,Light,Chapped,6,Color: Terracotta | Intensity: Medium | Finish: Satin | Mood: Fresh | Occasion: Date
+P503,Kalimantan Timur,Plum,Light,Warm,Medium,Normal,3,Color: Nude | Intensity: Medium | Finish: Matte | Mood: Fun | Occasion: Special occasion
+P504,Sumatera Utara,Plum,Medium,Warm,Light,Dry,5,Color: Brown | Intensity: Natural | Finish: Matte | Mood: Soft | Occasion: Campus / Work
+P505,Banten,Plum,Medium,Warm,Light,Dry,6,Color: Nude | Intensity: Natural | Finish: Glowy | Mood: Energetic | Occasion: Campus / Work
+P506,Jawa Timur,Plum,Light,Warm,Medium,Normal,5,Color: Berry | Intensity: Bold | Finish: Glossy | Mood: Elegant | Occasion: Everyday
+P507,Sumatera Utara,Plum,Medium,Neutral,Medium,Textured / Lines,7,Color: Red | Intensity: Bold | Finish: Satin | Mood: Fun | Occasion: Special occasion
+P508,Banten,Plum,Light,Olive,Light,Dry,3,Color: Mauve | Intensity: Natural | Finish: Matte | Mood: Fresh | Occasion: Campus / Work
+P509,Kalimantan Timur,Plum,Medium,Neutral,Light,Normal,6,Color: Nude | Intensity: Bold | Finish: Glowy | Mood: Fresh | Occasion: Date
+P510,Kalimantan Timur,Plum,Medium,Neutral,Two-Toned,Chapped,6,Color: Red | Intensity: Medium | Finish: Satin | Mood: Energetic | Occasion: Everyday
+P511,DKI Jakarta,Plum,Light,Warm,Dark / Hyperpigmented,Dry,6,Color: Red | Intensity: Natural | Finish: Glossy | Mood: Fresh | Occasion: Date
+P512,DI Yogyakarta,Plum,Fair,Warm,Two-Toned,Dry,4,Color: Pink | Intensity: Medium | Finish: Glossy | Mood: Energetic | Occasion: Campus / Work
+P513,Jawa Timur,Plum,Light,Warm,Medium,Normal,3,Color: Mauve | Intensity: Bold | Finish: Glossy | Mood: Soft | Occasion: Special occasion
+P514,Kalimantan Timur,Plum,Medium,Warm,Dark / Hyperpigmented,Chapped,7,Color: Brown | Intensity: Bold | Finish: Satin | Mood: Fun | Occasion: Date
+P515,Banten,Plum,Light,Neutral,Light,Dry,4,Color: Red | Intensity: Bold | Finish: Matte | Mood: Bold | Occasion: Special occasion
+P516,DI Yogyakarta,Plum,Medium,Warm,Light,Dry,5,Color: Nude | Intensity: Natural | Finish: Glossy | Mood: Elegant | Occasion: Campus / Work
+P517,Kalimantan Timur,Plum,Medium,Warm,Dark / Hyperpigmented,Normal,7,Color: Mauve | Intensity: Natural | Finish: Glossy | Mood: Bold | Occasion: Everyday
+P518,Jawa Tengah,Plum,Tan,Warm,Medium,Normal,6,Color: Berry | Intensity: Natural | Finish: Matte | Mood: Bold | Occasion: Date
+P519,Bali,Plum,Light,Neutral,Light,Normal,4,Color: Coral | Intensity: Natural | Finish: Satin | Mood: Bold | Occasion: Everyday
+P520,Sumatera Utara,Plum,Light,Warm,Light,Dry,2,Color: Pink | Intensity: Bold | Finish: Matte | Mood: Fresh | Occasion: Party
+P521,Bali,Roast Pink,Medium,Cool,Light,Dry,5,Color: Red | Intensity: Medium | Finish: Glowy | Mood: Fun | Occasion: Date
+P522,Sulawesi Selatan,Roast Pink,Deep,Cool,Dark / Hyperpigmented,Normal,7,Color: Pink | Intensity: Medium | Finish: Satin | Mood: Soft | Occasion: Party
+P523,Jawa Barat,Roast Pink,Medium,Olive,Light,Normal,7,Color: Coral | Intensity: Natural | Finish: Glossy | Mood: Energetic | Occasion: Everyday
+P524,Jawa Barat,Roast Pink,Medium,Neutral,Light,Normal,6,Color: Red | Intensity: Medium | Finish: Satin | Mood: Bold | Occasion: Everyday
+P525,Sulawesi Selatan,Roast Pink,Light,Warm,Light,Normal,8,Color: Berry | Intensity: Bold | Finish: Glowy | Mood: Bold | Occasion: Everyday
+P526,DI Yogyakarta,Roast Pink,Medium,Olive,Dark / Hyperpigmented,Normal,6,Color: Terracotta | Intensity: Natural | Finish: Matte | Mood: Fresh | Occasion: Date
+P527,Jawa Tengah,Roast Pink,Medium,Cool,Medium,Normal,6,Color: Terracotta | Intensity: Bold | Finish: Glossy | Mood: Bold | Occasion: Date
+P528,Banten,Roast Pink,Fair,Warm,Light,Dry,5,Color: Pink | Intensity: Natural | Finish: Glowy | Mood: Elegant | Occasion: Special occasion
+P529,Bali,Roast Pink,Fair,Olive,Two-Toned,Chapped,8,Color: Nude | Intensity: Medium | Finish: Matte | Mood: Fun | Occasion: Everyday
+P530,Banten,Roast Pink,Deep,Cool,Two-Toned,Normal,4,Color: Mauve | Intensity: Natural | Finish: Matte | Mood: Fresh | Occasion: Campus / Work
+P531,Jawa Timur,Roast Pink,Light,Warm,Medium,Chapped,5,Color: Pink | Intensity: Medium | Finish: Matte | Mood: Energetic | Occasion: Party
+P532,Bali,Roast Pink,Medium,Warm,Dark / Hyperpigmented,Dry,8,Color: Coral | Intensity: Natural | Finish: Glowy | Mood: Soft | Occasion: Date
+P533,DI Yogyakarta,Roast Pink,Light,Warm,Two-Toned,Normal,4,Color: Red | Intensity: Medium | Finish: Matte | Mood: Energetic | Occasion: Party
+P534,Bali,Roast Pink,Light,Neutral,Dark / Hyperpigmented,Normal,5,Color: Brown | Intensity: Medium | Finish: Matte | Mood: Soft | Occasion: Everyday
+P535,Jawa Barat,Roast Pink,Fair,Olive,Medium,Normal,8,Color: Terracotta | Intensity: Bold | Finish: Satin | Mood: Elegant | Occasion: Everyday
+P536,DI Yogyakarta,Roast Pink,Medium,Neutral,Light,Normal,5,Color: Terracotta | Intensity: Bold | Finish: Glowy | Mood: Elegant | Occasion: Campus / Work
+P537,Bali,Roast Pink,Medium,Warm,Light,Normal,7,Color: Pink | Intensity: Medium | Finish: Matte | Mood: Elegant | Occasion: Special occasion
+P538,Sulawesi Selatan,Roast Pink,Light,Warm,Light,Chapped,5,Color: Red | Intensity: Natural | Finish: Glowy | Mood: Soft | Occasion: Campus / Work
+P539,Jawa Tengah,Roast Pink,Deep,Warm,Two-Toned,Textured / Lines,6,Color: Red | Intensity: Natural | Finish: Glowy | Mood: Fresh | Occasion: Party
+P540,Jawa Tengah,Roast Pink,Medium,Olive,Medium,Normal,8,Color: Coral | Intensity: Medium | Finish: Matte | Mood: Fresh | Occasion: Party
+P541,Sulawesi Selatan,Milk Tea,Fair,Cool,Two-Toned,Normal,4,Color: Berry | Intensity: Medium | Finish: Glowy | Mood: Fresh | Occasion: Special occasion
+P542,Kalimantan Timur,Milk Tea,Medium,Olive,Two-Toned,Textured / Lines,6,Color: Terracotta | Intensity: Natural | Finish: Glowy | Mood: Soft | Occasion: Campus / Work
+P543,Kalimantan Timur,Milk Tea,Medium,Warm,Medium,Dry,6,Color: Pink | Intensity: Natural | Finish: Matte | Mood: Energetic | Occasion: Special occasion
+P544,Sumatera Utara,Milk Tea,Light,Cool,Dark / Hyperpigmented,Normal,8,Color: Coral | Intensity: Medium | Finish: Glowy | Mood: Elegant | Occasion: Special occasion
+P545,Bali,Milk Tea,Light,Warm,Light,Normal,6,Color: Red | Intensity: Medium | Finish: Glowy | Mood: Soft | Occasion: Special occasion
+P546,Kalimantan Timur,Milk Tea,Tan,Warm,Medium,Normal,7,Color: Nude | Intensity: Medium | Finish: Glossy | Mood: Bold | Occasion: Campus / Work
+P547,DKI Jakarta,Milk Tea,Medium,Warm,Medium,Normal,5,Color: Coral | Intensity: Medium | Finish: Matte | Mood: Energetic | Occasion: Date
+P548,Banten,Milk Tea,Light,Neutral,Light,Normal,7,Color: Mauve | Intensity: Bold | Finish: Matte | Mood: Soft | Occasion: Campus / Work
+P549,Banten,Milk Tea,Deep,Warm,Dark / Hyperpigmented,Normal,5,Color: Berry | Intensity: Medium | Finish: Glowy | Mood: Elegant | Occasion: Everyday
+P550,Jawa Tengah,Milk Tea,Light,Neutral,Two-Toned,Textured / Lines,3,Color: Brown | Intensity: Medium | Finish: Glowy | Mood: Elegant | Occasion: Date
+P551,DKI Jakarta,Milk Tea,Medium,Warm,Medium,Normal,7,Color: Red | Intensity: Natural | Finish: Glossy | Mood: Bold | Occasion: Special occasion
+P552,DI Yogyakarta,Milk Tea,Medium,Warm,Light,Textured / Lines,6,Color: Nude | Intensity: Natural | Finish: Satin | Mood: Soft | Occasion: Everyday
+P553,Jawa Tengah,Milk Tea,Light,Warm,Light,Normal,4,Color: Mauve | Intensity: Natural | Finish: Glossy | Mood: Bold | Occasion: Campus / Work
+P554,Banten,Milk Tea,Tan,Warm,Two-Toned,Dry,8,Color: Mauve | Intensity: Bold | Finish: Glowy | Mood: Bold | Occasion: Everyday
+P555,DKI Jakarta,Milk Tea,Medium,Neutral,Medium,Normal,4,Color: Berry | Intensity: Medium | Finish: Glowy | Mood: Soft | Occasion: Party
+P556,Kalimantan Timur,Milk Tea,Tan,Olive,Dark / Hyperpigmented,Dry,6,Color: Berry | Intensity: Medium | Finish: Satin | Mood: Energetic | Occasion: Everyday
+P557,Banten,Milk Tea,Light,Warm,Medium,Normal,8,Color: Terracotta | Intensity: Natural | Finish: Satin | Mood: Elegant | Occasion: Campus / Work
+P558,Jawa Tengah,Milk Tea,Light,Neutral,Light,Normal,2,Color: Brown | Intensity: Medium | Finish: Glowy | Mood: Elegant | Occasion: Everyday
+P559,DKI Jakarta,Milk Tea,Medium,Neutral,Medium,Dry,6,Color: Red | Intensity: Bold | Finish: Satin | Mood: Elegant | Occasion: Everyday
+P560,Jawa Tengah,Milk Tea,Medium,Neutral,Light,Chapped,3,Color: Coral | Intensity: Bold | Finish: Glossy | Mood: Fun | Occasion: Party
+P561,Sumatera Utara,Ruby Red,Light,Warm,Light,Chapped,6,Color: Coral | Intensity: Natural | Finish: Glowy | Mood: Energetic | Occasion: Special occasion
+P562,Kalimantan Timur,Ruby Red,Fair,Warm,Medium,Normal,4,Color: Pink | Intensity: Natural | Finish: Glossy | Mood: Elegant | Occasion: Special occasion
+P563,Kalimantan Timur,Ruby Red,Light,Warm,Dark / Hyperpigmented,Textured / Lines,4,Color: Coral | Intensity: Bold | Finish: Matte | Mood: Fun | Occasion: Everyday
+P564,Sumatera Utara,Ruby Red,Light,Neutral,Dark / Hyperpigmented,Chapped,3,Color: Berry | Intensity: Medium | Finish: Glossy | Mood: Bold | Occasion: Date
+P565,Jawa Tengah,Ruby Red,Light,Neutral,Dark / Hyperpigmented,Normal,5,Color: Brown | Intensity: Natural | Finish: Glowy | Mood: Bold | Occasion: Date
+P566,Jawa Timur,Ruby Red,Light,Olive,Dark / Hyperpigmented,Textured / Lines,5,Color: Mauve | Intensity: Medium | Finish: Glossy | Mood: Fun | Occasion: Party
+P567,DI Yogyakarta,Ruby Red,Medium,Neutral,Light,Dry,8,Color: Brown | Intensity: Medium | Finish: Satin | Mood: Bold | Occasion: Special occasion
+P568,Bali,Ruby Red,Medium,Warm,Dark / Hyperpigmented,Dry,7,Color: Coral | Intensity: Natural | Finish: Satin | Mood: Energetic | Occasion: Everyday
+P569,Bali,Ruby Red,Light,Neutral,Dark / Hyperpigmented,Normal,4,Color: Coral | Intensity: Bold | Finish: Satin | Mood: Bold | Occasion: Date
+P570,Jawa Barat,Ruby Red,Medium,Cool,Medium,Textured / Lines,6,Color: Berry | Intensity: Natural | Finish: Glossy | Mood: Fun | Occasion: Date
+P571,Sumatera Utara,Ruby Red,Medium,Cool,Two-Toned,Dry,7,Color: Coral | Intensity: Medium | Finish: Matte | Mood: Fun | Occasion: Everyday
+P572,Kalimantan Timur,Ruby Red,Medium,Neutral,Medium,Chapped,5,Color: Pink | Intensity: Medium | Finish: Satin | Mood: Elegant | Occasion: Everyday
+P573,DI Yogyakarta,Ruby Red,Light,Olive,Dark / Hyperpigmented,Dry,4,Color: Coral | Intensity: Medium | Finish: Matte | Mood: Soft | Occasion: Campus / Work
+P574,Jawa Tengah,Ruby Red,Medium,Cool,Two-Toned,Dry,4,Color: Terracotta | Intensity: Bold | Finish: Glowy | Mood: Soft | Occasion: Date
+P575,Jawa Timur,Ruby Red,Medium,Neutral,Medium,Normal,5,Color: Mauve | Intensity: Medium | Finish: Satin | Mood: Energetic | Occasion: Everyday
+P576,DKI Jakarta,Ruby Red,Medium,Warm,Dark / Hyperpigmented,Textured / Lines,4,Color: Coral | Intensity: Natural | Finish: Satin | Mood: Elegant | Occasion: Campus / Work
+P577,Bali,Ruby Red,Medium,Neutral,Medium,Textured / Lines,5,Color: Red | Intensity: Bold | Finish: Glowy | Mood: Bold | Occasion: Party
+P578,DI Yogyakarta,Ruby Red,Fair,Cool,Dark / Hyperpigmented,Chapped,6,Color: Mauve | Intensity: Medium | Finish: Matte | Mood: Fresh | Occasion: Special occasion
+P579,Jawa Tengah,Ruby Red,Medium,Warm,Light,Chapped,5,Color: Nude | Intensity: Medium | Finish: Satin | Mood: Fresh | Occasion: Everyday
+P580,Jawa Tengah,Ruby Red,Light,Warm,Medium,Chapped,7,Color: Berry | Intensity: Medium | Finish: Satin | Mood: Fresh | Occasion: Party
+P581,Sulawesi Selatan,Orange Blaze,Light,Cool,Medium,Chapped,7,Color: Coral | Intensity: Natural | Finish: Matte | Mood: Fresh | Occasion: Date
+P582,Banten,Orange Blaze,Tan,Warm,Dark / Hyperpigmented,Normal,3,Color: Berry | Intensity: Medium | Finish: Satin | Mood: Energetic | Occasion: Party
+P583,Sumatera Utara,Orange Blaze,Light,Warm,Medium,Normal,6,Color: Red | Intensity: Medium | Finish: Matte | Mood: Soft | Occasion: Campus / Work
+P584,Jawa Timur,Orange Blaze,Medium,Warm,Light,Chapped,5,Color: Nude | Intensity: Bold | Finish: Satin | Mood: Fresh | Occasion: Date
+P585,DKI Jakarta,Orange Blaze,Medium,Warm,Light,Normal,3,Color: Coral | Intensity: Bold | Finish: Matte | Mood: Elegant | Occasion: Everyday
+P586,Jawa Barat,Orange Blaze,Tan,Cool,Dark / Hyperpigmented,Dry,5,Color: Nude | Intensity: Bold | Finish: Matte | Mood: Fun | Occasion: Party
+P587,DI Yogyakarta,Orange Blaze,Medium,Warm,Medium,Normal,4,Color: Coral | Intensity: Medium | Finish: Satin | Mood: Soft | Occasion: Everyday
+P588,Banten,Orange Blaze,Light,Olive,Light,Dry,5,Color: Pink | Intensity: Bold | Finish: Glossy | Mood: Elegant | Occasion: Special occasion
+P589,Jawa Timur,Orange Blaze,Medium,Neutral,Medium,Normal,4,Color: Pink | Intensity: Bold | Finish: Matte | Mood: Energetic | Occasion: Everyday
+P590,Jawa Barat,Orange Blaze,Light,Warm,Light,Dry,5,Color: Brown | Intensity: Bold | Finish: Satin | Mood: Energetic | Occasion: Special occasion
+P591,Jawa Tengah,Orange Blaze,Medium,Olive,Medium,Normal,4,Color: Terracotta | Intensity: Medium | Finish: Satin | Mood: Fresh | Occasion: Special occasion
+P592,Bali,Orange Blaze,Fair,Olive,Medium,Normal,8,Color: Mauve | Intensity: Medium | Finish: Satin | Mood: Fresh | Occasion: Everyday
+P593,Jawa Barat,Orange Blaze,Medium,Warm,Light,Textured / Lines,7,Color: Mauve | Intensity: Natural | Finish: Matte | Mood: Elegant | Occasion: Everyday
+P594,Jawa Barat,Orange Blaze,Light,Neutral,Dark / Hyperpigmented,Dry,4,Color: Brown | Intensity: Medium | Finish: Glossy | Mood: Energetic | Occasion: Party
+P595,DKI Jakarta,Orange Blaze,Medium,Neutral,Two-Toned,Normal,5,Color: Red | Intensity: Natural | Finish: Glossy | Mood: Energetic | Occasion: Date
+P596,DI Yogyakarta,Orange Blaze,Light,Olive,Dark / Hyperpigmented,Chapped,6,Color: Pink | Intensity: Natural | Finish: Matte | Mood: Soft | Occasion: Campus / Work
+P597,Sumatera Utara,Orange Blaze,Medium,Neutral,Medium,Normal,4,Color: Mauve | Intensity: Bold | Finish: Glossy | Mood: Bold | Occasion: Everyday
+P598,Sumatera Utara,Orange Blaze,Medium,Warm,Medium,Textured / Lines,7,Color: Red | Intensity: Natural | Finish: Glowy | Mood: Fun | Occasion: Party
+P599,Banten,Orange Blaze,Light,Neutral,Two-Toned,Normal,5,Color: Mauve | Intensity: Medium | Finish: Satin | Mood: Fresh | Occasion: Campus / Work
+P600,DKI Jakarta,Orange Blaze,Fair,Warm,Light,Dry,6,Color: Pink | Intensity: Medium | Finish: Glowy | Mood: Elegant | Occasion: Party

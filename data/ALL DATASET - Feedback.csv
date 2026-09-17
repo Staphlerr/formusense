@@ -1,0 +1,301 @@
+feedback_id,user_id,shade_id,Brand,name,Undertone,Skintone,appealing,color,texture,finish,overall_rating,what_would_you_change
+F001,U001,001,Barevis,Caramel,Olive,Light,Love it,Just right,Comfortable,Just right,5,
+F002,U002,001,Barevis,Caramel,Warm,Light,Like it,Too dark,Comfortable,Too glossy,4,"Color, Finish"
+F003,U003,001,Barevis,Caramel,Neutral,Medium,Not sure,Just right,Too dry,Just right,3,Texture
+F004,U004,001,Barevis,Caramel,Warm,Medium,Not for me,Too pale,Too sticky,Too glossy,2,"Color, Texture, Finish"
+F005,U005,001,Barevis,Caramel,Cool,Light,Like it,Just right,Comfortable,Just right,4,
+F006,U006,001,Barevis,Caramel,Warm,Medium,Love it,Just right,Comfortable,Too glossy,5,Finish
+F007,U007,001,Barevis,Caramel,Neutral,Deep,Like it,Too dark,Too thick,Just right,3,"Color, Texture"
+F008,U008,001,Barevis,Caramel,Cool,Medium,Not sure,Too pale,Comfortable,Just right,3,Color
+F009,U009,001,Barevis,Caramel,Olive,Medium,Love it,Just right,Comfortable,Just right,5,
+F010,U010,001,Barevis,Caramel,Neutral,Light,Like it,Just right,Too dry,Too matte,4,"Texture, Finish"
+F011,U001,002,Nuea,Peach,Olive,Light,Love it,Just right,Comfortable,Just right,5,
+F012,U002,002,Nuea,Peach,Warm,Light,Like it,Too dark,Comfortable,Too glossy,4,"Color, Finish"
+F013,U003,002,Nuea,Peach,Neutral,Medium,Not sure,Just right,Too dry,Just right,3,Texture
+F014,U004,002,Nuea,Peach,Warm,Medium,Not for me,Too pale,Too sticky,Too glossy,2,"Color, Texture, Finish"
+F015,U005,002,Nuea,Peach,Cool,Light,Like it,Just right,Comfortable,Just right,4,
+F016,U006,002,Nuea,Peach,Warm,Medium,Love it,Just right,Comfortable,Too glossy,5,Finish
+F017,U007,002,Nuea,Peach,Neutral,Deep,Like it,Too dark,Too thick,Just right,3,"Color, Texture"
+F018,U008,002,Nuea,Peach,Cool,Medium,Not sure,Too pale,Comfortable,Just right,3,Color
+F019,U009,002,Nuea,Peach,Olive,Medium,Love it,Just right,Comfortable,Just right,5,
+F020,U010,002,Nuea,Peach,Neutral,Light,Not sure,Just right,Too dry,Too matte,4,"Texture, Finish"
+F021,U001,003,Ronaa.,Maple,Olive,Light,Love it,Just right,Comfortable,Just right,5,
+F022,U002,003,Ronaa.,Maple,Warm,Light,Like it,Too dark,Comfortable,Too glossy,4,"Color, Finish"
+F023,U003,003,Ronaa.,Maple,Neutral,Medium,Not sure,Just right,Too dry,Just right,3,Texture
+F024,U004,003,Ronaa.,Maple,Warm,Medium,Not for me,Too pale,Too sticky,Too glossy,2,"Color, Texture, Finish"
+F025,U005,003,Ronaa.,Maple,Cool,Light,Like it,Just right,Comfortable,Just right,4,
+F026,U006,003,Ronaa.,Maple,Warm,Medium,Love it,Just right,Comfortable,Too glossy,5,Finish
+F027,U007,003,Ronaa.,Maple,Neutral,Deep,Like it,Too dark,Too thick,Just right,3,"Color, Texture"
+F028,U008,003,Ronaa.,Maple,Cool,Medium,Not sure,Too pale,Comfortable,Just right,3,Color
+F029,U009,003,Ronaa.,Maple,Olive,Medium,Not sure,Just right,Too thick,Too matte,4,Texture
+F030,U010,003,Ronaa.,Maple,Neutral,Light,Like it,Just right,Too dry,Too matte,4,"Texture, Finish"
+F031,U001,004,Barevis,Berry,Olive,Light,Love it,Just right,Comfortable,Just right,5,
+F032,U002,004,Barevis,Berry,Warm,Light,Like it,Too dark,Comfortable,Too matte,4,"Color, Finish"
+F033,U003,004,Barevis,Berry,Neutral,Medium,Not sure,Just right,Too dry,Just right,3,Texture
+F034,U004,004,Barevis,Berry,Warm,Medium,Not for me,Too pale,Too thick,Too glossy,2,"Color, Texture, Finish"
+F035,U005,004,Barevis,Berry,Cool,Light,Like it,Just right,Comfortable,Just right,4,
+F036,U006,004,Barevis,Berry,Warm,Medium,Love it,Just right,Comfortable,Too glossy,5,Finish
+F037,U007,004,Barevis,Berry,Neutral,Deep,Like it,Too dark,Too thick,Just right,3,"Color, Texture"
+F038,U008,004,Barevis,Berry,Cool,Medium,Not sure,Too dark,Comfortable,Just right,3,Color
+F039,U009,004,Barevis,Berry,Olive,Medium,Love it,Just right,Comfortable,Just right,5,
+F040,U010,004,Barevis,Berry,Neutral,Light,Like it,Just right,Too dry,Too matte,4,"Texture, Finish"
+F041,U001,005,Nuea,Red,Olive,Light,Love it,Just right,Comfortable,Just right,5,
+F042,U002,005,Nuea,Red,Warm,Light,Like it,Too dark,Comfortable,Too glossy,4,"Color, Finish"
+F043,U003,005,Nuea,Red,Neutral,Medium,Not sure,Just right,Too dry,Just right,3,Texture
+F044,U004,005,Nuea,Red,Warm,Medium,Not for me,Too pale,Too sticky,Too glossy,2,"Color, Texture, Finish"
+F045,U005,005,Nuea,Red,Cool,Light,Like it,Too dark,Comfortable,Just right,3,Color
+F046,U006,005,Nuea,Red,Warm,Medium,Love it,Just right,Comfortable,Too glossy,5,Finish
+F047,U007,005,Nuea,Red,Neutral,Deep,Not sure,Too dark,Too thick,Just right,3,"Color, Texture"
+F048,U008,005,Nuea,Red,Cool,Medium,Not sure,Too pale,Comfortable,Just right,3,Color
+F049,U009,005,Nuea,Red,Olive,Medium,Love it,Just right,Comfortable,Just right,5,
+F050,U010,005,Nuea,Red,Neutral,Light,Like it,Just right,Too dry,Too matte,4,"Texture, Finish"
+F051,U001,006,Ronaa.,Nude Peach,Olive,Light,Love it,Just right,Comfortable,Just right,5,
+F052,U002,006,Ronaa.,Nude Peach,Warm,Light,Like it,Too dark,Comfortable,Too glossy,3,"Color, Finish"
+F053,U003,006,Ronaa.,Nude Peach,Neutral,Medium,Not sure,Just right,Too dry,Just right,3,Texture
+F054,U004,006,Ronaa.,Nude Peach,Warm,Medium,Not for me,Too pale,Too sticky,Too glossy,2,"Color, Texture, Finish"
+F055,U005,006,Ronaa.,Nude Peach,Cool,Light,Like it,Just right,Comfortable,Just right,4,
+F056,U006,006,Ronaa.,Nude Peach,Warm,Medium,Not sure,Just right,Comfortable,Too glossy,5,Finish
+F057,U007,006,Ronaa.,Nude Peach,Neutral,Deep,Like it,Too dark,Too thick,Just right,3,"Color, Texture"
+F058,U008,006,Ronaa.,Nude Peach,Cool,Medium,Not sure,Too pale,Comfortable,Just right,3,Color
+F059,U009,006,Ronaa.,Nude Peach,Olive,Medium,Love it,Just right,Comfortable,Just right,5,
+F060,U010,006,Ronaa.,Nude Peach,Neutral,Light,Like it,Just right,Too dry,Too matte,4,"Texture, Finish"
+F061,U001,007,Nuea,Pink Blush,Olive,Light,Love it,Just right,Comfortable,Just right,5,
+F062,U002,007,Nuea,Pink Blush,Warm,Light,Like it,Too dark,Comfortable,Too glossy,4,"Color, Finish"
+F063,U003,007,Nuea,Pink Blush,Neutral,Medium,Not sure,Just right,Too dry,Just right,3,Texture
+F064,U004,007,Nuea,Pink Blush,Warm,Medium,Not for me,Too pale,Too sticky,Too matte,2,"Color, Texture, Finish"
+F065,U005,007,Nuea,Pink Blush,Cool,Light,Not sure,Just right,Comfortable,Just right,4,
+F066,U006,007,Nuea,Pink Blush,Warm,Medium,Love it,Just right,Comfortable,Too glossy,5,Finish
+F067,U007,007,Nuea,Pink Blush,Neutral,Deep,Like it,Too dark,Too thick,Just right,3,"Color, Texture"
+F068,U008,007,Nuea,Pink Blush,Cool,Medium,Not sure,Too pale,Too thick,Just right,3,Color
+F069,U009,007,Nuea,Pink Blush,Olive,Medium,Love it,Just right,Comfortable,Just right,5,
+F070,U010,007,Nuea,Pink Blush,Neutral,Light,Like it,Just right,Too dry,Too matte,4,"Texture, Finish"
+F071,U001,008,Barevis,Pink Fun,Olive,Light,Love it,Just right,Comfortable,Just right,5,
+F072,U002,008,Barevis,Pink Fun,Warm,Light,Like it,Too dark,Comfortable,Too glossy,4,"Color, Finish"
+F073,U003,008,Barevis,Pink Fun,Neutral,Medium,Not sure,Just right,Too thick,Just right,3,Texture
+F074,U004,008,Barevis,Pink Fun,Warm,Medium,Not sure,Too pale,Too sticky,Too glossy,2,"Color, Texture, Finish"
+F075,U005,008,Barevis,Pink Fun,Cool,Light,Like it,Just right,Comfortable,Just right,4,
+F076,U006,008,Barevis,Pink Fun,Warm,Medium,Love it,Just right,Comfortable,Too glossy,5,Finish
+F077,U007,008,Barevis,Pink Fun,Neutral,Deep,Like it,Too dark,Too thick,Just right,3,"Color, Texture"
+F078,U008,008,Barevis,Pink Fun,Cool,Medium,Not sure,Too pale,Comfortable,Just right,3,Color
+F079,U009,008,Barevis,Pink Fun,Olive,Medium,Love it,Just right,Comfortable,Just right,5,
+F080,U010,008,Barevis,Pink Fun,Neutral,Light,Like it,Just right,Too dry,Too matte,4,"Texture, Finish"
+F081,U001,009,Nuea,Berry Pink,Olive,Light,Love it,Just right,Comfortable,Just right,5,
+F082,U002,009,Nuea,Berry Pink,Warm,Light,Like it,Too dark,Comfortable,Too glossy,4,"Color, Finish"
+F083,U003,009,Nuea,Berry Pink,Neutral,Medium,Not sure,Just right,Too dry,Just right,3,Texture
+F084,U004,009,Nuea,Berry Pink,Warm,Medium,Not for me,Too pale,Too sticky,Too glossy,2,"Color, Texture, Finish"
+F085,U005,009,Nuea,Berry Pink,Cool,Light,Like it,Just right,Comfortable,Just right,4,
+F086,U006,009,Nuea,Berry Pink,Warm,Medium,Love it,Just right,Comfortable,Too glossy,5,Finish
+F087,U007,009,Nuea,Berry Pink,Neutral,Deep,Like it,Too dark,Too thick,Just right,3,"Color, Texture"
+F088,U008,009,Nuea,Berry Pink,Cool,Medium,Not sure,Too pale,Comfortable,Just right,3,Color
+F089,U009,009,Nuea,Berry Pink,Olive,Medium,Love it,Just right,Comfortable,Just right,5,
+F090,U010,009,Nuea,Berry Pink,Neutral,Light,Like it,Too dark,Too dry,Too matte,3,"Texture, Finish"
+F091,U001,010,Ronaa.,Cherry Berry,Olive,Light,Love it,Just right,Comfortable,Just right,5,
+F092,U002,010,Ronaa.,Cherry Berry,Warm,Light,Not sure,Too dark,Comfortable,Too glossy,4,"Color, Finish"
+F093,U003,010,Ronaa.,Cherry Berry,Neutral,Medium,Not sure,Just right,Too dry,Just right,3,Texture
+F094,U004,010,Ronaa.,Cherry Berry,Warm,Medium,Not for me,Too pale,Too sticky,Too glossy,2,"Color, Texture, Finish"
+F095,U005,010,Ronaa.,Cherry Berry,Cool,Light,Like it,Just right,Comfortable,Just right,4,
+F096,U006,010,Ronaa.,Cherry Berry,Warm,Medium,Love it,Just right,Comfortable,Too matte,4,Finish
+F097,U007,010,Ronaa.,Cherry Berry,Neutral,Deep,Like it,Too dark,Too thick,Just right,3,"Color, Texture"
+F098,U008,010,Ronaa.,Cherry Berry,Cool,Medium,Not sure,Too pale,Comfortable,Just right,3,Color
+F099,U009,010,Ronaa.,Cherry Berry,Olive,Medium,Love it,Just right,Comfortable,Just right,5,
+F100,U010,010,Ronaa.,Cherry Berry,Neutral,Light,Like it,Just right,Too dry,Too matte,4,"Texture, Finish"
+F101,U001,011,Barevis,Burnt Terracotta,Olive,Light,Not sure,Just right,Comfortable,Just right,5,
+F102,U002,011,Barevis,Burnt Terracotta,Warm,Light,Like it,Too dark,Comfortable,Too glossy,4,"Color, Finish"
+F103,U003,011,Barevis,Burnt Terracotta,Neutral,Medium,Not sure,Just right,Too dry,Just right,3,Texture
+F104,U004,011,Barevis,Burnt Terracotta,Warm,Medium,Not for me,Too dark,Too sticky,Too glossy,2,"Color, Texture, Finish"
+F105,U005,011,Barevis,Burnt Terracotta,Cool,Light,Like it,Just right,Comfortable,Just right,4,
+F106,U006,011,Barevis,Burnt Terracotta,Warm,Medium,Love it,Just right,Comfortable,Too glossy,5,Finish
+F107,U007,011,Barevis,Burnt Terracotta,Neutral,Deep,Like it,Too dark,Too thick,Just right,3,"Color, Texture"
+F108,U008,011,Barevis,Burnt Terracotta,Cool,Medium,Not sure,Too pale,Comfortable,Just right,3,Color
+F109,U009,011,Barevis,Burnt Terracotta,Olive,Medium,Love it,Just right,Comfortable,Just right,5,
+F110,U010,011,Barevis,Burnt Terracotta,Neutral,Light,Like it,Just right,Too dry,Too matte,4,"Texture, Finish"
+F111,U001,012,Ronaa.,Coral,Olive,Light,Love it,Too dark,Comfortable,Just right,3,Color
+F112,U002,012,Ronaa.,Coral,Warm,Light,Like it,Too dark,Too thick,Too glossy,4,"Color, Finish"
+F113,U003,012,Ronaa.,Coral,Neutral,Medium,Not sure,Just right,Too dry,Just right,3,Texture
+F114,U004,012,Ronaa.,Coral,Warm,Medium,Not for me,Too pale,Too sticky,Too glossy,2,"Color, Texture, Finish"
+F115,U005,012,Ronaa.,Coral,Cool,Light,Like it,Just right,Comfortable,Just right,4,
+F116,U006,012,Ronaa.,Coral,Warm,Medium,Love it,Just right,Comfortable,Too glossy,5,Finish
+F117,U007,012,Ronaa.,Coral,Neutral,Deep,Like it,Too dark,Too thick,Just right,3,"Color, Texture"
+F118,U008,012,Ronaa.,Coral,Cool,Medium,Not sure,Too pale,Comfortable,Just right,3,Color
+F119,U009,012,Ronaa.,Coral,Olive,Medium,Love it,Just right,Comfortable,Just right,5,
+F120,U010,012,Ronaa.,Coral,Neutral,Light,Like it,Just right,Too dry,Too matte,4,"Texture, Finish"
+F121,U001,013,Nuea,Burgundy,Olive,Light,Love it,Just right,Comfortable,Just right,5,
+F122,U002,013,Nuea,Burgundy,Warm,Light,Like it,Too dark,Comfortable,Too glossy,4,"Color, Finish"
+F123,U003,013,Nuea,Burgundy,Neutral,Medium,Not sure,Just right,Too dry,Just right,3,Texture
+F124,U004,013,Nuea,Burgundy,Warm,Medium,Not for me,Too pale,Too sticky,Too glossy,2,"Color, Texture, Finish"
+F125,U005,013,Nuea,Burgundy,Cool,Light,Like it,Just right,Comfortable,Just right,4,
+F126,U006,013,Nuea,Burgundy,Warm,Medium,Love it,Just right,Comfortable,Too glossy,5,Finish
+F127,U007,013,Nuea,Burgundy,Neutral,Deep,Like it,Too dark,Too thick,Just right,3,"Color, Texture"
+F128,U008,013,Nuea,Burgundy,Cool,Medium,Not sure,Too pale,Comfortable,Too matte,3,Color
+F129,U009,013,Nuea,Burgundy,Olive,Medium,Love it,Just right,Comfortable,Just right,5,
+F130,U010,013,Nuea,Burgundy,Neutral,Light,Not sure,Just right,Too dry,Too matte,4,"Texture, Finish"
+F131,U001,014,Barevis,Cappucino,Olive,Light,Love it,Just right,Comfortable,Too matte,4,Finish
+F132,U002,014,Barevis,Cappucino,Warm,Light,Like it,Too dark,Comfortable,Too glossy,4,"Color, Finish"
+F133,U003,014,Barevis,Cappucino,Neutral,Medium,Not sure,Just right,Too dry,Just right,3,Texture
+F134,U004,014,Barevis,Cappucino,Warm,Medium,Not for me,Too pale,Too sticky,Too glossy,2,"Color, Texture, Finish"
+F135,U005,014,Barevis,Cappucino,Cool,Light,Like it,Just right,Comfortable,Just right,4,
+F136,U006,014,Barevis,Cappucino,Warm,Medium,Love it,Just right,Comfortable,Too glossy,5,Finish
+F137,U007,014,Barevis,Cappucino,Neutral,Deep,Like it,Too dark,Too thick,Just right,3,"Color, Texture"
+F138,U008,014,Barevis,Cappucino,Cool,Medium,Not sure,Too pale,Comfortable,Just right,3,Color
+F139,U009,014,Barevis,Cappucino,Olive,Medium,Not sure,Just right,Comfortable,Just right,5,
+F140,U010,014,Barevis,Cappucino,Neutral,Light,Like it,Just right,Too dry,Too matte,4,"Texture, Finish"
+F141,U001,015,Nuea,Jazz,Olive,Light,Love it,Just right,Comfortable,Just right,5,
+F142,U002,015,Nuea,Jazz,Warm,Light,Like it,Too dark,Comfortable,Too glossy,4,"Color, Finish"
+F143,U003,015,Nuea,Jazz,Neutral,Medium,Not sure,Just right,Too dry,Just right,3,Texture
+F144,U004,015,Nuea,Jazz,Warm,Medium,Not for me,Too pale,Too sticky,Too glossy,2,"Color, Texture, Finish"
+F145,U005,015,Nuea,Jazz,Cool,Light,Like it,Just right,Comfortable,Just right,4,
+F146,U006,015,Nuea,Jazz,Warm,Medium,Love it,Just right,Too thick,Too glossy,4,Finish
+F147,U007,015,Nuea,Jazz,Neutral,Deep,Like it,Too dark,Too thick,Just right,3,"Color, Texture"
+F148,U008,015,Nuea,Jazz,Cool,Medium,Not sure,Too pale,Comfortable,Just right,3,Color
+F149,U009,015,Nuea,Jazz,Olive,Medium,Love it,Too dark,Comfortable,Just right,3,Color
+F150,U010,015,Nuea,Jazz,Neutral,Light,Like it,Just right,Too dry,Too matte,4,"Texture, Finish"
+F151,U001,016,Ronaa.,Rose Pink,Olive,Light,Love it,Just right,Too thick,Just right,4,Texture
+F152,U002,016,Ronaa.,Rose Pink,Warm,Light,Like it,Too dark,Comfortable,Too glossy,4,"Color, Finish"
+F153,U003,016,Ronaa.,Rose Pink,Neutral,Medium,Not sure,Just right,Too dry,Just right,3,Texture
+F154,U004,016,Ronaa.,Rose Pink,Warm,Medium,Not for me,Too pale,Too sticky,Too glossy,2,"Color, Texture, Finish"
+F155,U005,016,Ronaa.,Rose Pink,Cool,Light,Like it,Just right,Comfortable,Just right,4,
+F156,U006,016,Ronaa.,Rose Pink,Warm,Medium,Love it,Too dark,Comfortable,Too glossy,3,Finish
+F157,U007,016,Ronaa.,Rose Pink,Neutral,Deep,Not sure,Too dark,Too thick,Just right,3,"Color, Texture"
+F158,U008,016,Ronaa.,Rose Pink,Cool,Medium,Not sure,Too pale,Comfortable,Just right,3,Color
+F159,U009,016,Ronaa.,Rose Pink,Olive,Medium,Love it,Just right,Comfortable,Just right,5,
+F160,U010,016,Ronaa.,Rose Pink,Neutral,Light,Like it,Just right,Too dry,Too matte,4,"Texture, Finish"
+F161,U001,017,Barevis,Latte,Olive,Light,Love it,Just right,Comfortable,Just right,5,
+F162,U002,017,Barevis,Latte,Warm,Light,Like it,Too dark,Comfortable,Too glossy,4,"Color, Finish"
+F163,U003,017,Barevis,Latte,Neutral,Medium,Not sure,Too dark,Too dry,Too matte,3,Texture
+F164,U004,017,Barevis,Latte,Warm,Medium,Not for me,Too pale,Too sticky,Too glossy,2,"Color, Texture, Finish"
+F165,U005,017,Barevis,Latte,Cool,Light,Like it,Just right,Comfortable,Just right,4,
+F166,U006,017,Barevis,Latte,Warm,Medium,Not sure,Just right,Comfortable,Too glossy,5,Finish
+F167,U007,017,Barevis,Latte,Neutral,Deep,Like it,Too dark,Too thick,Just right,3,"Color, Texture"
+F168,U008,017,Barevis,Latte,Cool,Medium,Not sure,Too pale,Comfortable,Just right,3,Color
+F169,U009,017,Barevis,Latte,Olive,Medium,Love it,Just right,Comfortable,Just right,5,
+F170,U010,017,Barevis,Latte,Neutral,Light,Like it,Just right,Too dry,Too matte,4,"Texture, Finish"
+F171,U001,018,Nuea,Dusty,Olive,Light,Love it,Just right,Comfortable,Just right,5,
+F172,U002,018,Nuea,Dusty,Warm,Light,Like it,Too dark,Comfortable,Too glossy,4,"Color, Finish"
+F173,U003,018,Nuea,Dusty,Neutral,Medium,Not sure,Just right,Too dry,Just right,3,Texture
+F174,U004,018,Nuea,Dusty,Warm,Medium,Not for me,Too pale,Too sticky,Too glossy,2,"Color, Texture, Finish"
+F175,U005,018,Nuea,Dusty,Cool,Light,Not sure,Just right,Comfortable,Just right,4,
+F176,U006,018,Nuea,Dusty,Warm,Medium,Love it,Just right,Comfortable,Too glossy,5,Finish
+F177,U007,018,Nuea,Dusty,Neutral,Deep,Like it,Too dark,Too thick,Just right,3,"Color, Texture"
+F178,U008,018,Nuea,Dusty,Cool,Medium,Not sure,Too pale,Comfortable,Just right,3,Color
+F179,U009,018,Nuea,Dusty,Olive,Medium,Love it,Just right,Comfortable,Just right,5,
+F180,U010,018,Nuea,Dusty,Neutral,Light,Like it,Just right,Too thick,Too matte,4,"Texture, Finish"
+F181,U001,019,Barevis,Peachy,Olive,Light,Love it,Just right,Comfortable,Just right,5,
+F182,U002,019,Barevis,Peachy,Warm,Light,Like it,Too dark,Comfortable,Too glossy,4,"Color, Finish"
+F183,U003,019,Barevis,Peachy,Neutral,Medium,Not sure,Just right,Too dry,Just right,3,Texture
+F184,U004,019,Barevis,Peachy,Warm,Medium,Not sure,Too pale,Too sticky,Too glossy,2,"Color, Texture, Finish"
+F185,U005,019,Barevis,Peachy,Cool,Light,Like it,Just right,Too thick,Just right,4,Texture
+F186,U006,019,Barevis,Peachy,Warm,Medium,Love it,Just right,Comfortable,Too glossy,5,Finish
+F187,U007,019,Barevis,Peachy,Neutral,Deep,Like it,Too dark,Too thick,Just right,3,"Color, Texture"
+F188,U008,019,Barevis,Peachy,Cool,Medium,Not sure,Too pale,Comfortable,Just right,3,Color
+F189,U009,019,Barevis,Peachy,Olive,Medium,Love it,Just right,Comfortable,Just right,5,
+F190,U010,019,Barevis,Peachy,Neutral,Light,Like it,Just right,Too dry,Too matte,4,"Texture, Finish"
+F191,U001,020,Ronaa.,Coral Pink,Olive,Light,Love it,Just right,Comfortable,Just right,5,
+F192,U002,020,Ronaa.,Coral Pink,Warm,Light,Like it,Too dark,Comfortable,Too glossy,4,"Color, Finish"
+F193,U003,020,Ronaa.,Coral Pink,Neutral,Medium,Not sure,Just right,Too dry,Just right,3,Texture
+F194,U004,020,Ronaa.,Coral Pink,Warm,Medium,Not for me,Too pale,Too sticky,Too glossy,2,"Color, Texture, Finish"
+F195,U005,020,Ronaa.,Coral Pink,Cool,Light,Like it,Just right,Comfortable,Too matte,4,Finish
+F196,U006,020,Ronaa.,Coral Pink,Warm,Medium,Love it,Just right,Comfortable,Too glossy,5,Finish
+F197,U007,020,Ronaa.,Coral Pink,Neutral,Deep,Like it,Too dark,Too thick,Just right,3,"Color, Texture"
+F198,U008,020,Ronaa.,Coral Pink,Cool,Medium,Not sure,Too pale,Comfortable,Just right,3,Color
+F199,U009,020,Ronaa.,Coral Pink,Olive,Medium,Love it,Just right,Comfortable,Just right,5,
+F200,U010,020,Ronaa.,Coral Pink,Neutral,Light,Like it,Just right,Too dry,Too matte,4,"Texture, Finish"
+F201,U001,021,Barevis,Rust Red,Olive,Light,Love it,Just right,Comfortable,Just right,5,
+F202,U002,021,Barevis,Rust Red,Warm,Light,Not sure,Too dark,Comfortable,Too glossy,4,"Color, Finish"
+F203,U003,021,Barevis,Rust Red,Neutral,Medium,Not sure,Just right,Too dry,Just right,3,Texture
+F204,U004,021,Barevis,Rust Red,Warm,Medium,Not for me,Too pale,Too sticky,Too glossy,2,"Color, Texture, Finish"
+F205,U005,021,Barevis,Rust Red,Cool,Light,Like it,Just right,Comfortable,Just right,4,
+F206,U006,021,Barevis,Rust Red,Warm,Medium,Love it,Just right,Comfortable,Too glossy,5,Finish
+F207,U007,021,Barevis,Rust Red,Neutral,Deep,Like it,Too dark,Too thick,Just right,3,"Color, Texture"
+F208,U008,021,Barevis,Rust Red,Cool,Medium,Not sure,Too dark,Comfortable,Just right,3,Color
+F209,U009,021,Barevis,Rust Red,Olive,Medium,Love it,Just right,Comfortable,Just right,5,
+F210,U010,021,Barevis,Rust Red,Neutral,Light,Like it,Just right,Too dry,Too matte,4,"Texture, Finish"
+F211,U001,022,Nuea,Tomato Red,Olive,Light,Not sure,Just right,Comfortable,Just right,5,
+F212,U002,022,Nuea,Tomato Red,Warm,Light,Like it,Too dark,Comfortable,Too glossy,4,"Color, Finish"
+F213,U003,022,Nuea,Tomato Red,Neutral,Medium,Not sure,Just right,Too dry,Just right,3,Texture
+F214,U004,022,Nuea,Tomato Red,Warm,Medium,Not for me,Too pale,Too sticky,Too glossy,2,"Color, Texture, Finish"
+F215,U005,022,Nuea,Tomato Red,Cool,Light,Like it,Too dark,Comfortable,Just right,3,Color
+F216,U006,022,Nuea,Tomato Red,Warm,Medium,Love it,Just right,Comfortable,Too glossy,5,Finish
+F217,U007,022,Nuea,Tomato Red,Neutral,Deep,Like it,Too dark,Too thick,Just right,3,"Color, Texture"
+F218,U008,022,Nuea,Tomato Red,Cool,Medium,Not sure,Too pale,Comfortable,Just right,3,Color
+F219,U009,022,Nuea,Tomato Red,Olive,Medium,Love it,Just right,Too thick,Just right,4,Texture
+F220,U010,022,Nuea,Tomato Red,Neutral,Light,Like it,Just right,Too dry,Too matte,4,"Texture, Finish"
+F221,U001,023,Ronaa.,Deep Berry,Olive,Light,Love it,Just right,Comfortable,Just right,5,
+F222,U002,023,Ronaa.,Deep Berry,Warm,Light,Like it,Too dark,Comfortable,Too glossy,3,"Color, Finish"
+F223,U003,023,Ronaa.,Deep Berry,Neutral,Medium,Not sure,Just right,Too dry,Just right,3,Texture
+F224,U004,023,Ronaa.,Deep Berry,Warm,Medium,Not for me,Too pale,Too thick,Too glossy,2,"Color, Texture, Finish"
+F225,U005,023,Ronaa.,Deep Berry,Cool,Light,Like it,Just right,Comfortable,Just right,4,
+F226,U006,023,Ronaa.,Deep Berry,Warm,Medium,Love it,Just right,Comfortable,Too glossy,5,Finish
+F227,U007,023,Ronaa.,Deep Berry,Neutral,Deep,Like it,Too dark,Too thick,Too matte,3,"Color, Texture"
+F228,U008,023,Ronaa.,Deep Berry,Cool,Medium,Not sure,Too pale,Comfortable,Just right,3,Color
+F229,U009,023,Ronaa.,Deep Berry,Olive,Medium,Love it,Just right,Comfortable,Just right,5,
+F230,U010,023,Ronaa.,Deep Berry,Neutral,Light,Like it,Just right,Too dry,Too matte,4,"Texture, Finish"
+F231,U001,024,Nuea,Terracotta,Olive,Light,Love it,Just right,Comfortable,Just right,5,
+F232,U002,024,Nuea,Terracotta,Warm,Light,Like it,Too dark,Comfortable,Too glossy,4,"Color, Finish"
+F233,U003,024,Nuea,Terracotta,Neutral,Medium,Not sure,Just right,Too dry,Just right,3,Texture
+F234,U004,024,Nuea,Terracotta,Warm,Medium,Not for me,Too pale,Too sticky,Too glossy,2,"Color, Texture, Finish"
+F235,U005,024,Nuea,Terracotta,Cool,Light,Like it,Just right,Comfortable,Just right,4,
+F236,U006,024,Nuea,Terracotta,Warm,Medium,Love it,Just right,Comfortable,Too glossy,5,Finish
+F237,U007,024,Nuea,Terracotta,Neutral,Deep,Like it,Too dark,Too thick,Just right,3,"Color, Texture"
+F238,U008,024,Nuea,Terracotta,Cool,Medium,Not sure,Too pale,Comfortable,Just right,3,Color
+F239,U009,024,Nuea,Terracotta,Olive,Medium,Love it,Just right,Comfortable,Just right,5,
+F240,U010,024,Nuea,Terracotta,Neutral,Light,Not sure,Just right,Too dry,Too matte,4,"Texture, Finish"
+F241,U001,025,Nuea,Light Pink,Olive,Light,Love it,Just right,Comfortable,Just right,5,
+F242,U002,025,Nuea,Light Pink,Warm,Light,Like it,Too dark,Comfortable,Too glossy,4,"Color, Finish"
+F243,U003,025,Nuea,Light Pink,Neutral,Medium,Not sure,Just right,Too dry,Just right,3,Texture
+F244,U004,025,Nuea,Light Pink,Warm,Medium,Not for me,Too pale,Too sticky,Too glossy,2,"Color, Texture, Finish"
+F245,U005,025,Nuea,Light Pink,Cool,Light,Like it,Just right,Comfortable,Just right,4,
+F246,U006,025,Nuea,Light Pink,Warm,Medium,Love it,Just right,Comfortable,Too glossy,5,Finish
+F247,U007,025,Nuea,Light Pink,Neutral,Deep,Like it,Too dark,Too thick,Just right,3,"Color, Texture"
+F248,U008,025,Nuea,Light Pink,Cool,Medium,Not sure,Too pale,Comfortable,Just right,3,Color
+F249,U009,025,Nuea,Light Pink,Olive,Medium,Not sure,Just right,Comfortable,Just right,5,
+F250,U010,025,Nuea,Light Pink,Neutral,Light,Like it,Just right,Too dry,Too matte,4,"Texture, Finish"
+F251,U001,026,Ronaa.,Plum,Olive,Light,Love it,Just right,Comfortable,Just right,5,
+F252,U002,026,Ronaa.,Plum,Warm,Light,Like it,Too dark,Comfortable,Too glossy,4,"Color, Finish"
+F253,U003,026,Ronaa.,Plum,Neutral,Medium,Not sure,Just right,Too dry,Just right,3,Texture
+F254,U004,026,Ronaa.,Plum,Warm,Medium,Not for me,Too pale,Too sticky,Too glossy,2,"Color, Texture, Finish"
+F255,U005,026,Ronaa.,Plum,Cool,Light,Like it,Just right,Comfortable,Just right,4,
+F256,U006,026,Ronaa.,Plum,Warm,Medium,Love it,Just right,Comfortable,Too glossy,5,Finish
+F257,U007,026,Ronaa.,Plum,Neutral,Deep,Like it,Too dark,Too thick,Just right,3,"Color, Texture"
+F258,U008,026,Ronaa.,Plum,Cool,Medium,Not sure,Too pale,Too thick,Just right,3,Color
+F259,U009,026,Ronaa.,Plum,Olive,Medium,Love it,Just right,Comfortable,Too matte,4,Finish
+F260,U010,026,Ronaa.,Plum,Neutral,Light,Like it,Too dark,Too dry,Too matte,3,"Texture, Finish"
+F261,U001,027,Barevis,Roast Pink,Olive,Light,Love it,Just right,Comfortable,Just right,5,
+F262,U002,027,Barevis,Roast Pink,Warm,Light,Like it,Too dark,Comfortable,Too matte,4,"Color, Finish"
+F263,U003,027,Barevis,Roast Pink,Neutral,Medium,Not sure,Just right,Too thick,Just right,3,Texture
+F264,U004,027,Barevis,Roast Pink,Warm,Medium,Not for me,Too pale,Too sticky,Too glossy,2,"Color, Texture, Finish"
+F265,U005,027,Barevis,Roast Pink,Cool,Light,Like it,Just right,Comfortable,Just right,4,
+F266,U006,027,Barevis,Roast Pink,Warm,Medium,Love it,Just right,Comfortable,Too glossy,5,Finish
+F267,U007,027,Barevis,Roast Pink,Neutral,Deep,Not sure,Too dark,Too thick,Just right,3,"Color, Texture"
+F268,U008,027,Barevis,Roast Pink,Cool,Medium,Not sure,Too pale,Comfortable,Just right,3,Color
+F269,U009,027,Barevis,Roast Pink,Olive,Medium,Love it,Just right,Comfortable,Just right,5,
+F270,U010,027,Barevis,Roast Pink,Neutral,Light,Like it,Just right,Too dry,Too matte,4,"Texture, Finish"
+F271,U001,028,Barevis,Milk Tea,Olive,Light,Love it,Just right,Comfortable,Just right,5,
+F272,U002,028,Barevis,Milk Tea,Warm,Light,Like it,Too dark,Comfortable,Too glossy,4,"Color, Finish"
+F273,U003,028,Barevis,Milk Tea,Neutral,Medium,Not sure,Just right,Too dry,Just right,3,Texture
+F274,U004,028,Barevis,Milk Tea,Warm,Medium,Not for me,Too dark,Too sticky,Too glossy,2,"Color, Texture, Finish"
+F275,U005,028,Barevis,Milk Tea,Cool,Light,Like it,Just right,Comfortable,Just right,4,
+F276,U006,028,Barevis,Milk Tea,Warm,Medium,Not sure,Just right,Comfortable,Too glossy,5,Finish
+F277,U007,028,Barevis,Milk Tea,Neutral,Deep,Like it,Too dark,Too thick,Just right,3,"Color, Texture"
+F278,U008,028,Barevis,Milk Tea,Cool,Medium,Not sure,Too pale,Comfortable,Just right,3,Color
+F279,U009,028,Barevis,Milk Tea,Olive,Medium,Love it,Just right,Comfortable,Just right,5,
+F280,U010,028,Barevis,Milk Tea,Neutral,Light,Like it,Just right,Too dry,Too matte,4,"Texture, Finish"
+F281,U001,029,Nuea,Ruby Red,Olive,Light,Love it,Too dark,Comfortable,Just right,3,Color
+F282,U002,029,Nuea,Ruby Red,Warm,Light,Like it,Too dark,Comfortable,Too glossy,4,"Color, Finish"
+F283,U003,029,Nuea,Ruby Red,Neutral,Medium,Not sure,Just right,Too dry,Just right,3,Texture
+F284,U004,029,Nuea,Ruby Red,Warm,Medium,Not for me,Too pale,Too sticky,Too glossy,2,"Color, Texture, Finish"
+F285,U005,029,Nuea,Ruby Red,Cool,Light,Not sure,Just right,Comfortable,Just right,4,
+F286,U006,029,Nuea,Ruby Red,Warm,Medium,Love it,Just right,Comfortable,Too glossy,5,Finish
+F287,U007,029,Nuea,Ruby Red,Neutral,Deep,Like it,Too dark,Too thick,Just right,3,"Color, Texture"
+F288,U008,029,Nuea,Ruby Red,Cool,Medium,Not sure,Too pale,Comfortable,Just right,3,Color
+F289,U009,029,Nuea,Ruby Red,Olive,Medium,Love it,Just right,Comfortable,Just right,5,
+F290,U010,029,Nuea,Ruby Red,Neutral,Light,Like it,Just right,Too dry,Too matte,4,"Texture, Finish"
+F291,U001,030,Nuea,Orange Blaze,Olive,Light,Love it,Just right,Comfortable,Just right,5,
+F292,U002,030,Nuea,Orange Blaze,Warm,Light,Like it,Too dark,Comfortable,Too glossy,4,"Color, Finish"
+F293,U003,030,Nuea,Orange Blaze,Neutral,Medium,Not sure,Just right,Too dry,Just right,3,Texture
+F294,U004,030,Nuea,Orange Blaze,Warm,Medium,Not sure,Too pale,Too sticky,Too matte,2,"Color, Texture, Finish"
+F295,U005,030,Nuea,Orange Blaze,Cool,Light,Like it,Just right,Comfortable,Just right,4,
+F296,U006,030,Nuea,Orange Blaze,Warm,Medium,Love it,Just right,Comfortable,Too glossy,5,Finish
+F297,U007,030,Nuea,Orange Blaze,Neutral,Deep,Like it,Too dark,Too thick,Just right,3,"Color, Texture"
+F298,U008,030,Nuea,Orange Blaze,Cool,Medium,Not sure,Too pale,Comfortable,Just right,3,Color
+F299,U009,030,Nuea,Orange Blaze,Olive,Medium,Love it,Just right,Comfortable,Just right,5,
+F300,U010,030,Nuea,Orange Blaze,Neutral,Light,Like it,Just right,Too dry,Too matte,4,"Texture, Finish"

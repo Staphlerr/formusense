@@ -1,0 +1,31 @@
+shade_id,Brand,name,color_family,hex,undertone_fit,intensity,finish
+001,Barevis,Caramel,Orange,#d5755c,Olive,Medium,Glasting
+002,Nuea,Peach,Pink,#da6c66,Warm,Soft,Glasting
+003,Ronaa.,Maple,Orange,#c4523f,Warm,Medium,Glasting
+004,Barevis,Berry,Pink,#b85258,Cool,Medium,Glasting
+005,Nuea,Red,Red,#ae0a19,Neutral,Deep,Glasting
+006,Ronaa.,Nude Peach,Nude,#d08a80,Warm,Soft,Glasting
+007,Nuea,Pink Blush,Pink,#cf5b6f,Cool,Soft,Glasting
+008,Barevis,Pink Fun,Pink,#f4779e,Cool,Medium,Matte
+009,Nuea,Berry Pink,Pink,#ca616c,Cool,Medium,Matte
+010,Ronaa.,Cherry Berry,Red,#c6222b,Cool,Deep,Matte
+011,Barevis,Burnt Terracotta,Brown,#c85e4b,Warm,Deep,Matte
+012,Ronaa.,Coral,Orange,#e5796a,Warm,Medium,Matte
+013,Nuea,Burgundy,Red,#580e16,Cool,Deep,Matte
+014,Barevis,Cappucino,Brown,#b15444,Olive,Medium,Matte
+015,Nuea,Jazz,Red,#a3403b,Neutral,Deep,Matte
+016,Ronaa.,Rose Pink,Pink,#de7b8d,Cool,Medium,Matte
+017,Barevis,Latte,Nude,#cf9a92,Olive,Soft,Matte
+018,Nuea,Dusty,Nude,#cc8e8f,Neutral,Medium,Matte
+019,Barevis,Peachy,Peach,#ea827a,Cool,Medium,Glossy
+020,Ronaa.,Coral Pink,Pink,#c5404f,Warm,Medium,Glossy
+021,Barevis,Rust Red,Red,#be4441,Warm,Deep,Matte
+022,Nuea,Tomato Red,Red,#f85847,Warm,Deep,Matte
+023,Ronaa.,Deep Berry,Red,#6b2237,Cool,Deep,Matte
+024,Nuea,Terracotta,Brown,#b1623f,Olive,Medium,Glossy
+025,Nuea,Light Pink,Pink,#f37e87,Cool,Soft,Glossy
+026,Ronaa.,Plum,Red,#791c23,Cool,Deep,Glossy
+027,Barevis,Roast Pink,Pink,#f34156,Olive,Medium,Matte
+028,Barevis,Milk Tea,Orange,#b75d41,Olive,Soft,Glossy
+029,Nuea,Ruby Red,Red,#ae3e47,Neutral,Deep,Glossy
+030,Nuea,Orange Blaze,Orange,#cb5600,Warm,Deep,Glossy
