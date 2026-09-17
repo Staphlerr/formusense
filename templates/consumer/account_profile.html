@@ -47,13 +47,13 @@
 
   <section class="account-section" aria-labelledby="saved-photos-title">
     <div class="account-section-head"><div><span class="eyebrow">Riwayat pratinjau</span><h2 id="saved-photos-title">Foto hasil shade</h2></div></div>
-    <p class="fine-print">Foto hanya masuk riwayat saat kamu memilih “Simpan foto hasil ke profil” di halaman rekomendasi. Foto asli yang dipakai untuk analisis tidak otomatis disimpan.</p>
+    <p class="fine-print">Foto hanya masuk riwayat saat kamu memilih “Simpan foto hasil ke profil” di halaman rekomendasi. Foto asli yang dipakai untuk analisis tidak otomatis disimpan. Keterangan tiap foto hanya untuk mengenali riwayat, bukan untuk menghitung ulang rekomendasi.</p>
     {% if saved_photos %}
     <div class="account-photo-grid">
       {% for photo in saved_photos %}
       <article class="card account-photo-card">
         <img src="{% url 'consumer:profile_photo' photo.pk %}" alt="Foto hasil mencoba shade {{ photo.shade_name }}" loading="lazy">
-        <div><strong>{{ photo.shade_name }}</strong><small>{{ photo.created_at|date:'d M Y, H:i' }}</small>
+        <div><strong>{{ photo.nickname|default:'Nama belum diisi' }}</strong><small>Shade: {{ photo.shade_name }}</small><small>{% if photo.age_range %}{{ photo.get_age_range_display }}{% else %}Usia belum diisi{% endif %} · {% if photo.region %}{{ photo.get_region_display }}{% else %}Wilayah belum diisi{% endif %}</small><small>{{ photo.created_at|date:'d M Y, H:i' }}</small>
           <form method="post" action="{% url 'consumer:delete_photo' photo.pk %}">{% csrf_token %}<button class="button secondary" type="submit">Hapus foto</button></form>
         </div>
       </article>

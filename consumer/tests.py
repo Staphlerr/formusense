@@ -56,7 +56,9 @@ class DemoFlowTests(TestCase):
         self.assertEqual(len(picks), 3)
         self.assertNotIn("SHD009", {pick["shade_id"] for pick in picks})
         recommendation_page = self.client.get(reverse("consumer:recommendations"))
-        self.assertContains(recommendation_page, "Coba shade lipstik di fotomu")
+        self.assertContains(recommendation_page, "Kami menemukan")
+        self.assertContains(recommendation_page, "Coba warnanya di fotomu")
+        self.assertLess(recommendation_page.content.index(b'class="match-grid"'), recommendation_page.content.index(b'id="tryon"'))
         self.assertContains(recommendation_page, "swatch publik")
         shade_id = picks[0]["shade_id"]
         response = self.client.post(reverse("consumer:feedback", args=[shade_id]), {
@@ -544,13 +546,18 @@ class AccountCollectionTests(TestCase):
         upload = SimpleUploadedFile("hasil.png", image.getvalue(), content_type="image/png")
         response = self.client.post(reverse("consumer:save_photo"), {
             "shade_id": "SHD001", "photo": upload,
+            "nickname": "Maya", "age_range": "25_34", "region": "West Java",
         })
         self.assertEqual(response.status_code, 200)
         entry = SavedPhoto.objects.get(user=self.owner)
         self.assertTrue(entry.image_jpeg.startswith(b"\xff\xd8"))
+        self.assertEqual((entry.nickname, entry.age_range, entry.region),
+                         ("Maya", "25_34", "West Java"))
         photo_url = reverse("consumer:profile_photo", args=[entry.pk])
         self.assertEqual(self.client.get(photo_url).status_code, 200)
         self.assertContains(self.client.get(reverse("consumer:account_profile")), photo_url)
+        self.assertContains(self.client.get(reverse("consumer:account_profile")), "Maya")
+        self.assertContains(self.client.get(reverse("consumer:account_profile")), "Jawa Barat")
         self.client.force_login(self.other)
         self.assertEqual(self.client.get(photo_url).status_code, 404)
         self.assertEqual(self.client.post(reverse("consumer:delete_photo", args=[entry.pk])).status_code, 404)
@@ -558,6 +565,29 @@ class AccountCollectionTests(TestCase):
         self.assertRedirects(self.client.post(reverse("consumer:delete_photo", args=[entry.pk])),
                              reverse("consumer:account_profile"))
         self.assertFalse(SavedPhoto.objects.exists())
+
+    def test_photo_labels_are_snapshots_per_photo(self):
+        from django.core.files.uploadedfile import SimpleUploadedFile
+        from PIL import Image
+
+        image = io.BytesIO()
+        Image.new("RGB", (32, 32), "#b05f49").save(image, format="PNG")
+        for shade_id, nickname, age_range, region in [
+            ("SHD001", "Maya", "25_34", "West Java"),
+            ("SHD002", "Rani", "18_24", "Jakarta"),
+        ]:
+            upload = SimpleUploadedFile("hasil.png", image.getvalue(), content_type="image/png")
+            response = self.client.post(reverse("consumer:save_photo"), {
+                "shade_id": shade_id, "photo": upload, "nickname": nickname,
+                "age_range": age_range, "region": region,
+            })
+            self.assertEqual(response.status_code, 200)
+        photos = list(SavedPhoto.objects.filter(user=self.owner).order_by("pk"))
+        self.assertEqual([(photo.nickname, photo.age_range, photo.region, photo.shade_id)
+                          for photo in photos], [
+            ("Maya", "25_34", "West Java", "SHD001"),
+            ("Rani", "18_24", "Jakarta", "SHD002"),
+        ])
 
     def test_photo_history_rejects_non_image(self):
         from django.core.files.uploadedfile import SimpleUploadedFile

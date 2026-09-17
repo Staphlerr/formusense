@@ -6,61 +6,68 @@
 
   <!-- ============ LIST VIEW ============ -->
   <div id="recs-list-view">
-    <span class="eyebrow">Dari katalog shade contoh</span>
-    <h1>Tiga cara memakai shade favoritmu</h1>
-    <p class="lead">Pilihan diurutkan dari profil dan preferensimu. Kecocokan warna tetap perlu dicoba langsung.</p>
+    <div class="match-intro"><span class="eyebrow">Pilihan warna untukmu</span>
+      <h1>Kami menemukan <em>3 shade</em> untukmu.</h1>
+      <p class="lead">Dari warna sehari-hari sampai tampilan yang lebih berani. Pilihan ini diurutkan dari profil dan seleramu; hasil akhirnya tetap perlu dicoba langsung.</p>
+    </div>
 
-    <section class="card tryon" id="tryon" data-photo-scanned="{{ photo_scanned|yesno:'true,false' }}" data-save-photo-url="{% url 'consumer:save_photo' %}">
+    <div class="match-grid" aria-label="Tiga rekomendasi shade">
+      {% for shade in picks %}
+      <article class="shade-card match-card {% if forloop.first %}is-selected-shade{% endif %}" data-detail-card="detail-{{ forloop.counter0 }}" data-note="{{ shade.display_note }}" data-note-source="{{ shade.display_note_source }}">
+        <div class="match-swatch" style="background:{{ shade.hex }}" aria-hidden="true"><span class="match-index">0{{ forloop.counter }}</span><span class="match-swatch-glow"></span></div>
+        <div class="match-body">
+          <span class="match-role">{{ shade.role_label }}</span>
+          <h2>{{ shade.shade_name }}</h2>
+          <p class="match-attributes">{{ shade.color_family|title }} · {{ shade.finish|title }} · {{ shade.intensity|title }}</p>
+          <p class="match-reason">{{ shade.reason|truncatewords:21 }}</p>
+          {% if shade.affinity.sample %}<p class="match-affinity">{{ shade.affinity.positive }} dari {{ shade.affinity.sample }} profil serupa menyukai warna ini</p>{% endif %}
+          <div class="match-actions">
+            <button type="button" class="button" data-tryon-shade data-id="{{ shade.shade_id }}" data-hex="{{ shade.hex }}" data-name="{{ shade.shade_name }}" data-select-preview="detail-{{ forloop.counter0 }}" aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}">Coba shade</button>
+            <button type="button" class="button secondary explore-btn" data-open-detail="detail-{{ forloop.counter0 }}">Jelajahi shade</button>
+          </div>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+
+    <section class="card tryon" id="tryon" data-photo-scanned="{{ photo_scanned|yesno:'true,false' }}" data-save-photo-url="{% url 'consumer:save_photo' %}" hidden>
       {{ lip_points|json_script:"lip-points-data" }}
       {{ lip_contours|json_script:"lip-contours-data" }}
       {{ public_examples|json_script:"public-examples-data" }}
-      <span class="eyebrow">Pratinjau virtual · simulasi warna</span>
-      <h2>Coba shade lipstik di fotomu</h2>
-      <p>Foto dari scan akan muncul di sini dalam tab browser ini. Kontur bibir dicari otomatis; jika belum pas, kamu bisa menandai sisi kiri, atas, kanan, dan bawah bibir. Setelah itu kamu bisa mengganti warna. Tampilan ini adalah simulasi visual; warna akhir produk perlu dicoba langsung.</p>
+      <div class="tryon-heading"><div><span class="eyebrow">Pratinjau virtual</span><h2>Coba warnanya di fotomu</h2><p>Simulasi warna membantu membayangkan hasilnya. Warna produk asli bisa berbeda saat dipakai.</p></div><button type="button" class="tryon-close" id="tryon-close" aria-label="Tutup pratinjau">✕</button></div>
 
       <div class="tryon-layout">
         <div class="lab-photo-panel">
-          <label for="tryon-upload">Kalau foto belum muncul, pilih selfie untuk pratinjau lokal</label>
-          <input id="tryon-upload" type="file" accept="image/jpeg,image/png">
-          <p class="fine-print">Foto yang dipilih di sini hanya diproses di browser untuk pratinjau dan tidak dikirim ke server.</p>
-          <div class="tryon-canvas-wrap"><canvas id="tryon-canvas" aria-label="Pratinjau foto dengan shade lipstik" hidden></canvas><p id="tryon-empty">Belum ada foto. Ambil foto pada langkah scan atau pilih selfie di atas.</p></div>
+          <div class="tryon-canvas-wrap"><canvas id="tryon-canvas" aria-label="Pratinjau foto dengan shade lipstik" hidden></canvas><p id="tryon-empty">Belum ada foto. Ambil foto pada langkah scan atau pilih selfie di bawah.</p></div>
           <p id="tryon-status" class="fine-print" role="status">Jika titik bibir belum terdeteksi, klik empat titik pada foto untuk menerapkan warna.</p>
-          <div class="actions"><button class="button secondary" id="tryon-align" type="button" disabled>Atur posisi bibir</button><button class="button secondary" id="tryon-download" type="button" disabled>Unduh pratinjau</button><button class="button" id="tryon-save-profile" type="button" disabled>Simpan foto hasil ke profil</button><a class="button secondary" href="{% url 'consumer:account_profile' %}">Lihat profil</a><button class="button secondary" id="tryon-clear" type="button" disabled>Hapus foto</button></div>
-          <p class="fine-print">Foto hasil hanya tersimpan di akun jika kamu menekan “Simpan foto hasil ke profil”. Maksimal 8 foto; kamu bisa menghapusnya dari profil.</p>
+          <label for="tryon-upload">Gunakan selfie lain</label>
+          <input id="tryon-upload" type="file" accept="image/jpeg,image/png">
+          <p class="fine-print">Selfie untuk pratinjau diproses di browser dan tidak dikirim ke server.</p>
         </div>
 
-        <div>
-          <h3 style="margin-top:0">Pilihan shade untukmu</h3>
-          <p class="fine-print" style="margin-bottom:14px">Klik “Coba shade” untuk mengganti warna di fotomu. Klik “Jelajahi shade” untuk membuka informasi lengkap shade itu.</p>
-
-          <div class="stack" style="gap:12px">
-            {% for shade in picks %}
-            <article class="shade-card archetype-card {% if forloop.first %}is-selected-shade{% endif %}" data-detail-card="detail-{{ forloop.counter0 }}" data-note="{{ shade.display_note }}" data-note-source="{{ shade.display_note_source }}" style="display:flex;flex-direction:row;align-items:stretch">
-              <div class="rec-row-swatch" aria-hidden="true"
-                style="width:96px;flex:none;border:0;padding:0;background:{{ shade.hex }};position:relative">
-              </div>
-              <div class="shade-body" style="padding:16px 18px;flex:1">
-                <div class="archetype-top">
-                  <small>{{ shade.role_label }}</small>
-                  {% if shade.affinity.sample %}<span class="badge badge-ok">{{ shade.affinity.positive }}/{{ shade.affinity.sample }}</span>{% endif %}
-                </div>
-                <h2 style="font-size:1.15rem">{{ shade.shade_name }}</h2>
-                <p style="font-size:.85rem">{{ shade.reason|truncatewords:16 }}</p>
-                <div class="rec-row-actions">
-                  <button type="button" class="button secondary" data-tryon-shade data-id="{{ shade.shade_id }}" data-hex="{{ shade.hex }}" data-name="{{ shade.shade_name }}" data-select-preview="detail-{{ forloop.counter0 }}" aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}">Coba shade</button>
-                  <button type="button" class="button secondary explore-btn" data-open-detail="detail-{{ forloop.counter0 }}">Jelajahi shade</button>
-                </div>
-              </div>
-            </article>
-            {% endfor %}
-          </div>
-
-          <label for="tryon-opacity" style="margin-top:18px">Kekuatan warna <output id="tryon-opacity-value">55%</output></label>
+        <div class="tryon-controls">
+          <span class="eyebrow">Sedang dicoba</span>
+          <div class="tryon-current"><span id="tryon-current-swatch" style="background:{{ picks.0.hex }}" aria-hidden="true"></span><strong id="tryon-current-name">{{ picks.0.shade_name }}</strong></div>
+          <p class="fine-print">Ganti shade kapan saja:</p>
+          <div class="tryon-quick-picks">{% for shade in picks %}<button type="button" data-quick-shade="detail-{{ forloop.counter0 }}" {% if forloop.first %}aria-pressed="true"{% else %}aria-pressed="false"{% endif %}><span style="background:{{ shade.hex }}" aria-hidden="true"></span>{{ shade.shade_name }}</button>{% endfor %}</div>
+          <label for="tryon-opacity">Kekuatan warna <output id="tryon-opacity-value">55%</output></label>
           <input id="tryon-opacity" type="range" min="20" max="90" value="55">
+          <div class="photo-metadata">
+            <h3>Catatan foto ini</h3>
+            <p class="fine-print">Kalau fotonya milik orang lain, ubah keterangannya sebelum menyimpan. Ini hanya label riwayat; rekomendasi tetap mengikuti profil analisis terakhir.</p>
+            <div class="photo-metadata-fields">
+              <div><label for="{{ photo_metadata_form.nickname.id_for_label }}">Nama panggilan</label>{{ photo_metadata_form.nickname }}</div>
+              <div><label for="{{ photo_metadata_form.age_range.id_for_label }}">Rentang usia</label>{{ photo_metadata_form.age_range }}</div>
+              <div><label for="{{ photo_metadata_form.region.id_for_label }}">Wilayah</label>{{ photo_metadata_form.region }}</div>
+            </div>
+            <p class="fine-print">Shade yang dipakai tercatat otomatis saat foto disimpan.</p>
+          </div>
+          <div class="tryon-action-list"><button class="button" id="tryon-save-profile" type="button" disabled>Simpan foto hasil ke profil</button><button class="button secondary" id="tryon-download" type="button" disabled>Unduh pratinjau</button></div>
+          <details class="tryon-more"><summary>Pengaturan foto lainnya</summary><div class="actions"><button class="button secondary" id="tryon-align" type="button" disabled>Atur posisi bibir</button><button class="button secondary" id="tryon-clear" type="button" disabled>Hapus foto</button><a class="button secondary" href="{% url 'consumer:account_profile' %}">Lihat profil</a></div><p class="fine-print">Jika kontur bibir belum pas, tandai sisi kiri, atas, kanan, lalu bawah bibir. Foto hasil hanya tersimpan di akun jika kamu memilih “Simpan foto hasil ke profil”.</p></details>
         </div>
       </div>
     </section>
-    <script src="{% static 'js/tryon.js' %}" defer></script>
+    <script src="{% static 'js/tryon.js' %}?v=20260918-photo-tags" defer></script>
 
     <div class="card note"><span class="eyebrow" id="selected-note-source">{{ picks.0.display_note_source }}</span><p id="selected-note-text">{{ picks.0.display_note }}</p></div>
 
@@ -189,6 +196,7 @@
   const shadeCards = [...document.querySelectorAll('[data-detail-card]')];
   const noteSource = document.querySelector('#selected-note-source');
   const noteText = document.querySelector('#selected-note-text');
+  const tryonPanel = document.querySelector('#tryon');
   let listScrollY = 0;
   function selectPreview(id) {
     const selectedCard = shadeCards.find((card) => card.dataset.detailCard === id);
@@ -199,6 +207,12 @@
     });
     noteSource.textContent = selectedCard.dataset.noteSource;
     noteText.textContent = selectedCard.dataset.note;
+    const shadeButton = selectedCard.querySelector('[data-select-preview]');
+    document.querySelector('#tryon-current-name').textContent = shadeButton.dataset.name;
+    document.querySelector('#tryon-current-swatch').style.background = shadeButton.dataset.hex;
+    document.querySelectorAll('[data-quick-shade]').forEach((button) => button.setAttribute('aria-pressed', String(button.dataset.quickShade === id)));
+    tryonPanel.hidden = false;
+    requestAnimationFrame(() => tryonPanel.scrollIntoView({ behavior: 'smooth', block: 'start' }));
   }
   function openDetail(id) {
     const selectedPanel = panels.find((panel) => panel.id === id);
@@ -214,13 +228,19 @@
     window.scrollTo({ top: listScrollY, behavior: 'auto' });
   }
   document.querySelectorAll('[data-select-preview]').forEach((btn) => btn.addEventListener('click', () => selectPreview(btn.dataset.selectPreview)));
+  document.querySelectorAll('[data-quick-shade]').forEach((btn) => btn.addEventListener('click', () => {
+    shadeCards.find((card) => card.dataset.detailCard === btn.dataset.quickShade)?.querySelector('[data-select-preview]')?.click();
+  }));
+  document.querySelector('#tryon-close')?.addEventListener('click', () => {
+    tryonPanel.hidden = true;
+    document.querySelector('.match-grid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
   document.querySelectorAll('[data-open-detail]').forEach((btn) => btn.addEventListener('click', () => openDetail(btn.dataset.openDetail)));
   document.querySelectorAll('[data-close-detail]').forEach((btn) => btn.addEventListener('click', closeDetail));
   document.querySelectorAll('[data-preview-detail]').forEach((btn) => btn.addEventListener('click', () => {
     closeDetail();
     const card = shadeCards.find((item) => item.dataset.detailCard === btn.dataset.previewDetail);
     card?.querySelector('[data-select-preview]')?.click();
-    document.querySelector('#tryon')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }));
 
   const savedKey = `formusense_saved_shades_${document.body.dataset.userId || 'guest'}`;

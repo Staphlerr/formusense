@@ -8,9 +8,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+  <link rel="stylesheet" href="{% static 'css/app.css' %}?v=20260918-photo-tags">
 </head>
-<body data-user-id="{% if user.is_authenticated %}{{ user.pk }}{% endif %}">
+<body class="{% if request.resolver_match.namespace == 'research' %}rd-app{% else %}consumer-app{% endif %}" data-user-id="{% if user.is_authenticated %}{{ user.pk }}{% endif %}">
   <header class="site-header">
     <nav class="container nav" aria-label="Navigasi utama">
       <a class="brand" href="{% if can_research and not can_consumer %}{% url 'research:overview' %}{% else %}{% url 'consumer:home' %}{% endif %}"><span class="brand-logo" aria-hidden="true"></span><span class="sr-only">LipXMatch</span></a>

@@ -1,20 +1,15 @@
 from django import forms
 
-from consumer.models import Feedback
+from consumer.models import AGE_RANGE_CHOICES, REGION_CHOICES, Feedback
 
 
 class ProfileStartForm(forms.Form):
     nickname = forms.CharField(label="Nama panggilan", max_length=50, required=False)
     age_range = forms.ChoiceField(label="Rentang usia", choices=[
-        ("", "Pilih (opsional)"), ("under_18", "Di bawah 18"),
-        ("18_24", "18–24"), ("25_34", "25–34"), ("35_plus", "35+"),
+        ("", "Pilih (opsional)"), *AGE_RANGE_CHOICES,
     ], required=False)
     region = forms.ChoiceField(label="Wilayah", choices=[
-        ("", "Pilih (opsional)"), ("Jakarta", "Jakarta"),
-        ("West Java", "Jawa Barat"), ("Central Java", "Jawa Tengah"),
-        ("East Java", "Jawa Timur"), ("Sumatra", "Sumatra"),
-        ("Kalimantan", "Kalimantan"), ("Sulawesi", "Sulawesi"),
-        ("Bali & Nusa Tenggara", "Bali & Nusa Tenggara"), ("Papua", "Papua"),
+        ("", "Pilih (opsional)"), *REGION_CHOICES,
     ], required=False)
 
 
@@ -24,15 +19,15 @@ class PreferenceForm(forms.Form):
         ("coral", "Coral"), ("terracotta", "Terracotta"),
         ("red", "Merah"), ("berry", "Berry"),
         ("mauve", "Mauve"), ("brown", "Cokelat"),
-    ], required=False)
+    ], required=False, widget=forms.RadioSelect)
     finish = forms.ChoiceField(label="Hasil akhir", choices=[
         ("", "Belum tahu"), ("satin", "Satin"), ("matte", "Matte"),
         ("cream", "Cream"), ("glossy", "Glossy"), ("glasting", "Glasting"),
-    ], required=False)
+    ], required=False, widget=forms.RadioSelect)
     intensity = forms.ChoiceField(label="Kesan", choices=[
         ("", "Belum tahu"), ("natural", "Natural"),
         ("medium", "Segar"), ("bold", "Berani"),
-    ], required=False)
+    ], required=False, widget=forms.RadioSelect)
 
 
 class LipProfileForm(forms.Form):
