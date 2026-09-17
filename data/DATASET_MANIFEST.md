@@ -4,7 +4,7 @@ This folder collects the datasets and source references for the 24-hour FormuSen
 
 ## Five team CSVs now used in the app
 
-These files sit directly under `data/`. Their real-world provenance and relationship to PT Paragon's actual portfolio have **not** been verified. Treat them as team-supplied demo data.
+These files sit directly under `data/`. The team has **no PT Paragon dataset**; these are team-supplied demo files, not Paragon portfolio, consumer, or laboratory records. Treat their values as demo data unless a separate provenance and validation record is supplied.
 
 | File | Rows | Current use |
 | --- | ---: | --- |
@@ -21,6 +21,14 @@ The formula and gap files are not joined to the 30-shade catalog by ID. Formula 
 `data/asian face/` now contains 99 JPG face photos plus the 2-byte placeholder file `face`. The photos have no accompanying per-image reference labels or source/usage documentation, so this is **not yet a ground-truth dataset** for skin tone, undertone, or lip pigmentation and is not used to score or tune those classifiers. A file-size/dimension audit found 36 photos with a side shorter than the local analyzer's 240-pixel minimum, and one exact duplicate pair (`img227.jpg`, `img243.jpg`). The remaining images may be useful as exploratory face/lip detection inputs after their source and usage permissions are checked; their mere presence does not establish expected color labels.
 
 To evaluate `services/local_vision.py`, each usable photo needs an independently assigned reference label (for example, `image_file`, `skin_tone` or Monk Skin Tone index, `undertone`, optional `lip_pigmentation`, and how each label was assigned). The image alone can test whether face and lip landmarks are detected, but cannot establish the correct undertone or pigmentation. Keep the image source, usage permission, and lighting/annotation notes with the labels; do not turn the pipeline's own predictions into its ground truth.
+
+## Synthetic tone pseudo-label set
+
+`data/pseudo-labels-tone/` contains 30 synthetic 512×512 portraits, `annotations.csv`, an XLSX copy, and a source/limitations README. All 30 CSV image paths exist. The set is balanced across six source skin-tone categories (five each: `fair`, `light`, `medium`, `tan`, `dark`, `deep`); the current app instead uses five categories (`light`, `light_medium`, `medium`, `tan`, `deep`), so a documented mapping would be needed before comparing labels.
+
+The `skin_tone` and `undertone` fields were copied from the [Fashion Stylist Multimodal Dataset](https://huggingface.co/datasets/lihicarmeli/fashion-stylist-multimodal) metadata. Its portraits were generated with SDXL, and its image prompt does **not** explicitly include undertone. Therefore the source undertone field is not a trustworthy visual target for the rendered image. `pigmentasi_bibir` and `catatan` are model-assisted visual pseudo-labels, often affected by apparent makeup or stylization; they are not measurements of natural lip pigmentation. The CSV marks 21 rows `usable`, five `small_face`, two `stylized`, one `limited_color`, and one `image_artifact`, but these flags do not establish clinical or colorimetric validity.
+
+This folder is **not used by the consumer recommendation flow or as ground truth**. Run `python manage.py audit_pseudo_labels` to pass its 30 images through the local photo analyzer and create `output/pseudo_label_smoke_test.csv` for side-by-side review. The report records source metadata/pseudo-labels and app estimates in separate columns, including analysis failures and measured Lab values when available. It does not calculate an accuracy score, train a model, or validate performance on real consumer photos. Keep model predictions and pseudo-labels separate from independently annotated evaluation labels.
 
 ## What Is Ready to Use
 

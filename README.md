@@ -1,6 +1,6 @@
 # FormuSense — prototipe hackathon
 
-Prototipe Django untuk alur konsumen (profil → persetujuan → preferensi → foto/isi manual → rekomendasi → feedback) dan dashboard R&D. Lima CSV tim di folder `data/` kini dipakai dalam alur utama; data lama di `data/formusense_demo/` tetap mendukung kartu peluang dan grafik lama. Semuanya diperlakukan sebagai **data demo**, bukan bukti permintaan pasar, portofolio Paragon, atau hasil uji laboratorium.
+Prototipe Django untuk alur konsumen (profil → persetujuan → preferensi → foto/isi manual → rekomendasi → feedback) dan dashboard R&D. Lima CSV tim di folder `data/` kini dipakai dalam alur utama; data lama di `data/formusense_demo/` tetap mendukung kartu peluang dan grafik lama. Tim tidak memiliki dataset Paragon. Semuanya diperlakukan sebagai **data demo**, bukan bukti permintaan pasar atau hasil uji laboratorium.
 
 ## Jalankan lokal
 
@@ -48,6 +48,8 @@ Kamera langsung memakai izin browser dan hanya muncul setelah persetujuan foto. 
 Untuk fitur coba shade, browser menyimpan versi foto yang diperkecil di `sessionStorage` tab yang sama ketika formulir analisis dikirim. Server hanya menyimpan koordinat kontur dan kategori profil dalam sesi, bukan foto. Foto otomatis hilang ketika sesi tab browser berakhir; tombol **Hapus foto** menghapusnya lebih awal. Kontur MediaPipe dipakai untuk menaruh warna pada area bibir, sambil menghindari bukaan mulut. Jika kontur tidak ada atau meleset, pengguna menandai empat titik secara manual. Overlay warna di kanvas tetap **simulasi visual**, bukan prediksi warna produk yang terkalibrasi.
 
 Halaman rekomendasi memuat tiga contoh swatch lipstik yang dipilih menurut kedekatan RGB dari **191 baris lipstik** dalam dataset publik Capstone Colors. Contoh tersebut untuk mencoba warna saja; tidak ikut menentukan tiga rekomendasi. Tiga rekomendasi berasal dari katalog 30 shade tim, dengan skor profil/preferensi dan bobot kecil dari 600 penilaian hedonik sintetis serta 300 review demo. Dashboard lama masih menampilkan 5.000 penilaian hedonik sintetis, 500 shade sintetis, dan 200 formula dari jalur eksperimen terpisah; ID seri `S`/`F` tidak digabung dengan CSV tim maupun katalog lama `SHD`. Foundation The Pudding dan formulasi shampoo Nature/Figshare juga tetap referensi terpisah.
+
+Untuk mengecek alur analisis foto pada 30 potret sintetis di `data/pseudo-labels-tone/`, jalankan `python manage.py audit_pseudo_labels`. Hasil per gambar disimpan di `output/pseudo_label_smoke_test.csv`, dengan metadata/pseudo-label sumber dan hasil aplikasi pada kolom terpisah. Ini hanya uji pengembangan: tidak memakai AI API, tidak melatih model, tidak mengubah rekomendasi konsumen, dan tidak menghasilkan skor akurasi pada foto nyata. Metadata undertone sumber bahkan tidak digunakan dalam prompt pembuat gambarnya.
 
 Setelah mengubah `.env`, **restart server**, lalu jalankan `python manage.py check_ai` untuk melihat apakah key diterima dan ID model ada di daftar API. Perintah ini tidak mencetak key dan tidak mengirim foto. Pemeriksaan ini relevan untuk fitur teks dan AI vision cadangan jika pengguna mengizinkannya.
 
