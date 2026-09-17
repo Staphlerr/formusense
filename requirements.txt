@@ -1,4 +1,4 @@
 Django>=5.2,<7
-mediapipe==1.0.1
+mediapipe==0.10.21
 opencv-contrib-python==5.0.0.93
 Pillow>=11,<13
