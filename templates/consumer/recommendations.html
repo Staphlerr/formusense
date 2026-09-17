@@ -6,15 +6,16 @@
 <p class="lead">Pilihan diurutkan dari profil dan preferensimu. Kecocokan warna tetap perlu dicoba langsung.</p>
 <section class="card tryon" id="tryon" data-photo-scanned="{{ photo_scanned|yesno:'true,false' }}">
   {{ lip_points|json_script:"lip-points-data" }}
+  {{ lip_contours|json_script:"lip-contours-data" }}
   <span class="eyebrow">Pratinjau virtual · simulasi warna</span><h2>Coba shade lipstik di fotomu</h2>
-  <p>Foto dari scan akan muncul di sini dalam tab browser ini. Jika titik bibir belum ditemukan, klik sisi kiri, atas, kanan, dan bawah bibir pada foto. Setelah itu kamu bisa mengganti warna. Tampilan ini adalah simulasi visual; warna akhir produk perlu dicoba langsung.</p>
+  <p>Foto dari scan akan muncul di sini dalam tab browser ini. Kontur bibir dicari otomatis; jika belum pas, kamu bisa menandai sisi kiri, atas, kanan, dan bawah bibir. Setelah itu kamu bisa mengganti warna. Tampilan ini adalah simulasi visual; warna akhir produk perlu dicoba langsung.</p>
   <div class="tryon-layout">
     <div>
       <label for="tryon-upload">Kalau foto belum muncul, pilih selfie untuk pratinjau lokal</label>
       <input id="tryon-upload" type="file" accept="image/jpeg,image/png">
       <p class="fine-print">Foto yang dipilih di sini hanya diproses di browser untuk pratinjau dan tidak dikirim ke server.</p>
       <div class="tryon-canvas-wrap"><canvas id="tryon-canvas" aria-label="Pratinjau foto dengan shade lipstik" hidden></canvas><p id="tryon-empty">Belum ada foto. Ambil foto pada langkah scan atau pilih selfie di atas.</p></div>
-      <p id="tryon-status" class="fine-print" role="status">Posisi bibir akan diperkirakan sebagai titik awal; gunakan “Atur posisi bibir” agar tepat.</p>
+      <p id="tryon-status" class="fine-print" role="status">Jika titik bibir belum terdeteksi, klik empat titik pada foto untuk menerapkan warna.</p>
       <div class="actions"><button class="button secondary" id="tryon-align" type="button" disabled>Atur posisi bibir</button><button class="button secondary" id="tryon-download" type="button" disabled>Simpan pratinjau</button><button class="button secondary" id="tryon-clear" type="button" disabled>Hapus foto</button></div>
     </div>
     <div>

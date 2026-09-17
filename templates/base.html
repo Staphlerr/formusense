@@ -7,15 +7,29 @@
   <title>{% block title %}FormuSense{% endblock %}</title>
   <link rel="stylesheet" href="{% static 'css/app.css' %}">
 </head>
-<body>
+<body data-user-id="{% if user.is_authenticated %}{{ user.pk }}{% endif %}">
   <header class="site-header">
     <nav class="container nav" aria-label="Navigasi utama">
-      <a class="brand" href="{% url 'consumer:home' %}"><span class="brand-mark">F</span> FormuSense</a>
+      <a class="brand" href="{% if can_research and not can_consumer %}{% url 'research:overview' %}{% else %}{% url 'consumer:home' %}{% endif %}"><span class="brand-mark">F</span> FormuSense</a>
       <div class="nav-links">
-        <a href="{% url 'consumer:home' %}">Home</a>
-        <a href="{% url 'consumer:profile_start' %}">Discover</a>
-        <a href="{% url 'consumer:how_it_works' %}">How it works</a>
-        <a href="{% url 'research:overview' %}">R&D Preview</a>
+        {% if can_consumer %}
+          <a href="{% url 'consumer:home' %}">Home</a>
+          <a href="{% url 'consumer:profile_start' %}">Discover</a>
+          <a href="{% url 'consumer:how_it_works' %}">How it works</a>
+        {% elif can_research %}
+          <a href="{% url 'research:overview' %}">Dashboard R&D</a>
+        {% else %}
+          <a href="{% url 'consumer:home' %}">Home</a>
+          <a href="{% url 'consumer:how_it_works' %}">How it works</a>
+          <a href="{% url 'accounts:consumer_login' %}">Masuk konsumen</a>
+          <a href="{% url 'accounts:rd_login' %}">Masuk R&D</a>
+        {% endif %}
+        {% if user.is_authenticated %}
+          <span class="nav-user">{{ user.username }}</span>
+          <form method="post" action="{% url 'accounts:logout' %}" data-logout-form>
+            {% csrf_token %}<button class="nav-logout" type="submit">Keluar</button>
+          </form>
+        {% endif %}
       </div>
     </nav>
   </header>
@@ -28,5 +42,6 @@
     {% block content %}{% endblock %}
   </main>
   <footer class="container footer">Prototipe hackathon · Data komunitas dan R&D: simulasi</footer>
+  <script src="{% static 'js/auth.js' %}" defer></script>
 </body>
 </html>

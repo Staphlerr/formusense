@@ -46,7 +46,7 @@ class LipProfileForm(forms.Form):
         ("neutral", "Neutral"), ("olive", "Olive"),
         ("uncertain", "Belum yakin"),
     ])
-    lip_pigmentation = forms.ChoiceField(label="Pigmentasi bibir", choices=[
+    lip_pigmentation = forms.ChoiceField(label="Kontras warna bibir terhadap kulit (perkiraan)", choices=[
         ("low", "Low"), ("medium", "Medium"),
         ("medium_high", "Medium–High"), ("high", "High"),
         ("uncertain", "Belum yakin"),

@@ -1,20 +1,22 @@
-"""Objective, explainable skin/lip color measurement.
+"""Pure color-science math: sRGB/CIELAB conversion and reference-scale classification.
 
 DROP-IN LOCATION: services/color_science.py
 
-This module replaces "ask a vision-language model to guess the skin tone"
-with a deterministic pipeline: detect facial landmarks with a specialized,
-pre-trained computer-vision model (MediaPipe Face Mesh), sample real pixel
-colors at those landmarks, convert them into a perceptually-uniform color
-space (CIELAB, the standard used in color science), and classify the result
-against a published, citable reference scale.
+This module intentionally contains ONLY deterministic math and published
+reference data -- no photo decoding, no face/landmark detection, no I/O.
+Face/landmark detection and pixel sampling live in services/local_vision.py
+(MediaPipe FaceLandmarker + OpenCV lip/cheek masking); that module imports
+the classify_* functions and MONK_SKIN_TONE_HEX from here so there is a
+single source of truth for the reference swatches and thresholds, instead
+of two modules quietly drifting apart with slightly different numbers.
 
 Nothing here is invented: every number produced can be traced back to
-(a) a pixel value actually read from the uploaded photo, and (b) a
-published reference point or a documented, simplified color-theory rule.
-Generative AI (see services/ai_client.py) is not used anywhere in this
-module -- it is only used AFTER this module has produced a profile, purely
-to phrase a sentence about it (see ai_client.generate_personal_note).
+(a) a pixel value actually read from a photo (by the caller, typically
+services/local_vision.py), and (b) a published reference point or a
+documented, simplified color-theory rule. Generative AI (see
+services/ai_client.py) is not used anywhere in this module -- it is only
+used AFTER a profile like this has been produced, purely to phrase a
+sentence about it (see ai_client.generate_personal_note).
 
 References:
 - Monk Skin Tone Scale, 10 published reference tones (Google / Ellis Monk,
@@ -23,75 +25,42 @@ References:
   in most skin-tone classification literature, e.g. Van Song et al.,
   "A New Method for Skin Color Classification Based on Global CIELAB Data
   and k-Mean Clustering", Color Research & Application (2026).
-- MediaPipe Face Landmarker / Tasks API (Google Research) -- pre-trained
-  facial landmark model (478-point face topology, an extension of the
-  original 468-point Face Mesh with 10 added iris points); see
-  https://ai.google.dev/edge/mediapipe/solutions/vision/face_landmarker
-  for the model and its canonical landmark index map.
 
-IMPORTANT -- read before the demo:
-This module targets MediaPipe's newer Tasks API (`FaceLandmarker`), not the
-older "Legacy Solutions" API (`mp.solutions.face_mesh`). As of mediapipe
-1.0.x the legacy Solutions API has been removed from the package entirely,
-so this module downloads/loads a `.task` model file instead of relying on
-a pip-bundled model. Before the demo:
-1. Create a `services/models/` folder and download the model file once
-   from Google's official model bucket:
-   https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task
-   and save it as `services/models/face_landmarker.task`
-   (i.e. next to this file, in a `models/` subfolder).
-2. The MediaPipe landmark index used below for cheek/skin sampling (205)
-   is a commonly-cited cheek point in MediaPipe tutorials, but it has NOT
-   been executed/verified in this conversation (no mediapipe runtime
-   available here). Run it on 3-5 real sample photos, draw the sampled
-   skin/lip points on the image, and eyeball that the skin point actually
-   lands on cheek skin (not hair, background, or shadow) and the lip
-   points land on the lips. If it drifts, adjust `_CHEEK_LANDMARK_INDEX`
-   or `_LIP_LANDMARK_INDICES` -- do not assume they are correct without
-   checking.
-3. Unlike the old `FACEMESH_LIPS` connection set (which no longer exists
-   in the Tasks API), lip geometry here comes from four hand-picked
-   landmark indices (61/291/0/17 -- left corner/right corner/upper outer
-   lip/lower outer lip). These are standard, commonly-documented indices
-   in MediaPipe's 468/478-point face topology, but "commonly documented"
-   is not the same as "verified by us in this project" -- check them
-   against real photos same as the cheek point.
+Honesty note on this file's history: an earlier version of this module also
+contained its own MediaPipe detection + pixel-sampling code
+(_locate_regions / analyze_photo_objective). That has been removed in favor
+of services/local_vision.py's more careful implementation (full lip-contour
+masking instead of 4 hand-picked points, adaptive cheek-sampling radius,
+multi-face detection) -- no point maintaining two parallel detection
+pipelines that can silently disagree. If you still have consumer/views.py
+importing LandmarkNotFound / analyze_photo_objective from this module,
+switch it to services.local_vision's LocalVisionError / analyze_photo_local
+per the updated views.py.
 """
 
 from __future__ import annotations
 
-import io
-from dataclasses import dataclass
-from pathlib import Path
-
-import numpy as np
-from PIL import Image
-
-
-class LandmarkNotFound(Exception):
-    """Raised when a face/lips cannot be located reliably in the photo.
-
-    Callers should catch this and fall back to services.ai_client.analyze_photo
-    (AI vision, secondary), and finally to the manual profile form -- the
-    same three-step fallback philosophy already used elsewhere in this app.
-    """
-
 
 # --- Monk Skin Tone Scale reference swatches -------------------------------
 # Published values, lightest (index 0) to darkest (index 9). Source: Google's
-# Monk Skin Tone Scale (https://skintone.google/the-scale); the scale page is
-# JS-rendered, so these were cross-checked against the tabulated values on
-# https://en.wikipedia.org/wiki/Monk_Skin_Tone_Scale. Re-verify against the
-# live page before a high-stakes submission -- do not trust this comment
-# blindly either.
+# Monk Skin Tone Scale (https://skintone.google/the-scale); cross-checked
+# against the tabulated values on
+# https://en.wikipedia.org/wiki/Monk_Skin_Tone_Scale. (A second, independent
+# implementation of this module briefly used a very slightly different hex
+# set, apparently sourced from an FDA presentation reproducing the same
+# scale -- the differences were sub-perceptual rounding, but only ONE set
+# should be used app-wide, which is why this is now the single source of
+# truth. Re-verify against the live page before a high-stakes submission --
+# do not trust this comment blindly either.)
 MONK_SKIN_TONE_HEX = [
     "#f6ede4", "#f3e7db", "#f7ead0", "#eadaba", "#d7bd96",
     "#a07e56", "#825c43", "#604134", "#3a312a", "#292420",
 ]
 
 # Coarse mapping from the 10-point MST scale down to this app's existing
-# skin_tone categories (light/light_medium/medium/tan/deep), so this module
-# is a drop-in replacement for the AI-vision output shape used elsewhere.
+# skin_tone categories (light/light_medium/medium/tan/deep), so both
+# services/local_vision.py and (previously) this module's own detector
+# produce identical category labels for the same measured color.
 # This bucketing is OUR choice (documented here, not hidden), not part of
 # the published MST scale itself.
 _MST_TO_APP_SKIN_TONE = {
@@ -101,22 +70,6 @@ _MST_TO_APP_SKIN_TONE = {
     6: "tan", 7: "tan",
     8: "deep", 9: "deep",
 }
-
-_CHEEK_LANDMARK_INDEX = 205  # verify against mediapipe's face mesh map -- see module docstring
-
-# Hand-picked lip landmark indices in MediaPipe's 468/478-point face
-# topology (the Tasks API no longer exposes a named FACEMESH_LIPS
-# connection set, so these replace it). See module docstring point 3.
-_LIP_LANDMARK_INDICES = {
-    "left": 61,    # left mouth corner
-    "right": 291,  # right mouth corner
-    "top": 0,      # upper outer lip midpoint
-    "bottom": 17,  # lower outer lip midpoint
-}
-
-# Location of the downloaded MediaPipe Tasks model file. See module
-# docstring step 1 for the download URL and expected path.
-_MODEL_PATH = Path(__file__).resolve().parent / "models" / "face_landmarker.task"
 
 
 def _hex_to_srgb(hex_color: str) -> tuple[float, float, float]:
@@ -135,7 +88,13 @@ def srgb_to_lab(r: float, g: float, b: float) -> tuple[float, float, float]:
     Implemented as the plain textbook formula (no library black box) so
     every step is inspectable and citable. See
     https://en.wikipedia.org/wiki/CIELAB_color_space for the reference
-    formula this follows.
+    formula this follows. (services/local_vision.py instead uses OpenCV's
+    built-in sRGB->Lab conversion for its own pixel sampling, which is an
+    equally standard, well-tested implementation of the same CIE formula --
+    just less manually inspectable in this codebase. Both are legitimate;
+    this hand-rolled version exists so at least one code path has zero
+    library dependency for the core color math, and so formula_lab.py can
+    reuse it for shade<->recipe matching without importing OpenCV.)
     """
     rl, gl, bl = (_srgb_channel_to_linear(c) for c in (r, g, b))
     x = rl * 0.4124 + gl * 0.3576 + bl * 0.1805
@@ -153,6 +112,15 @@ def srgb_to_lab(r: float, g: float, b: float) -> tuple[float, float, float]:
     a = 500 * (fx - fy)
     b_ = 200 * (fy - fz)
     return lightness, a, b_
+
+
+def lab_from_hex(hex_color: str) -> tuple[float, float, float]:
+    """Convenience wrapper: hex string straight to CIELAB. Used by
+    services/recommendation.py (shade<->skin contrast/harmony metrics) and
+    services/formula_lab.py (recipe matching) so neither module needs its
+    own hex-parsing code.
+    """
+    return srgb_to_lab(*_hex_to_srgb(hex_color))
 
 
 _MST_LAB = [srgb_to_lab(*_hex_to_srgb(h)) for h in MONK_SKIN_TONE_HEX]
@@ -189,6 +157,13 @@ def classify_undertone(lab: tuple[float, float, float]) -> str:
     low chroma reads as neutral. The exact cutoff numbers below are tunable
     constants we chose for this prototype -- present them as such, not as an
     empirically validated universal threshold.
+
+    NOTE: services/local_vision.py currently keeps its OWN undertone
+    heuristic (_undertone_from_lab) rather than calling this function,
+    because it needs to return "uncertain" as a valid category (matching
+    this app's form choices) and this function does not produce that value
+    -- see the module docstring in local_vision.py for why the two were not
+    merged.
     """
     _, a, b = lab
     chroma = (a ** 2 + b ** 2) ** 0.5
@@ -211,6 +186,14 @@ def classify_lip_pigmentation(skin_lab, lip_lab) -> str:
     level" -- perceived pigmentation is inherently about contrast against
     the wearer's own skin, so a relative measure is more defensible than an
     invented absolute one. Thresholds below are tunable prototype constants.
+
+    NOTE: services/local_vision.py currently keeps its OWN version of this
+    (_pigmentation_from_contrast) with tighter thresholds (3/9/17 instead of
+    8/18/28) -- possibly tuned against real sample photos, which would make
+    them more empirically grounded than the thresholds below (chosen without
+    real photo data). Neither set is a literature value; pick one canonical
+    set once you've checked both against real photos, rather than leaving
+    two silently different scales in the codebase.
     """
     contrast = skin_lab[0] - lip_lab[0]  # positive = lips darker than skin
     if contrast < 8:
@@ -220,152 +203,3 @@ def classify_lip_pigmentation(skin_lab, lip_lab) -> str:
     if contrast < 28:
         return "medium_high"
     return "high"
-
-
-@dataclass
-class _Regions:
-    skin_rgb: tuple[float, float, float]
-    lip_rgb: tuple[float, float, float]
-    lip_points: dict
-
-
-def _sample_patch(image: np.ndarray, x: float, y: float, radius_px: int = 6):
-    """Average RGB (0-1 range) in a small square patch around (x, y),
-    where x/y are relative image coordinates (0-1), matching the format
-    already used for lip_points elsewhere in this app.
-    """
-    h, w, _ = image.shape
-    cx, cy = int(x * w), int(y * h)
-    x0, x1 = max(cx - radius_px, 0), min(cx + radius_px, w)
-    y0, y1 = max(cy - radius_px, 0), min(cy + radius_px, h)
-    patch = image[y0:y1, x0:x1].reshape(-1, 3)
-    if patch.size == 0:
-        raise LandmarkNotFound("Region sampel warna berada di luar batas gambar")
-    mean = patch.mean(axis=0) / 255.0
-    return float(mean[0]), float(mean[1]), float(mean[2])
-
-
-def _locate_regions(image: np.ndarray) -> _Regions:
-    """Run MediaPipe FaceLandmarker (Tasks API) and sample skin + lip pixel colors.
-
-    NOTE: this targets mediapipe's newer Tasks API, required for mediapipe
-    1.0.x where the legacy `mp.solutions.face_mesh` API has been removed.
-    See the module docstring for the model download step this depends on.
-    """
-    try:
-        import mediapipe as mp  # imported lazily: the rest of the app still
-        # works even before this dependency is installed
-    except ImportError as error:
-        # Treat "dependency not installed yet" the same as "couldn't find a
-        # face" -- callers (consumer/views.py) already catch LandmarkNotFound
-        # and fall back to AI vision, then manual. Without this, a missing
-        # mediapipe install turns into an unhandled 500 instead of a graceful
-        # fallback, which defeats the whole point of the fallback chain.
-        raise LandmarkNotFound(
-            "Modul mediapipe belum terinstal (pip install mediapipe); "
-            "jatuh ke fallback berikutnya"
-        ) from error
-
-    if not _MODEL_PATH.exists():
-        # Fail gracefully (fallback chain) instead of an unhandled error --
-        # but this is a one-time setup step, not a real "no face found", so
-        # the message says exactly what to do.
-        raise LandmarkNotFound(
-            "Model MediaPipe (face_landmarker.task) belum ditemukan di "
-            f"{_MODEL_PATH}. Unduh sekali dari "
-            "https://storage.googleapis.com/mediapipe-models/face_landmarker/"
-            "face_landmarker/float16/1/face_landmarker.task dan simpan di "
-            "path tersebut (lihat docstring modul ini) -- untuk sementara "
-            "jatuh ke fallback berikutnya."
-        )
-
-    try:
-        base_options_cls = mp.tasks.BaseOptions
-        face_landmarker_cls = mp.tasks.vision.FaceLandmarker
-        face_landmarker_options_cls = mp.tasks.vision.FaceLandmarkerOptions
-        running_mode_enum = mp.tasks.vision.RunningMode
-    except AttributeError as error:
-        # This would mean the installed mediapipe is neither the legacy
-        # Solutions API nor the Tasks API we now target -- don't guess
-        # further, surface it clearly instead of silently misbehaving.
-        raise LandmarkNotFound(
-            "Versi mediapipe yang terinstal tidak menyediakan Tasks API "
-            "(mp.tasks.vision.FaceLandmarker). Modul ini ditulis untuk "
-            "mediapipe >= 1.0. Cek `pip show mediapipe` dan pastikan "
-            "versinya kompatibel, jangan asumsikan."
-        ) from error
-
-    options = face_landmarker_options_cls(
-        base_options=base_options_cls(model_asset_path=str(_MODEL_PATH)),
-        running_mode=running_mode_enum.IMAGE,
-        num_faces=1,
-    )
-
-    mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=image)
-
-    with face_landmarker_cls.create_from_options(options) as landmarker:
-        result = landmarker.detect(mp_image)
-
-    if not result.face_landmarks:
-        raise LandmarkNotFound("Wajah tidak terdeteksi dengan jelas di foto")
-
-    landmarks = result.face_landmarks[0]  # list of 478 landmarks, .x/.y/.z, normalized 0-1
-
-    lip_lm = {name: landmarks[idx] for name, idx in _LIP_LANDMARK_INDICES.items()}
-    lip_cx = sum(lm.x for lm in lip_lm.values()) / len(lip_lm)
-    lip_cy = sum(lm.y for lm in lip_lm.values()) / len(lip_lm)
-
-    cheek = landmarks[_CHEEK_LANDMARK_INDEX]
-
-    lip_rgb = _sample_patch(image, lip_cx, lip_cy)
-    skin_rgb = _sample_patch(image, cheek.x, cheek.y)
-
-    lip_points = {
-        "left": [lip_lm["left"].x, lip_lm["left"].y],
-        "right": [lip_lm["right"].x, lip_lm["right"].y],
-        "top": [lip_lm["top"].x, lip_lm["top"].y],
-        "bottom": [lip_lm["bottom"].x, lip_lm["bottom"].y],
-    }
-    return _Regions(skin_rgb=skin_rgb, lip_rgb=lip_rgb, lip_points=lip_points)
-
-
-def analyze_photo_objective(photo_bytes: bytes, mime_type: str) -> dict:
-    """Primary, deterministic replacement for ai_client.analyze_photo.
-
-    Returns the same dict shape the rest of the app already expects
-    (skin_tone, undertone, lip_pigmentation, visible_lip_condition,
-    confidence, lip_points), plus an extra "measurement" key with the raw
-    numbers (for showing your work to judges / storing as evidence). Callers
-    that only read the existing keys need no changes.
-
-    Raises LandmarkNotFound if no face/lips could be located -- callers
-    should catch that and fall back to services.ai_client.analyze_photo,
-    then to the manual form, exactly like the existing AIUnavailable
-    fallback chain already does.
-    """
-    del mime_type  # decoding is format-agnostic via PIL; kept for interface parity
-    image = np.array(Image.open(io.BytesIO(photo_bytes)).convert("RGB"))
-    regions = _locate_regions(image)
-
-    skin_lab = srgb_to_lab(*regions.skin_rgb)
-    lip_lab = srgb_to_lab(*regions.lip_rgb)
-
-    skin_tone, mst_index, mst_distance = classify_skin_tone(skin_lab)
-    undertone = classify_undertone(skin_lab)
-    lip_pigmentation = classify_lip_pigmentation(skin_lab, lip_lab)
-
-    return {
-        "skin_tone": skin_tone,
-        "undertone": undertone,
-        "lip_pigmentation": lip_pigmentation,
-        "visible_lip_condition": "",
-        "confidence": "measured",
-        "lip_points": regions.lip_points,
-        "measurement": {
-            "method": "mediapipe_face_landmarker+cielab",
-            "monk_skin_tone_index": mst_index,
-            "monk_skin_tone_distance": round(mst_distance, 2),
-            "skin_lab": tuple(round(v, 1) for v in skin_lab),
-            "lip_lab": tuple(round(v, 1) for v in lip_lab),
-        },
-    }

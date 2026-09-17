@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}Akses ditolak · FormuSense{% endblock %}
+{% block content %}
+<section class="page narrow">
+  <h1>Akses ditolak</h1>
+  <p class="lead">Akun yang sedang dipakai tidak memiliki izin untuk halaman ini.</p>
+  <div class="actions">
+    <a class="button" href="{% if can_research %}{% url 'research:overview' %}{% elif can_consumer %}{% url 'consumer:profile_start' %}{% else %}{% url 'consumer:home' %}{% endif %}">Ke area saya</a>
+  </div>
+</section>
+{% endblock %}

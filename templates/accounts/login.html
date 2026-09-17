@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}Masuk {% if role == 'rd' %}R&D{% else %}konsumen{% endif %} · FormuSense{% endblock %}
+{% block content %}
+<section class="page narrow">
+  <span class="eyebrow">{% if role == 'rd' %}Area tim formulasi{% else %}Area konsumen{% endif %}</span>
+  <h1>Masuk {% if role == 'rd' %}R&D{% else %}konsumen{% endif %}</h1>
+  <p class="lead">{% if role == 'rd' %}Dashboard ini hanya untuk akun R&D yang disiapkan oleh admin.{% else %}Masuk untuk menganalisis profil bibir, mencoba shade, dan memberi feedback.{% endif %}</p>
+  <form method="post" class="card form-card">
+    {% csrf_token %}
+    <input type="hidden" name="next" value="{{ next }}">
+    {{ form.as_div }}
+    <button type="submit" class="button">Masuk</button>
+  </form>
+  {% if role == 'rd' %}
+    <p>Pengguna biasa? <a href="{% url 'accounts:consumer_login' %}">Masuk sebagai konsumen</a>.</p>
+  {% else %}
+    <p>Belum punya akun? <a href="{% url 'accounts:register' %}">Daftar sebagai konsumen</a>.</p>
+  {% endif %}
+</section>
+{% endblock %}

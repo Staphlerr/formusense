@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}Daftar konsumen · FormuSense{% endblock %}
+{% block content %}
+<section class="page narrow">
+  <span class="eyebrow">Area konsumen</span>
+  <h1>Buat akun konsumen</h1>
+  <p class="lead">Akun ini untuk alur analisis dan rekomendasi shade. Akses R&D diberikan terpisah oleh admin.</p>
+  <form method="post" class="card form-card">
+    {% csrf_token %}
+    {{ form.as_div }}
+    <button type="submit" class="button">Daftar dan mulai</button>
+  </form>
+  <p>Sudah punya akun? <a href="{% url 'accounts:consumer_login' %}">Masuk</a>.</p>
+</section>
+{% endblock %}
