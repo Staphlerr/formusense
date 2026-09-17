@@ -58,6 +58,7 @@ const HINT_INTERVAL_MS = 400; // throttle the text hint so it doesn't flicker ev
 let landmarkerPromise = null; // lazy-loaded once, reused across open/close cycles
 let rafId = null;
 let lastHintAt = 0;
+let runGeneration = 0;
 
 function getLandmarker() {
   if (!landmarkerPromise) {
@@ -69,7 +70,10 @@ function getLandmarker() {
         runningMode: "VIDEO",
         numFaces: 1,
       });
-    })();
+    })().catch((error) => {
+      landmarkerPromise = null;
+      throw error;
+    });
   }
   return landmarkerPromise;
 }
@@ -95,20 +99,26 @@ function roughWarmthHint(r, g, b) {
   return "terlihat netral";
 }
 
-/**
- * Live nudge for exposure, mirroring (approximately) the exposure gate
- * services/local_vision.py actually enforces server-side (it rejects a
- * capture whose skin L* falls outside 18-88 on the CIELAB 0-100 scale).
- * This live version works on raw sRGB luma (0-255), not L*, since that's
- * all a video frame gives us cheaply -- it's a rough proxy for the same
- * idea, not the same number, and the server check is what actually
- * decides whether a captured photo gets accepted.
- * @returns {string|null} a short warning, or null when lighting looks OK.
- */
-function lightingHint(r, g, b) {
-  const luma = 0.299 * r + 0.587 * g + 0.114 * b; // 0-255, standard perceptual luma
-  if (luma < 70) return "cahaya kurang, cari tempat lebih terang";
-  if (luma > 200) return "terlalu terang/silau, kurangi cahaya langsung";
+// Framing hints are estimates from the detected face outline. They guide
+// capture but do not replace the server-side photo quality checks.
+function facePositionWarning(landmarks) {
+  const xs = landmarks.map((point) => point.x);
+  const ys = landmarks.map((point) => point.y);
+  const left = Math.min(...xs), right = Math.max(...xs);
+  const top = Math.min(...ys), bottom = Math.max(...ys);
+  if (left < 0.03 || right > 0.97 || top < 0.03 || bottom > 0.97) {
+    return "Sebagian wajah berada di luar bingkai. Geser wajah ke tengah kamera.";
+  }
+  if (right - left < 0.24 || bottom - top < 0.32) {
+    return "Wajah tampak terlalu kecil. Dekatkan sedikit ke kamera.";
+  }
+  if (Math.abs((left + right) / 2 - 0.5) > 0.2 || Math.abs((top + bottom) / 2 - 0.5) > 0.2) {
+    return "Wajah belum di tengah bingkai. Geser posisi kamera atau wajahmu.";
+  }
+  const lipLeft = landmarks[61], lipRight = landmarks[291];
+  if (Math.abs(lipRight.x - lipLeft.x) < 0.07) {
+    return "Area bibir tampak kecil. Dekatkan sedikit wajah ke kamera.";
+  }
   return null;
 }
 
@@ -129,19 +139,23 @@ function samplePixel(ctx, x, y) {
  * @param {HTMLCanvasElement} el.overlay - transparent canvas positioned exactly over el.video
  * @param {HTMLElement} el.hintText - where "terlihat warm/cool/netral" text goes
  * @param {HTMLElement} el.statusText - where "wajah terdeteksi" / "posisikan wajahmu" goes
+ * @param {(warning: string|null) => void} [el.onFaceQuality] - framing guidance for camera.js
  * @param {(error: Error) => void} [onUnavailable] - called if the model can't load;
  *   caller should hide the overlay/hint elements and otherwise change nothing --
  *   camera.js's capture flow works independently of this.
  */
 export async function startLiveOverlay(el, onUnavailable) {
+  const generation = ++runGeneration;
+  lastHintAt = 0;
   let landmarker;
   try {
     landmarker = await getLandmarker();
   } catch (error) {
     console.warn("Live overlay unavailable, camera capture still works normally:", error);
-    if (onUnavailable) onUnavailable(error);
+    if (generation === runGeneration && onUnavailable) onUnavailable(error);
     return;
   }
+  if (generation !== runGeneration) return;
 
   // Internal drawing-buffer resolution: native camera pixels, for landmark
   // precision (independent from how big the element is shown on screen).
@@ -162,6 +176,7 @@ export async function startLiveOverlay(el, onUnavailable) {
   const sampleCtx = sampleCanvas.getContext("2d", { willReadFrequently: true });
 
   function drawFrame(timestampMs) {
+    if (generation !== runGeneration) return;
     if (el.video.readyState < 2 || el.video.paused || el.video.ended) {
       rafId = requestAnimationFrame(drawFrame);
       return;
@@ -173,13 +188,15 @@ export async function startLiveOverlay(el, onUnavailable) {
     const landmarks = result.faceLandmarks && result.faceLandmarks[0];
 
     if (!landmarks) {
-      el.statusText.textContent = "Posisikan wajahmu di tengah frame";
-      el.hintText.textContent = "";
+      if (el.statusText.textContent !== "Posisikan wajahmu di tengah frame") {
+        el.statusText.textContent = "Posisikan wajahmu di tengah frame";
+      }
+      if (el.hintText.textContent) el.hintText.textContent = "";
+      if (timestampMs - lastHintAt > HINT_INTERVAL_MS) {
+        lastHintAt = timestampMs;
+        el.onFaceQuality?.("Wajah belum terlihat jelas. Hadapkan wajah ke kamera.");
+      }
     } else {
-      // statusText is set below, inside the throttled block, together with
-      // the lighting check -- setting it here too (every frame) would just
-      // immediately overwrite that enriched text back to the plain version.
-
       overlayCtx.strokeStyle = "#b9543e";
       overlayCtx.lineWidth = 2;
       overlayCtx.beginPath();
@@ -212,8 +229,10 @@ export async function startLiveOverlay(el, onUnavailable) {
         }
         el.hintText.textContent = `${hint} · perkiraan awal, akan diukur ulang lebih presisi saat kamu ambil foto`;
 
-        const lighting = lightingHint(avgR, avgG, avgB);
-        el.statusText.textContent = lighting ? `Wajah terdeteksi · ${lighting}` : "Wajah terdeteksi";
+        if (el.statusText.textContent !== "Wajah terdeteksi") {
+          el.statusText.textContent = "Wajah terdeteksi";
+        }
+        el.onFaceQuality?.(facePositionWarning(landmarks));
       }
     }
 
@@ -229,6 +248,7 @@ export async function startLiveOverlay(el, onUnavailable) {
  * startLiveOverlay never successfully started (e.g. model failed to load).
  */
 export function stopLiveOverlay(overlay) {
+  runGeneration += 1;
   if (rafId) cancelAnimationFrame(rafId);
   rafId = null;
   if (overlay) {

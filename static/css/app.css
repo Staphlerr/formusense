@@ -581,6 +581,30 @@ p {
 .camera-stage #live-hint {
   bottom: 12px;
 }
+.camera-quality {
+  margin: 12px 14px 0;
+  padding: 12px 15px;
+  border: 1px solid #aab9d9;
+  border-radius: 10px;
+  background: #eef3ff;
+  color: #203d72;
+}
+.camera-quality[data-state="warning"] {
+  border-color: #f1c591;
+  background: #fff3e4;
+  color: #79430c;
+}
+.camera-quality[data-state="good"] {
+  border-color: #a9d0b2;
+  background: #edf7ef;
+  color: #245a32;
+}
+.camera-quality strong { display: block; }
+.camera-quality ul {
+  margin: 5px 0 0;
+  padding-left: 20px;
+}
+.camera-quality li + li { margin-top: 3px; }
 .photo-preview {
   width: 100%;
   max-width: 320px;
