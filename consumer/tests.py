@@ -4,6 +4,8 @@ import os
 
 from django.core.management import call_command
 from django.core.management.base import CommandError
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.test import SimpleTestCase, TestCase
 from django.urls import reverse
 from unittest.mock import patch
@@ -22,6 +24,16 @@ from services.local_vision import (
 
 @patch.dict(os.environ, {"AI_API_KEY": ""})
 class DemoFlowTests(TestCase):
+    def setUp(self):
+        self.consumer = get_user_model().objects.create_user("consumer_test", password="StrongDemoPass123!")
+        self.consumer.groups.add(Group.objects.get(name="consumer"))
+        self.rd_user = get_user_model().objects.create_user("rd_test", password="StrongDemoPass123!")
+        self.rd_user.groups.add(Group.objects.get(name="rd"))
+        self.client.force_login(self.consumer)
+
+    def use_rd(self):
+        self.client.force_login(self.rd_user)
+
     def test_demo_profile_recommendation_feedback_reaches_rd(self):
         self.client.post(reverse("consumer:profile_start"), {
             "nickname": "Ani", "age_range": "25_34", "region": "West Java",
@@ -49,6 +61,7 @@ class DemoFlowTests(TestCase):
         self.assertRedirects(response, reverse("consumer:feedback_success"))
         self.assertEqual(Feedback.objects.count(), 1)
         self.assertEqual(Feedback.objects.first().rating, None)
+        self.use_rd()
         self.assertContains(self.client.get(reverse("research:overview")), "Feedback lokal baru")
         self.assertContains(self.client.get(reverse("research:evidence")), "Suka warnanya")
 
@@ -73,15 +86,22 @@ class DemoFlowTests(TestCase):
         self.assertEqual(response.status_code, 404)
 
     def test_all_pages_render(self):
-        pages = [
+        consumer_pages = [
             reverse("consumer:home"), reverse("consumer:profile_start"),
             reverse("consumer:consent"), reverse("consumer:preferences"),
             reverse("consumer:scan"), reverse("consumer:profile_result"),
-            reverse("consumer:how_it_works"), reverse("research:overview"),
+            reverse("consumer:how_it_works"),
+        ]
+        for url in consumer_pages:
+            with self.subTest(url=url):
+                self.assertEqual(self.client.get(url).status_code, 200)
+        self.use_rd()
+        rd_pages = [
+            reverse("research:overview"),
             reverse("research:unmet_demand"), reverse("research:evidence"),
             reverse("research:formula_lab"),
         ]
-        for url in pages:
+        for url in rd_pages:
             with self.subTest(url=url):
                 self.assertEqual(self.client.get(url).status_code, 200)
 
@@ -99,6 +119,7 @@ class DemoFlowTests(TestCase):
         self.assertEqual(after["local_requests"], before["local_requests"] + 1)
         self.assertEqual(after["related_issues"], before["related_issues"] + 1)
         self.assertEqual(overview()["local_feedback_count"], 1)
+        self.use_rd()
         self.assertContains(self.client.get(reverse("research:unmet_demand")), "1</strong><small>permintaan baru")
         response = self.client.post(reverse("research:formula_lab"), {"opportunity": "OPP001"})
         self.assertContains(response, "Keluhan paling sering")
@@ -116,6 +137,7 @@ class DemoFlowTests(TestCase):
         self.assertEqual(after["sample"], before["sample"] + 1)
 
     def test_rd_ai_buttons_have_fallback_and_render_generated_note(self):
+        self.use_rd()
         summary_url = reverse("research:unmet_demand")
         fallback = self.client.post(summary_url, {"opportunity": "OPP001"})
         self.assertContains(fallback, "Ringkasan aturan")

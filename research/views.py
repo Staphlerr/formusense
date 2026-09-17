@@ -1,6 +1,7 @@
 from django.http import Http404
 from django.shortcuts import render
 
+from accounts.access import research_required
 from services.ai_client import AIUnavailable, generate_formula_rationale, generate_opportunity_summary
 from services.analytics import evidence as evidence_data
 from services.analytics import overview as overview_data
@@ -9,12 +10,14 @@ from services.formula_lab import build_formula_brief
 from services.dataset_insights import dataset_insights
 
 
+@research_required
 def overview(request):
     return render(request, "research/overview.html", {
         **overview_data(), "datasets": dataset_insights(),
     })
 
 
+@research_required
 def unmet_demand(request):
     opportunities = opportunity_data()
     context = {"opportunities": opportunities}
@@ -37,10 +40,12 @@ def unmet_demand(request):
     return render(request, "research/unmet_demand.html", context)
 
 
+@research_required
 def evidence(request):
     return render(request, "research/evidence.html", evidence_data(request.GET.get("opportunity")))
 
 
+@research_required
 def formula_lab(request):
     opportunities = opportunity_data()
     selected_id = (request.POST if request.method == "POST" else request.GET).get("opportunity", "OPP001")

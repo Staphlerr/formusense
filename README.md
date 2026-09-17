@@ -14,15 +14,24 @@ python manage.py runserver
 
 Buka `http://127.0.0.1:8000/`. Django 5.2 atau 6 pada Python yang didukung dapat dipakai. Jalankan `python manage.py test` untuk memeriksa alur dasar.
 
+## Akun dan batas akses
+
+- **Konsumen:** buat akun di `/accounts/register/`, lalu masuk di `/accounts/consumer/login/`. Pendaftaran publik hanya memberi role `consumer`. Profil foto dan rekomendasi berada di sesi akun yang sedang aktif.
+- **R&D:** buat akun secara lokal dengan `python manage.py create_rd_user nama_pengguna`, lalu masukkan password ketika diminta. Masuk di `/accounts/rd/login/`. Tidak ada pendaftaran R&D dari website. Superuser Django juga dapat mengakses R&D.
+- Pengunjung tanpa akun hanya melihat beranda dan penjelasan. Semua halaman profil, rekomendasi, feedback, dan dashboard R&D diperiksa role-nya di server untuk GET maupun POST. Akun dengan role salah mendapat 403. Keluar memakai tombol **Keluar**.
+- Foto untuk coba shade disimpan sementara di `sessionStorage` dengan kunci per akun, dan dihapus oleh tombol keluar pada browser. Saat berganti akun, data profil konsumen di sesi server dibersihkan.
+
+Untuk demo dua sisi pada satu komputer, pakai dua jendela browser berbeda (misalnya jendela biasa dan incognito), masing-masing login sebagai konsumen dan R&D.
+
 Tanpa pengaturan API, tombol **Gunakan profil demo** dan **Isi profil manual** tetap dapat membawa pengguna sampai rekomendasi. CSV katalog dan feedback demo dibaca langsung; feedback yang dikirim melalui aplikasi disimpan di SQLite lokal.
 
 ## Coba alur lengkap dalam 3 menit
 
-1. Buka halaman utama → **Mulai** → isi atau lewati profil singkat.
+1. Buka halaman utama → **Buat akun konsumen** → isi profil singkat.
 2. Untuk alur tanpa foto, pilih **Lanjut tanpa foto**, pilih preferensi `Terracotta` dan `Satin`, lalu **Gunakan profil demo**. Untuk alur kamera, pilih persetujuan foto, lalu **Buka kamera → Ambil foto → Analisis foto**. Unggah JPG/PNG juga tersedia. Layar pemrosesan muncul selama foto dikirim dan dianalisis.
 3. Periksa/ubah profil, lalu lihat tiga shade dari katalog. Di halaman rekomendasi, coba shade pada foto. Kontur bibir terpasang otomatis bila terdeteksi; jika meleset, klik **Atur posisi bibir** untuk menandai empat titik secara manual. Angka minat komunitas tampil sebagai jumlah respons dengan ukuran sampel, bukan klaim akurasi.
 4. Buka salah satu shade → beri feedback. Pilih **Terracotta** pada “warna yang masih dicari” agar permintaan baru dapat diamati.
-5. Setelah mengirim, buka **R&D Preview** → **Unmet Demand**. Jumlah permintaan lokal untuk konsep terracotta bertambah. **Consumer Evidence** menampilkan komentar/keluhan; **Formula Lab** membuat brief dari peluang yang dipilih.
+5. Masuk dengan akun R&D di `/accounts/rd/login/` (gunakan jendela terpisah untuk mempertahankan sesi konsumen), lalu buka **Unmet Demand**. Jumlah permintaan lokal untuk konsep terracotta bertambah. **Consumer Evidence** menampilkan komentar/keluhan; **Formula Lab** membuat brief dari peluang yang dipilih.
 
 Form feedback membedakan minat berdasarkan gambar dari pengalaman setelah pemakaian. Rating dan keluhan tekstur hanya disimpan pada jenis pengalaman pemakaian, yang meminta pengguna menyatakan bahwa produk sudah dicoba. Feedback baru masuk dashboard R&D hanya setelah pengguna mencentang persetujuan penggunaan data demo.
 
@@ -53,6 +62,7 @@ python manage.py runserver
 
 | Lokasi | Tugas |
 | --- | --- |
+| `accounts/` | Pendaftaran, login, role, dan pembatasan akses konsumen/R&D |
 | `consumer/` | Alur konsumen, form, dan penyimpanan feedback |
 | `research/` | Halaman dashboard R&D |
 | `services/data.py` | Pembaca CSV demo |
@@ -80,4 +90,4 @@ python manage.py runserver
 1. Ganti HTML/CSS awal dengan desain Claude yang telah dipilih; rute dan data halaman sudah tersedia.
 2. Uji dengan beberapa foto berizin dalam kondisi cahaya dan warna kulit beragam untuk mengukur konsistensi hasil; foto contoh MediaPipe baru memverifikasi alur teknis, bukan akurasi kosmetik.
 3. Rapikan katalog menjadi shade yang benar-benar tersedia dan konsep R&D; verifikasi informasi produk.
-4. Tambahkan autentikasi R&D dan kebijakan retensi/penghapusan data sebelum aplikasi dipakai di luar demo lokal.
+4. Tetapkan kebijakan retensi/penghapusan data dan tinjau keamanan deployment sebelum aplikasi dipakai di luar demo lokal.

@@ -2,7 +2,7 @@
   const root = document.querySelector('#tryon');
   if (!root) return;
 
-  const photoKey = 'formusense_tryon_photo_v1';
+  const photoKey = `formusense_tryon_photo_v1_${document.body.dataset.userId}`;
   const canvas = document.querySelector('#tryon-canvas');
   const context = canvas.getContext('2d');
   const upload = document.querySelector('#tryon-upload');

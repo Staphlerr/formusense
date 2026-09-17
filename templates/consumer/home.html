@@ -5,7 +5,14 @@
     <span class="eyebrow">AI-assisted · closed-loop R&D</span>
     <h1>Temukan shade lipstik yang terasa pas buatmu.</h1>
     <p class="lead">Kenali profil warna, pilih dari katalog shade demo, lalu berikan masukan yang membantu tim formulasi.</p>
-    <div class="actions"><a class="button" href="{% url 'consumer:profile_start' %}">Mulai</a><a class="button secondary" href="{% url 'research:overview' %}">Lihat sisi R&D</a></div>
+    <div class="actions">
+      {% if can_consumer %}
+        <a class="button" href="{% url 'consumer:profile_start' %}">Mulai</a>
+      {% elif not can_research %}
+        <a class="button" href="{% url 'accounts:register' %}">Buat akun konsumen</a>
+      {% endif %}
+      <a class="button secondary" href="{% if can_research %}{% url 'research:overview' %}{% else %}{% url 'accounts:rd_login' %}{% endif %}">{% if can_research %}Buka dashboard R&D{% else %}Masuk sisi R&D{% endif %}</a>
+    </div>
   </div>
   <div class="hero-art" aria-hidden="true"><span class="swatch a"></span><span class="swatch b"></span><span class="swatch c"></span><span class="swatch d"></span></div>
 </section>

@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.http import Http404
 from django.shortcuts import redirect, render
 
+from accounts.access import consumer_required
 from consumer.forms import FeedbackForm, LipProfileForm, PreferenceForm, ProfileStartForm
 from services.ai_client import AIUnavailable, generate_personal_note
 from services.analytics import affinity, community_spectrum
@@ -26,6 +27,7 @@ def home(request):
     return render(request, "consumer/home.html")
 
 
+@consumer_required
 def profile_start(request):
     form = ProfileStartForm(request.POST or None, initial=request.session.get("basic_profile"))
     if request.method == "POST" and form.is_valid():
@@ -34,6 +36,7 @@ def profile_start(request):
     return render(request, "consumer/profile_start.html", {"form": form})
 
 
+@consumer_required
 def consent(request):
     if request.method == "POST":
         request.session["photo_consent"] = request.POST.get("choice") == "photo"
@@ -43,6 +46,7 @@ def consent(request):
     return render(request, "consumer/consent.html")
 
 
+@consumer_required
 def preferences(request):
     form = PreferenceForm(request.POST or None, initial=request.session.get("preference"))
     if request.method == "POST" and form.is_valid():
@@ -51,6 +55,7 @@ def preferences(request):
     return render(request, "consumer/preferences.html", {"form": form})
 
 
+@consumer_required
 def scan(request):
     if request.method == "POST":
         action = request.POST.get("action")
@@ -95,6 +100,7 @@ def scan(request):
     })
 
 
+@consumer_required
 def profile_result(request):
     current = request.session.get("lip_profile", MANUAL_PROFILE)
     form = LipProfileForm(request.POST or None, initial=current)
@@ -111,6 +117,7 @@ def profile_result(request):
     })
 
 
+@consumer_required
 def recommendations(request):
     profile = request.session.get("lip_profile")
     if not profile:
@@ -142,6 +149,7 @@ def recommendations(request):
     })
 
 
+@consumer_required
 def feedback(request, shade_id):
     shade = shade_by_id(shade_id, available_only=True)
     if shade is None:
@@ -171,6 +179,7 @@ def feedback(request, shade_id):
     return render(request, "consumer/feedback.html", {"form": form, "shade": shade})
 
 
+@consumer_required
 def feedback_success(request):
     return render(request, "consumer/feedback_success.html", {
         "last_feedback": request.session.get("last_feedback", {}),

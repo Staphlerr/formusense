@@ -14,10 +14,33 @@
   const name = document.querySelector('#photo-name');
   const ready = document.querySelector('#photo-ready');
   const analyzeButton = document.querySelector('#analyze-button');
-  const loading = document.querySelector('#scan-loading');
-  const loadingPhoto = document.querySelector('#loading-photo');
-  const loadingFace = document.querySelector('#loading-face');
-  const tryOnPhotoKey = 'formusense_tryon_photo_v1';
+  let loading = document.querySelector('#scan-loading');
+  if (!loading) {
+    // A running Django process may still serve an older cached scan template.
+    // Keep photo submission and its loading feedback working in that case.
+    loading = document.createElement('div');
+    loading.id = 'scan-loading';
+    loading.className = 'scan-loading';
+    loading.setAttribute('role', 'status');
+    loading.setAttribute('aria-live', 'polite');
+    loading.hidden = true;
+    loading.innerHTML = `
+      <div class="scan-loading-inner">
+        <span class="eyebrow">Analisis foto</span>
+        <h1>Mengenali profil bibirmu...</h1>
+        <p class="lead">Foto sedang diproses. Hasilnya bisa kamu periksa sebelum melihat rekomendasi.</p>
+        <div class="scan-progress" aria-hidden="true"><span></span></div>
+        <ol class="scan-loading-steps">
+          <li id="loading-photo" class="is-active"><span class="scan-step-icon">1</span><span>Menyiapkan foto</span><small>Sedang diproses</small></li>
+          <li id="loading-face"><span class="scan-step-icon">2</span><span>Mencari wajah dan kontur bibir</span><small>Menunggu</small></li>
+          <li id="loading-color"><span class="scan-step-icon">3</span><span>Memperkirakan warna dari foto</span><small>Menunggu</small></li>
+        </ol>
+      </div>`;
+    document.body.append(loading);
+  }
+  const loadingPhoto = loading.querySelector('#loading-photo');
+  const loadingFace = loading.querySelector('#loading-face');
+  const tryOnPhotoKey = `formusense_tryon_photo_v1_${document.body.dataset.userId}`;
   let stream = null;
   let previewUrl = null;
   let submitting = false;
@@ -147,25 +170,36 @@
   form.addEventListener('submit', async (event) => {
     if (submitting || !input.files[0]) return;
     event.preventDefault();
+    submitting = true;
     stopCamera();
     loading.hidden = false;
     document.body.classList.add('scan-is-loading');
     analyzeButton.textContent = 'Menganalisis foto…';
     analyzeButton.setAttribute('aria-busy', 'true');
     analyzeButton.disabled = true;
-    await cachePhotoForTryOn(input.files[0]);
-    loadingPhoto.classList.remove('is-active');
-    loadingPhoto.classList.add('is-done');
-    loadingPhoto.querySelector('small').textContent = 'Selesai';
-    loadingFace.classList.add('is-active');
-    loadingFace.querySelector('small').textContent = 'Sedang diproses';
+    try { await cachePhotoForTryOn(input.files[0]); }
+    catch (cause) { /* A storage failure must not block the photo upload. */ }
+    if (loadingPhoto) {
+      loadingPhoto.classList.remove('is-active');
+      loadingPhoto.classList.add('is-done');
+      const label = loadingPhoto.querySelector('small');
+      if (label) label.textContent = 'Selesai';
+    }
+    if (loadingFace) {
+      loadingFace.classList.add('is-active');
+      const label = loadingFace.querySelector('small');
+      if (label) label.textContent = 'Sedang diproses';
+    }
     analyzeButton.disabled = false;
-    submitting = true;
     form.requestSubmit(analyzeButton);
   });
   window.addEventListener('pageshow', () => {
     loading.hidden = true;
     document.body.classList.remove('scan-is-loading');
+    submitting = false;
+    analyzeButton.textContent = '3 · Analisis foto';
+    analyzeButton.removeAttribute('aria-busy');
+    analyzeButton.disabled = !input.files[0];
   });
   document.querySelectorAll('button[name="action"][value="manual"], button[name="action"][value="demo"]')
     .forEach((button) => button.addEventListener('click', () => {
