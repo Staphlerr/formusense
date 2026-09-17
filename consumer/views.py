@@ -168,6 +168,11 @@ def profile_result(request):
     }
     return render(request, "consumer/profile_result.html", {
         "form": form,
+        "profile_display": {
+            field: dict(form.fields[field].choices).get(form[field].value(), "Belum yakin")
+            for field in ("skin_tone", "undertone", "lip_pigmentation")
+        },
+        "photo_scanned": request.session.get("photo_scanned", False),
         "source_label": source_labels.get(current.get("confidence"), "Perkiraan awal"),
         "analysis_note": current.get("analysis_note", ""),
         # Raw Lab/measurement numbers when tier 1 (local_vision) produced
@@ -220,6 +225,13 @@ def save_photo(request):
     photo = request.FILES.get("photo")
     if shade is None or photo is None:
         return JsonResponse({"error": "Pilih shade dan foto hasil terlebih dahulu."}, status=400)
+    basic_profile = request.session.get("basic_profile", {})
+    photo_metadata = ProfileStartForm({
+        field: request.POST.get(field, basic_profile.get(field, ""))
+        for field in ("nickname", "age_range", "region")
+    })
+    if not photo_metadata.is_valid():
+        return JsonResponse({"error": "Periksa nama, rentang usia, dan wilayah foto."}, status=400)
     if photo.content_type not in {"image/jpeg", "image/png"} or photo.size > 3 * 1024 * 1024:
         return JsonResponse({"error": "Gunakan foto JPG/PNG maksimal 3 MB."}, status=400)
     if SavedPhoto.objects.filter(user=request.user).count() >= 8:
@@ -236,6 +248,7 @@ def save_photo(request):
         return JsonResponse({"error": "Foto tidak dapat dibaca."}, status=400)
     entry = SavedPhoto.objects.create(
         user=request.user, shade_id=shade_id, shade_name=shade["shade_name"],
+        **photo_metadata.cleaned_data,
         image_jpeg=output.getvalue(),
     )
     return JsonResponse({"saved": True, "photo_id": entry.pk,
@@ -300,6 +313,7 @@ def recommendations(request):
         pick["display_note_source"] = note_source if index == 1 else "Aturan katalog"
     return render(request, "consumer/recommendations.html", {
         "picks": picks, "profile": profile, "personal_note": note,
+        "photo_metadata_form": ProfileStartForm(initial=request.session.get("basic_profile", {})),
         "note_source": note_source, "spectrum": hedonic_spectrum(profile),
         "finish_gap": (preference.get("finish")
                        if preference.get("finish")

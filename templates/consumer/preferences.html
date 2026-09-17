@@ -1,8 +1,62 @@
 {% extends 'base.html' %}
 {% block title %}Preferensi · LipXMatch{% endblock %}
 {% block content %}
-<section class="page narrow"><span class="eyebrow">Langkah 3 dari 4</span><h1>Gaya yang kamu suka</h1>
-<p class="lead">Boleh pilih “Belum tahu”. Preferensi ini membantu mengurutkan shade.</p>
-<form method="post" class="card form-card">{% csrf_token %}{{ form.as_div }}<button class="button" type="submit">Lanjut</button></form>
+<section class="page beauty-onboarding" id="preferences-page">
+  <div class="onboarding-intro">
+    <span class="eyebrow">Langkah 3 dari 4 · Tentang seleramu</span>
+    <h1>Warna seperti apa yang terasa <em>kamu banget?</em></h1>
+    <p class="lead">Pilih yang paling dekat dengan seleramu. Belum tahu juga boleh—hasil scan tetap bisa membantumu menemukan pilihan.</p>
+  </div>
+
+  <form method="post" class="preference-form">{% csrf_token %}
+    <fieldset class="preference-group">
+      <legend><span class="preference-number">01</span> Keluarga warna</legend>
+      <p>Bayangkan warna yang paling ingin kamu coba.</p>
+      {{ form.color.errors }}
+      <div class="color-options">
+        {% for option in form.color %}
+        <label class="color-option color-option--{{ option.data.value|default:'unsure' }}">
+          {{ option.tag }}
+          <span class="color-option-swatch" aria-hidden="true"></span>
+          <span class="color-option-label">{{ option.choice_label }}</span>
+        </label>
+        {% endfor %}
+      </div>
+    </fieldset>
+
+    <fieldset class="preference-group">
+      <legend><span class="preference-number">02</span> Hasil akhir</legend>
+      <p>Bagaimana tampilan lipstik yang kamu suka?</p>
+      {{ form.finish.errors }}
+      <div class="finish-options">
+        {% for option in form.finish %}
+        <label class="finish-option finish-option--{{ option.data.value|default:'unsure' }}">
+          {{ option.tag }}
+          <span class="finish-option-mark" aria-hidden="true"></span>
+          <strong>{{ option.choice_label }}</strong>
+          <small>{% if option.data.value == 'matte' %}Lembut tanpa kilau{% elif option.data.value == 'satin' %}Kilau halus{% elif option.data.value == 'cream' %}Lembut dan nyaman{% elif option.data.value == 'glossy' %}Berkilau segar{% elif option.data.value == 'glasting' %}Kilau bening{% else %}Bantu aku memilih{% endif %}</small>
+        </label>
+        {% endfor %}
+      </div>
+    </fieldset>
+
+    <fieldset class="preference-group">
+      <legend><span class="preference-number">03</span> Kesan yang dicari</legend>
+      <p>Untuk keseharian, suasana ceria, atau momen lebih berani?</p>
+      {{ form.intensity.errors }}
+      <div class="mood-options">
+        {% for option in form.intensity %}
+        <label class="mood-option mood-option--{{ option.data.value|default:'unsure' }}">
+          {{ option.tag }}
+          <span class="mood-option-art" aria-hidden="true"></span>
+          <strong>{{ option.choice_label }}</strong>
+          <small>{% if option.data.value == 'natural' %}Tampil lembut sehari-hari{% elif option.data.value == 'medium' %}Sedikit lebih hidup{% elif option.data.value == 'bold' %}Tampil menonjol{% else %}Aku mau lihat opsinya{% endif %}</small>
+        </label>
+        {% endfor %}
+      </div>
+    </fieldset>
+
+    <div class="onboarding-next"><p>Preferensimu membantu mengurutkan shade, bukan membatasi pilihan.</p><button class="button" type="submit">Lanjut ke foto <span aria-hidden="true">→</span></button></div>
+  </form>
 </section>
 {% endblock %}

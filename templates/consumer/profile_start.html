@@ -1,8 +1,17 @@
 {% extends 'base.html' %}
 {% block title %}Profil · LipXMatch{% endblock %}
 {% block content %}
-<section class="page narrow"><span class="eyebrow">Langkah 1 dari 4</span><h1>Buat profil singkat</h1>
-<p class="lead">Nama, usia, dan wilayah boleh dikosongkan untuk mencoba dengan profil contoh.</p>
-<form method="post" class="card form-card">{% csrf_token %}{{ form.as_div }}<button class="button" type="submit">Lanjut</button></form>
+<section class="page beauty-onboarding profile-start-page">
+  <div class="onboarding-intro"><span class="eyebrow">Langkah 1 dari 4 · Mulai dari kamu</span><h1>Yuk, kenalan <em>sebentar.</em></h1><p class="lead">Profil singkat ini membantu memberi konteks untuk pilihan shade dan ringkasan kebutuhan konsumen. Semua kolom boleh dikosongkan.</p></div>
+  <div class="profile-start-layout">
+    <form method="post" class="card profile-start-form">{% csrf_token %}
+      <span class="eyebrow">Tentang kamu</span>
+      <div><label for="{{ form.nickname.id_for_label }}">{{ form.nickname.label }}</label>{{ form.nickname }}{{ form.nickname.errors }}<small>Pakai nama panggilan saja kalau mau.</small></div>
+      <div class="profile-start-pair"><div><label for="{{ form.age_range.id_for_label }}">{{ form.age_range.label }}</label>{{ form.age_range }}{{ form.age_range.errors }}</div><div><label for="{{ form.region.id_for_label }}">{{ form.region.label }}</label>{{ form.region }}{{ form.region.errors }}</div></div>
+      <p class="fine-print">Usia dan wilayah hanya membantu membaca pola secara berkelompok. Tidak perlu diisi untuk menemukan shade.</p>
+      <button class="button" type="submit">Lanjut <span aria-hidden="true">→</span></button>
+    </form>
+    <div class="profile-start-art" aria-hidden="true"><span class="profile-art-orbit profile-art-orbit-one"></span><span class="profile-art-orbit profile-art-orbit-two"></span><div class="profile-art-center"><span>Find your shade.</span><i></i><strong>Tell us what you love.</strong></div><div class="profile-art-swatches"><b></b><b></b><b></b><b></b><b></b></div></div>
+  </div>
 </section>
 {% endblock %}

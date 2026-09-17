@@ -158,12 +158,9 @@ def classify_undertone(lab: tuple[float, float, float]) -> str:
     constants we chose for this prototype -- present them as such, not as an
     empirically validated universal threshold.
 
-    NOTE: services/local_vision.py currently keeps its OWN undertone
-    heuristic (_undertone_from_lab) rather than calling this function,
-    because it needs to return "uncertain" as a valid category (matching
-    this app's form choices) and this function does not produce that value
-    -- see the module docstring in local_vision.py for why the two were not
-    merged.
+    services/local_vision.py calls this function after rejecting images
+    with unreliable exposure or too little color information. Those images
+    retain an "uncertain" undertone for manual correction.
     """
     _, a, b = lab
     chroma = (a ** 2 + b ** 2) ** 0.5

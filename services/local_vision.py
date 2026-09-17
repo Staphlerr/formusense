@@ -4,9 +4,9 @@ Face landmarks come from Google's MediaPipe FaceLandmarker (Tasks API).
 Skin-tone classification and the CIELAB reference swatches come from
 services/color_science.py -- this module does NOT keep its own copy of the
 Monk Skin Tone hex values or skin-tone bucketing, so there is one source of
-truth for that part of the pipeline. Undertone and lip-pigmentation
-classification stay local to this module (see the note below the imports
-for why those two were NOT also merged into color_science.py).
+truth for that part of the pipeline. Undertone also uses color_science.py
+after image-quality checks. Lip-pigmentation classification stays local
+because its thresholds differ from the general helper there.
 
 Colour categories below are transparent demo heuristics, not a trained
 skin-tone or undertone classifier. Nothing here calls any AI/LLM API --

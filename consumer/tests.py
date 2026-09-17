@@ -20,10 +20,10 @@ from services.team_data import (
     build_gap_formula_brief, catalog_shades, gap_candidates,
     same_brand_shades, shade_evidence, shade_feedback_examples, team_dataset_summary,
 )
-from services.color_science import classify_skin_tone
+from services.color_science import classify_skin_tone, classify_undertone
 from services.local_vision import (
     LocalVisionError, _pigmentation_from_contrast,
-    _undertone_from_lab, analyze_photo_local, model_available,
+    analyze_photo_local, model_available,
 )
 
 
@@ -44,7 +44,7 @@ class DemoFlowTests(TestCase):
             "nickname": "Ani", "age_range": "25_34", "region": "West Java",
         })
         self.client.post(reverse("consumer:consent"), {"choice": "manual"})
-        self.client.post(reverse("consumer:preferences"), {"color": "terracotta", "finish": "satin"})
+        self.client.post(reverse("consumer:preferences"), {"color": "orange", "finish": "matte"})
         response = self.client.post(reverse("consumer:scan"), {"action": "demo"})
         self.assertRedirects(response, reverse("consumer:profile_result"))
         response = self.client.post(reverse("consumer:profile_result"), {
@@ -56,7 +56,9 @@ class DemoFlowTests(TestCase):
         self.assertEqual(len(picks), 3)
         self.assertNotIn("SHD009", {pick["shade_id"] for pick in picks})
         recommendation_page = self.client.get(reverse("consumer:recommendations"))
-        self.assertContains(recommendation_page, "Coba shade lipstik di fotomu")
+        self.assertContains(recommendation_page, "Kami menemukan")
+        self.assertContains(recommendation_page, "Coba warnanya di fotomu")
+        self.assertLess(recommendation_page.content.index(b'class="match-grid"'), recommendation_page.content.index(b'id="tryon"'))
         self.assertContains(recommendation_page, "swatch publik")
         shade_id = picks[0]["shade_id"]
         response = self.client.post(reverse("consumer:feedback", args=[shade_id]), {
@@ -129,7 +131,9 @@ class DemoFlowTests(TestCase):
         response = self.client.post(reverse("research:formula_lab"), {"opportunity": "OPP001"})
         self.assertContains(response, "Keluhan paling sering")
         self.assertEqual(build_formula_brief("OPP001")["brief"]["opportunity"]["local_requests"], 1)
-        self.assertIsNone(build_formula_brief("OPP002")["brief"]["illustrative_composition"])
+        reference_brief = build_formula_brief("OPP002")["brief"]
+        self.assertFalse(reference_brief["needs_reference"])
+        self.assertAlmostEqual(sum(reference_brief["baseline_composition"].values()), 100, places=1)
 
     def test_interest_affinity_is_count_not_claimed_accuracy(self):
         before = affinity("SHD001", {"skin_tone": "medium", "undertone": "warm"})
@@ -277,7 +281,7 @@ class LocalVisionTests(SimpleTestCase):
         with self.assertRaisesRegex(LocalVisionError, "Wajah tidak terdeteksi"):
             analyze_photo_local(image.getvalue(), "image/png")
 
-    def test_colour_rules_are_provisional_and_leave_ambiguous_undertone_unknown(self):
+    def test_colour_rules_follow_current_provisional_heuristics(self):
         import cv2
         import numpy as np
 
@@ -285,7 +289,7 @@ class LocalVisionTests(SimpleTestCase):
                                 cv2.COLOR_RGB2LAB)[0, 0]
         self.assertEqual(classify_skin_tone(tuple(float(v) for v in skin_lab))[0], "medium")
         self.assertEqual(_pigmentation_from_contrast(70, 58), "medium_high")
-        self.assertEqual(_undertone_from_lab(15, 18), "uncertain")
+        self.assertEqual(classify_undertone((70, 15, 18)), "neutral")
 
 
 class AIAdapterTests(SimpleTestCase):
@@ -473,7 +477,9 @@ class TeamDataFlowTests(TestCase):
         satin = next(item for item in gap_page.context["finish_coverage"] if item["finish"] == "satin")
         self.assertEqual(satin["catalog_count"], 0)
         self.assertEqual(satin["local_requests"], 1)
-        self.assertContains(self.client.get(reverse("research:evidence")), "300 penilaian contoh")
+        evidence_page = self.client.get(reverse("research:evidence"))
+        self.assertContains(evidence_page, "Keluhan pemakaian · internal")
+        self.assertGreater(evidence_page.context["team_feedback"]["count"], 0)
         brief_page = self.client.post(reverse("research:formula_lab"), {"gap": "0"})
         self.assertContains(brief_page, "Komposisi awal untuk diuji")
         self.assertEqual(brief_page.context["team_brief"]["total"], 100)
@@ -544,13 +550,18 @@ class AccountCollectionTests(TestCase):
         upload = SimpleUploadedFile("hasil.png", image.getvalue(), content_type="image/png")
         response = self.client.post(reverse("consumer:save_photo"), {
             "shade_id": "SHD001", "photo": upload,
+            "nickname": "Maya", "age_range": "25_34", "region": "West Java",
         })
         self.assertEqual(response.status_code, 200)
         entry = SavedPhoto.objects.get(user=self.owner)
         self.assertTrue(entry.image_jpeg.startswith(b"\xff\xd8"))
+        self.assertEqual((entry.nickname, entry.age_range, entry.region),
+                         ("Maya", "25_34", "West Java"))
         photo_url = reverse("consumer:profile_photo", args=[entry.pk])
         self.assertEqual(self.client.get(photo_url).status_code, 200)
         self.assertContains(self.client.get(reverse("consumer:account_profile")), photo_url)
+        self.assertContains(self.client.get(reverse("consumer:account_profile")), "Maya")
+        self.assertContains(self.client.get(reverse("consumer:account_profile")), "Jawa Barat")
         self.client.force_login(self.other)
         self.assertEqual(self.client.get(photo_url).status_code, 404)
         self.assertEqual(self.client.post(reverse("consumer:delete_photo", args=[entry.pk])).status_code, 404)
@@ -558,6 +569,29 @@ class AccountCollectionTests(TestCase):
         self.assertRedirects(self.client.post(reverse("consumer:delete_photo", args=[entry.pk])),
                              reverse("consumer:account_profile"))
         self.assertFalse(SavedPhoto.objects.exists())
+
+    def test_photo_labels_are_snapshots_per_photo(self):
+        from django.core.files.uploadedfile import SimpleUploadedFile
+        from PIL import Image
+
+        image = io.BytesIO()
+        Image.new("RGB", (32, 32), "#b05f49").save(image, format="PNG")
+        for shade_id, nickname, age_range, region in [
+            ("SHD001", "Maya", "25_34", "West Java"),
+            ("SHD002", "Rani", "18_24", "Jakarta"),
+        ]:
+            upload = SimpleUploadedFile("hasil.png", image.getvalue(), content_type="image/png")
+            response = self.client.post(reverse("consumer:save_photo"), {
+                "shade_id": shade_id, "photo": upload, "nickname": nickname,
+                "age_range": age_range, "region": region,
+            })
+            self.assertEqual(response.status_code, 200)
+        photos = list(SavedPhoto.objects.filter(user=self.owner).order_by("pk"))
+        self.assertEqual([(photo.nickname, photo.age_range, photo.region, photo.shade_id)
+                          for photo in photos], [
+            ("Maya", "25_34", "West Java", "SHD001"),
+            ("Rani", "18_24", "Jakarta", "SHD002"),
+        ])
 
     def test_photo_history_rejects_non_image(self):
         from django.core.files.uploadedfile import SimpleUploadedFile

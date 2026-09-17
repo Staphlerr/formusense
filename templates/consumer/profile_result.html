@@ -1,24 +1,73 @@
 {% extends 'base.html' %}
 {% block title %}Hasil profil · LipXMatch{% endblock %}
 {% block content %}
-<section class="page narrow"><h1>Periksa profilmu</h1>
-    <p class="fine-print">{{ source_label }}</p>
-    <p class="lead">Nilai di bawah bisa kamu sesuaikan. Estimasi dari foto, bukan diagnosis pasti.</p>
-    {% if analysis_note %}<p class="message">{{ analysis_note }}</p>{% endif %}
-    <form method="post" class="card form-card" id="result-form">{% csrf_token %}{{ form.as_div }}<button class="button" type="submit" id="result-submit">Lihat rekomendasi shade</button></form>
+<section class="page profile-result-page" id="profile-result-page">
+  <div class="profile-result-heading">
+    <div><span class="eyebrow">{{ source_label }}</span><h1>Kenali profil warna <em>bibirmu.</em></h1><p class="lead">Ini perkiraan awal dari fotomu atau profil yang kamu isi. Periksa hasilnya sebelum melihat shade yang cocok.</p></div>
+    <span class="profile-result-step">Hasil analisis <span aria-hidden="true">✦</span></span>
+  </div>
+  {% if analysis_note %}<p class="message">{{ analysis_note }}</p>{% endif %}
+
+  <form method="post" class="profile-result-form" id="result-form">{% csrf_token %}
+    <div class="profile-result-layout">
+      <div class="profile-portrait">
+        <div class="profile-photo-frame">
+          <img id="profile-session-photo" alt="Foto yang kamu pakai dalam sesi analisis ini" hidden>
+          <div class="profile-photo-placeholder" id="profile-photo-placeholder" aria-hidden="true"><span>✦</span><svg class="profile-placeholder-lips" viewBox="0 0 260 120" focusable="false"><defs><linearGradient id="profile-lip-color" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#b05b62"/><stop offset="1" stop-color="#723348"/></linearGradient></defs><path d="M12 60 C42 47 65 29 87 28 C105 25 119 43 130 43 C141 43 155 25 173 28 C195 29 218 47 248 60 C194 64 160 63 130 62 C100 63 66 64 12 60Z" fill="url(#profile-lip-color)"/><path d="M12 60 C59 65 93 62 130 62 C167 62 201 65 248 60 C212 92 178 103 130 104 C82 103 48 92 12 60Z" fill="#803b50"/><path d="M30 61 Q130 74 230 61" fill="none" stroke="#64283f" stroke-width="3" opacity=".52"/></svg></div>
+        </div>
+        <div class="profile-portrait-caption"><span class="eyebrow">Profil personal</span><p>Warna bibir dan kulitmu adalah titik awal untuk menemukan shade yang terasa pas.</p></div>
+      </div>
+
+      <div class="profile-summary">
+        <div class="profile-summary-head"><span class="eyebrow">Profil bibirmu</span><span class="profile-summary-seal" aria-hidden="true">✦</span></div>
+        <h2>Warna yang jadi dasar rekomendasimu</h2>
+        <div class="profile-trait-grid">
+          <div class="profile-trait"><span class="trait-icon trait-icon-skin" aria-hidden="true"></span><small>Warna kulit</small><strong>{{ profile_display.skin_tone }}</strong></div>
+          <div class="profile-trait"><span class="trait-icon trait-icon-undertone" aria-hidden="true"></span><small>Undertone</small><strong>{{ profile_display.undertone }}</strong></div>
+          <div class="profile-trait profile-trait-wide"><span class="trait-icon trait-icon-lip" aria-hidden="true"></span><small>Kontras warna bibir terhadap kulit</small><strong>{{ profile_display.lip_pigmentation }}</strong><span class="trait-meter" aria-hidden="true"><i class="trait-meter--{{ form.lip_pigmentation.value|default:'uncertain' }}"></i></span></div>
+        </div>
+        {% if form.visible_lip_condition.value %}<p class="profile-appearance"><strong>Ciri yang tampak:</strong> {{ form.visible_lip_condition.value }}</p>{% endif %}
+        <p class="profile-result-disclaimer">Hasil foto dipengaruhi pencahayaan dan kamera; ciri bibir hanya deskripsi tampilan, bukan penilaian kesehatan.</p>
+        <div class="profile-result-actions"><button class="button" type="submit" id="result-submit">Lihat 3 shade untukku <span aria-hidden="true">→</span></button><a class="button secondary" href="#profile-edit" id="profile-adjust-link">Ubah profil</a></div>
+      </div>
+    </div>
+
+    <details class="profile-edit card" id="profile-edit" {% if form.errors %}open{% endif %}>
+      <summary>Periksa atau koreksi hasil analisis <span aria-hidden="true">⌄</span></summary>
+      <p class="fine-print">Kalau perkiraan ini belum sesuai, pilih nilai yang menurutmu lebih tepat.</p>
+      <div class="profile-edit-grid">
+        <div><label for="{{ form.skin_tone.id_for_label }}">{{ form.skin_tone.label }}</label>{{ form.skin_tone }}{{ form.skin_tone.errors }}</div>
+        <div><label for="{{ form.undertone.id_for_label }}">{{ form.undertone.label }}</label>{{ form.undertone }}{{ form.undertone.errors }}</div>
+        <div><label for="{{ form.lip_pigmentation.id_for_label }}">{{ form.lip_pigmentation.label }}</label>{{ form.lip_pigmentation }}{{ form.lip_pigmentation.errors }}</div>
+        <div><label for="{{ form.visible_lip_condition.id_for_label }}">{{ form.visible_lip_condition.label }}</label>{{ form.visible_lip_condition }}{{ form.visible_lip_condition.errors }}</div>
+      </div>
+      <button class="button" type="submit">Simpan koreksi &amp; lihat shade</button>
+    </details>
+  </form>
 </section>
 <script>
-    (() => {
-      const form = document.querySelector('#result-form');
-      const btn = document.querySelector('#result-submit');
-      if (!form || !btn) return;
-      form.addEventListener('submit', () => {
-        if (!form.checkValidity()) return; // don't lock the button on a validation error
-        btn.disabled = true;
-        btn.setAttribute('aria-busy', 'true');
-        btn.dataset.originalText = btn.textContent;
-        btn.textContent = 'Menyiapkan rekomendasi…';
-      });
-    })();
+(() => {
+  const edit = document.querySelector('#profile-edit');
+  document.querySelector('#profile-adjust-link')?.addEventListener('click', () => { edit.open = true; });
+  document.querySelector('#result-form')?.addEventListener('submit', (event) => {
+    if (!event.currentTarget.checkValidity()) return;
+    const button = event.submitter;
+    if (!button) return;
+    button.disabled = true;
+    button.setAttribute('aria-busy', 'true');
+    button.textContent = 'Menyiapkan rekomendasi…';
+  });
+  {% if photo_scanned %}
+  try {
+    const image = sessionStorage.getItem(`formusense_tryon_photo_v1_${document.body.dataset.userId}`);
+    if (image) {
+      const photo = document.querySelector('#profile-session-photo');
+      photo.src = image;
+      photo.hidden = false;
+      document.querySelector('#profile-photo-placeholder').hidden = true;
+    }
+  } catch (error) { /* The profile remains available without browser storage. */ }
+  {% endif %}
+})();
 </script>
 {% endblock %}

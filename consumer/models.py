@@ -2,6 +2,19 @@ from django.db import models
 from django.conf import settings
 
 
+AGE_RANGE_CHOICES = [
+    ("under_18", "Di bawah 18"), ("18_24", "18–24"),
+    ("25_34", "25–34"), ("35_plus", "35+"),
+]
+REGION_CHOICES = [
+    ("Jakarta", "Jakarta"), ("West Java", "Jawa Barat"),
+    ("Central Java", "Jawa Tengah"), ("East Java", "Jawa Timur"),
+    ("Sumatra", "Sumatra"), ("Kalimantan", "Kalimantan"),
+    ("Sulawesi", "Sulawesi"), ("Bali & Nusa Tenggara", "Bali & Nusa Tenggara"),
+    ("Papua", "Papua"),
+]
+
+
 class Feedback(models.Model):
     INTEREST = "color_interest"
     WEAR = "wear_feedback"
@@ -44,6 +57,9 @@ class SavedPhoto(models.Model):
                              related_name="saved_photos")
     shade_id = models.CharField(max_length=12)
     shade_name = models.CharField(max_length=100)
+    nickname = models.CharField(max_length=50, blank=True)
+    age_range = models.CharField(max_length=20, choices=AGE_RANGE_CHOICES, blank=True)
+    region = models.CharField(max_length=50, choices=REGION_CHOICES, blank=True)
     image_jpeg = models.BinaryField()
     created_at = models.DateTimeField(auto_now_add=True)
 

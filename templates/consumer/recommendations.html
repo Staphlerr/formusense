@@ -6,61 +6,68 @@
 
   <!-- ============ LIST VIEW ============ -->
   <div id="recs-list-view">
-    <span class="eyebrow">Dari katalog shade contoh</span>
-    <h1>Tiga cara memakai shade favoritmu</h1>
-    <p class="lead">Pilihan diurutkan dari profil dan preferensimu. Kecocokan warna tetap perlu dicoba langsung.</p>
+    <div class="match-intro"><span class="eyebrow">Pilihan warna untukmu</span>
+      <h1>Kami menemukan <em>3 shade</em> untukmu.</h1>
+      <p class="lead">Dari warna sehari-hari sampai tampilan yang lebih berani. Pilihan ini diurutkan dari profil dan seleramu; hasil akhirnya tetap perlu dicoba langsung.</p>
+    </div>
 
-    <section class="card tryon" id="tryon" data-photo-scanned="{{ photo_scanned|yesno:'true,false' }}" data-save-photo-url="{% url 'consumer:save_photo' %}">
+    <div class="match-grid" aria-label="Tiga rekomendasi shade">
+      {% for shade in picks %}
+      <article class="shade-card match-card {% if forloop.first %}is-selected-shade{% endif %}" data-detail-card="detail-{{ forloop.counter0 }}" data-note="{{ shade.display_note }}" data-note-source="{{ shade.display_note_source }}">
+        <div class="match-swatch" style="background:{{ shade.hex }}" aria-hidden="true"><span class="match-index">0{{ forloop.counter }}</span><span class="match-swatch-glow"></span></div>
+        <div class="match-body">
+          <span class="match-role">{{ shade.role_label }}</span>
+          <h2>{{ shade.shade_name }}</h2>
+          <p class="match-attributes">{{ shade.color_family|title }} · {{ shade.finish|title }} · {{ shade.intensity|title }}</p>
+          <p class="match-reason">{{ shade.reason|truncatewords:21 }}</p>
+          {% if shade.affinity.sample %}<p class="match-affinity">{{ shade.affinity.positive }} dari {{ shade.affinity.sample }} profil serupa menyukai warna ini</p>{% endif %}
+          <div class="match-actions">
+            <button type="button" class="button" data-tryon-shade data-id="{{ shade.shade_id }}" data-hex="{{ shade.hex }}" data-name="{{ shade.shade_name }}" data-select-preview="detail-{{ forloop.counter0 }}" aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}">Coba shade</button>
+            <button type="button" class="button secondary explore-btn" data-open-detail="detail-{{ forloop.counter0 }}">Jelajahi shade</button>
+          </div>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+
+    <section class="card tryon" id="tryon" data-photo-scanned="{{ photo_scanned|yesno:'true,false' }}" data-save-photo-url="{% url 'consumer:save_photo' %}" hidden>
       {{ lip_points|json_script:"lip-points-data" }}
       {{ lip_contours|json_script:"lip-contours-data" }}
       {{ public_examples|json_script:"public-examples-data" }}
-      <span class="eyebrow">Pratinjau virtual · simulasi warna</span>
-      <h2>Coba shade lipstik di fotomu</h2>
-      <p>Foto dari scan akan muncul di sini dalam tab browser ini. Kontur bibir dicari otomatis; jika belum pas, kamu bisa menandai sisi kiri, atas, kanan, dan bawah bibir. Setelah itu kamu bisa mengganti warna. Tampilan ini adalah simulasi visual; warna akhir produk perlu dicoba langsung.</p>
+      <div class="tryon-heading"><div><span class="eyebrow">Pratinjau virtual</span><h2>Coba warnanya di fotomu</h2><p>Simulasi warna membantu membayangkan hasilnya. Warna produk asli bisa berbeda saat dipakai.</p></div><button type="button" class="tryon-close" id="tryon-close" aria-label="Tutup pratinjau">✕</button></div>
 
       <div class="tryon-layout">
         <div class="lab-photo-panel">
-          <label for="tryon-upload">Kalau foto belum muncul, pilih selfie untuk pratinjau lokal</label>
-          <input id="tryon-upload" type="file" accept="image/jpeg,image/png">
-          <p class="fine-print">Foto yang dipilih di sini hanya diproses di browser untuk pratinjau dan tidak dikirim ke server.</p>
-          <div class="tryon-canvas-wrap"><canvas id="tryon-canvas" aria-label="Pratinjau foto dengan shade lipstik" hidden></canvas><p id="tryon-empty">Belum ada foto. Ambil foto pada langkah scan atau pilih selfie di atas.</p></div>
+          <div class="tryon-canvas-wrap"><canvas id="tryon-canvas" aria-label="Pratinjau foto dengan shade lipstik" hidden></canvas><p id="tryon-empty">Belum ada foto. Ambil foto pada langkah scan atau pilih selfie di bawah.</p></div>
           <p id="tryon-status" class="fine-print" role="status">Jika titik bibir belum terdeteksi, klik empat titik pada foto untuk menerapkan warna.</p>
-          <div class="actions"><button class="button secondary" id="tryon-align" type="button" disabled>Atur posisi bibir</button><button class="button secondary" id="tryon-download" type="button" disabled>Unduh pratinjau</button><button class="button" id="tryon-save-profile" type="button" disabled>Simpan foto hasil ke profil</button><a class="button secondary" href="{% url 'consumer:account_profile' %}">Lihat profil</a><button class="button secondary" id="tryon-clear" type="button" disabled>Hapus foto</button></div>
-          <p class="fine-print">Foto hasil hanya tersimpan di akun jika kamu menekan “Simpan foto hasil ke profil”. Maksimal 8 foto; kamu bisa menghapusnya dari profil.</p>
+          <label for="tryon-upload">Gunakan selfie lain</label>
+          <input id="tryon-upload" type="file" accept="image/jpeg,image/png">
+          <p class="fine-print">Selfie untuk pratinjau diproses di browser dan tidak dikirim ke server.</p>
         </div>
 
-        <div>
-          <h3 style="margin-top:0">Pilihan shade untukmu</h3>
-          <p class="fine-print" style="margin-bottom:14px">Klik “Coba shade” untuk mengganti warna di fotomu. Klik “Jelajahi shade” untuk membuka informasi lengkap shade itu.</p>
-
-          <div class="stack" style="gap:12px">
-            {% for shade in picks %}
-            <article class="shade-card archetype-card {% if forloop.first %}is-selected-shade{% endif %}" data-detail-card="detail-{{ forloop.counter0 }}" data-note="{{ shade.display_note }}" data-note-source="{{ shade.display_note_source }}" style="display:flex;flex-direction:row;align-items:stretch">
-              <div class="rec-row-swatch" aria-hidden="true"
-                   style="width:96px;flex:none;border:0;padding:0;background:{{ shade.hex }};position:relative">
-              </div>
-              <div class="shade-body" style="padding:16px 18px;flex:1">
-                <div class="archetype-top">
-                  <small>{{ shade.role_label }}</small>
-                  {% if shade.affinity.sample %}<span class="badge badge-ok">{{ shade.affinity.positive }}/{{ shade.affinity.sample }}</span>{% endif %}
-                </div>
-                <h2 style="font-size:1.15rem">{{ shade.shade_name }}</h2>
-                <p style="font-size:.85rem">{{ shade.reason|truncatewords:16 }}</p>
-                <div class="rec-row-actions">
-                  <button type="button" class="button secondary" data-tryon-shade data-id="{{ shade.shade_id }}" data-hex="{{ shade.hex }}" data-name="{{ shade.shade_name }}" data-select-preview="detail-{{ forloop.counter0 }}" aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}">Coba shade</button>
-                  <button type="button" class="button secondary explore-btn" data-open-detail="detail-{{ forloop.counter0 }}">Jelajahi shade</button>
-                </div>
-              </div>
-            </article>
-            {% endfor %}
-          </div>
-
-          <label for="tryon-opacity" style="margin-top:18px">Kekuatan warna <output id="tryon-opacity-value">55%</output></label>
+        <div class="tryon-controls">
+          <span class="eyebrow">Sedang dicoba</span>
+          <div class="tryon-current"><span id="tryon-current-swatch" style="background:{{ picks.0.hex }}" aria-hidden="true"></span><strong id="tryon-current-name">{{ picks.0.shade_name }}</strong></div>
+          <p class="fine-print">Ganti shade kapan saja:</p>
+          <div class="tryon-quick-picks">{% for shade in picks %}<button type="button" data-quick-shade="detail-{{ forloop.counter0 }}" {% if forloop.first %}aria-pressed="true"{% else %}aria-pressed="false"{% endif %}><span style="background:{{ shade.hex }}" aria-hidden="true"></span>{{ shade.shade_name }}</button>{% endfor %}</div>
+          <label for="tryon-opacity">Kekuatan warna <output id="tryon-opacity-value">55%</output></label>
           <input id="tryon-opacity" type="range" min="20" max="90" value="55">
+          <div class="photo-metadata">
+            <h3>Catatan foto ini</h3>
+            <p class="fine-print">Kalau fotonya milik orang lain, ubah keterangannya sebelum menyimpan. Ini hanya label riwayat; rekomendasi tetap mengikuti profil analisis terakhir.</p>
+            <div class="photo-metadata-fields">
+              <div><label for="{{ photo_metadata_form.nickname.id_for_label }}">Nama panggilan</label>{{ photo_metadata_form.nickname }}</div>
+              <div><label for="{{ photo_metadata_form.age_range.id_for_label }}">Rentang usia</label>{{ photo_metadata_form.age_range }}</div>
+              <div><label for="{{ photo_metadata_form.region.id_for_label }}">Wilayah</label>{{ photo_metadata_form.region }}</div>
+            </div>
+            <p class="fine-print">Shade yang dipakai tercatat otomatis saat foto disimpan.</p>
+          </div>
+          <div class="tryon-action-list"><button class="button" id="tryon-save-profile" type="button" disabled>Simpan foto hasil ke profil</button><button class="button secondary" id="tryon-download" type="button" disabled>Unduh pratinjau</button></div>
+          <details class="tryon-more"><summary>Pengaturan foto lainnya</summary><div class="actions"><button class="button secondary" id="tryon-align" type="button" disabled>Atur posisi bibir</button><button class="button secondary" id="tryon-clear" type="button" disabled>Hapus foto</button><a class="button secondary" href="{% url 'consumer:account_profile' %}">Lihat profil</a></div><p class="fine-print">Jika kontur bibir belum pas, tandai sisi kiri, atas, kanan, lalu bawah bibir. Foto hasil hanya tersimpan di akun jika kamu memilih “Simpan foto hasil ke profil”.</p></details>
         </div>
       </div>
     </section>
-    <script src="{% static 'js/tryon.js' %}" defer></script>
+    <script src="{% static 'js/tryon.js' %}?v=20260918-photo-tags" defer></script>
 
     <div class="card note"><span class="eyebrow" id="selected-note-source">{{ picks.0.display_note_source }}</span><p id="selected-note-text">{{ picks.0.display_note }}</p></div>
 
@@ -183,249 +190,262 @@
 </div>
 
 <script>
-  (() => {
-    /* ================= preview and dedicated detail view ================= */
-    const listView = document.querySelector('#recs-list-view');
-    const panels = [...document.querySelectorAll('.shade-detail-panel')];
-    const shadeCards = [...document.querySelectorAll('[data-detail-card]')];
-    const noteSource = document.querySelector('#selected-note-source');
-    const noteText = document.querySelector('#selected-note-text');
-    let listScrollY = 0;
-    function selectPreview(id) {
-      const selectedCard = shadeCards.find((card) => card.dataset.detailCard === id);
-      if (!selectedCard) return;
-      shadeCards.forEach((card) => {
-        card.classList.toggle('is-selected-shade', card === selectedCard);
-        card.querySelector('[data-select-preview]')?.setAttribute('aria-pressed', String(card === selectedCard));
-      });
-      noteSource.textContent = selectedCard.dataset.noteSource;
-      noteText.textContent = selectedCard.dataset.note;
-    }
-    function openDetail(id) {
-      const selectedPanel = panels.find((panel) => panel.id === id);
-      if (!selectedPanel) return;
-      listScrollY = window.scrollY;
-      listView.hidden = true;
-      panels.forEach((panel) => panel.classList.toggle('is-open', panel === selectedPanel));
-      window.scrollTo({ top: 0, behavior: 'auto' });
-    }
-    function closeDetail() {
-      panels.forEach((panel) => panel.classList.remove('is-open'));
-      listView.hidden = false;
-      window.scrollTo({ top: listScrollY, behavior: 'auto' });
-    }
-    document.querySelectorAll('[data-select-preview]').forEach((btn) => btn.addEventListener('click', () => selectPreview(btn.dataset.selectPreview)));
-    document.querySelectorAll('[data-open-detail]').forEach((btn) => btn.addEventListener('click', () => openDetail(btn.dataset.openDetail)));
-    document.querySelectorAll('[data-close-detail]').forEach((btn) => btn.addEventListener('click', closeDetail));
-    document.querySelectorAll('[data-preview-detail]').forEach((btn) => btn.addEventListener('click', () => {
-      closeDetail();
-      const card = shadeCards.find((item) => item.dataset.detailCard === btn.dataset.previewDetail);
-      card?.querySelector('[data-select-preview]')?.click();
-      document.querySelector('#tryon')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }));
-
-    const savedKey = `formusense_saved_shades_${document.body.dataset.userId || 'guest'}`;
-    let savedShades = [];
-    try { savedShades = JSON.parse(document.querySelector('#saved-shade-ids').textContent) || []; }
-    catch (error) { savedShades = []; }
-    const csrf = document.querySelector('#profile-save-token [name="csrfmiddlewaretoken"]')?.value || '';
-    async function saveShadeRequest(id, action) {
-      const response = await fetch("{% url 'consumer:save_shade' %}", {
-        method: 'POST', credentials: 'same-origin',
-        headers: { 'X-CSRFToken': csrf, 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({ shade_id: id, action }),
-      });
-      if (!response.ok || !response.headers.get('Content-Type')?.includes('application/json')) {
-        throw new Error('Gagal memperbarui shade tersimpan.');
-      }
-    }
-    document.querySelectorAll('[data-save-shade]').forEach((btn) => {
-      const update = () => {
-        const isSaved = savedShades.includes(btn.dataset.saveShade);
-        btn.setAttribute('aria-pressed', String(isSaved));
-        btn.textContent = isSaved ? '♥ Tersimpan di profil' : '♡ Simpan shade';
-      };
-      update();
-      btn.addEventListener('click', async () => {
-        const id = btn.dataset.saveShade;
-        const action = savedShades.includes(id) ? 'remove' : 'save';
-        btn.disabled = true;
-        try {
-          await saveShadeRequest(id, action);
-          savedShades = action === 'save' ? [...savedShades, id] : savedShades.filter((shadeId) => shadeId !== id);
-          update();
-        } catch (error) {
-          btn.textContent = 'Gagal, coba lagi';
-          setTimeout(update, 2200);
-        } finally { btn.disabled = false; }
-      });
+(() => {
+  /* ================= preview and dedicated detail view ================= */
+  const listView = document.querySelector('#recs-list-view');
+  const panels = [...document.querySelectorAll('.shade-detail-panel')];
+  const shadeCards = [...document.querySelectorAll('[data-detail-card]')];
+  const noteSource = document.querySelector('#selected-note-source');
+  const noteText = document.querySelector('#selected-note-text');
+  const tryonPanel = document.querySelector('#tryon');
+  let listScrollY = 0;
+  function selectPreview(id) {
+    const selectedCard = shadeCards.find((card) => card.dataset.detailCard === id);
+    if (!selectedCard) return;
+    shadeCards.forEach((card) => {
+      card.classList.toggle('is-selected-shade', card === selectedCard);
+      card.querySelector('[data-select-preview]')?.setAttribute('aria-pressed', String(card === selectedCard));
     });
-    // Preserve shades saved by the earlier browser-only version of the app.
-    try {
-      const legacy = JSON.parse(localStorage.getItem(savedKey) || '[]');
-      if (Array.isArray(legacy) && legacy.length) {
-        (async () => {
-          for (const id of legacy) {
-            if (typeof id !== 'string' || savedShades.includes(id)) continue;
-            await saveShadeRequest(id, 'save');
-            savedShades.push(id);
-          }
-          localStorage.removeItem(savedKey);
-          document.querySelectorAll('[data-save-shade]').forEach((btn) => {
-            if (savedShades.includes(btn.dataset.saveShade)) {
-              btn.setAttribute('aria-pressed', 'true');
-              btn.textContent = '♥ Tersimpan di profil';
-            }
-          });
-        })().catch(() => {});
-      }
-    } catch (error) { /* Browser storage is optional. */ }
+    noteSource.textContent = selectedCard.dataset.noteSource;
+    noteText.textContent = selectedCard.dataset.note;
+    const shadeButton = selectedCard.querySelector('[data-select-preview]');
+    document.querySelector('#tryon-current-name').textContent = shadeButton.dataset.name;
+    document.querySelector('#tryon-current-swatch').style.background = shadeButton.dataset.hex;
+    document.querySelectorAll('[data-quick-shade]').forEach((button) => button.setAttribute('aria-pressed', String(button.dataset.quickShade === id)));
+    tryonPanel.hidden = false;
+    requestAnimationFrame(() => tryonPanel.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+  }
+  function openDetail(id) {
+    const selectedPanel = panels.find((panel) => panel.id === id);
+    if (!selectedPanel) return;
+    listScrollY = window.scrollY;
+    listView.hidden = true;
+    panels.forEach((panel) => panel.classList.toggle('is-open', panel === selectedPanel));
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  }
+  function closeDetail() {
+    panels.forEach((panel) => panel.classList.remove('is-open'));
+    listView.hidden = false;
+    window.scrollTo({ top: listScrollY, behavior: 'auto' });
+  }
+  document.querySelectorAll('[data-select-preview]').forEach((btn) => btn.addEventListener('click', () => selectPreview(btn.dataset.selectPreview)));
+  document.querySelectorAll('[data-quick-shade]').forEach((btn) => btn.addEventListener('click', () => {
+    shadeCards.find((card) => card.dataset.detailCard === btn.dataset.quickShade)?.querySelector('[data-select-preview]')?.click();
+  }));
+  document.querySelector('#tryon-close')?.addEventListener('click', () => {
+    tryonPanel.hidden = true;
+    document.querySelector('.match-grid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+  document.querySelectorAll('[data-open-detail]').forEach((btn) => btn.addEventListener('click', () => openDetail(btn.dataset.openDetail)));
+  document.querySelectorAll('[data-close-detail]').forEach((btn) => btn.addEventListener('click', closeDetail));
+  document.querySelectorAll('[data-preview-detail]').forEach((btn) => btn.addEventListener('click', () => {
+    closeDetail();
+    const card = shadeCards.find((item) => item.dataset.detailCard === btn.dataset.previewDetail);
+    card?.querySelector('[data-select-preview]')?.click();
+  }));
 
-    /* ================= real public-example matching by hex distance ================= */
-    function hexToRgb(hex) {
-      const h = hex.replace('#', '');
-      const n = parseInt(h.length === 3 ? h.split('').map((c) => c + c).join('') : h, 16);
-      return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
-    }
-    function colorDistance(hexA, hexB) {
-      const [r1, g1, b1] = hexToRgb(hexA);
-      const [r2, g2, b2] = hexToRgb(hexB);
-      return Math.sqrt((r1 - r2) ** 2 + (g1 - g2) ** 2 + (b1 - b2) ** 2);
-    }
-    let publicExamples = [];
-    try { publicExamples = JSON.parse(document.querySelector('#public-examples-data').textContent) || []; }
-    catch (e) { publicExamples = []; }
-
-    const overlay = document.querySelector('#product-modal-overlay');
-    function openModal(item, distance) {
-      document.querySelector('#modal-swatch').style.background = item.hex;
-      document.querySelector('#modal-brand').textContent = (item.brand || '').toUpperCase();
-      document.querySelector('#modal-product').textContent = item.product || 'Nama produk tidak tersedia';
-      document.querySelector('#modal-name').textContent = `Shade: ${item.shade || 'tidak tersedia'}`;
-      document.querySelector('#modal-match').textContent = `${item.hex} · Jarak RGB ${Math.round(distance)} dari shade katalog (semakin kecil semakin dekat)`;
-      overlay.classList.add('is-open');
-    }
-    overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.classList.remove('is-open'); });
-    document.querySelectorAll('[data-close-modal]').forEach((btn) => btn.addEventListener('click', () => overlay.classList.remove('is-open')));
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') overlay.classList.remove('is-open'); });
-
-    panels.forEach((panel) => {
-      const targetHex = panel.dataset.hex;
-      const grid = panel.querySelector('[data-product-matches]');
-      const shadeExamples = publicExamples.filter((item) => item.near_demo_shade_id === panel.dataset.shadeId);
-      if (!grid || !shadeExamples.length) { if (grid) grid.innerHTML = '<p class="fine-print">Belum ada contoh swatch publik yang cocok untuk shade ini.</p>'; return; }
-      const ranked = shadeExamples
-        .map((item) => ({ item, dist: colorDistance(targetHex, item.hex) }))
-        .sort((a, b) => a.dist - b.dist)
-        .slice(0, 3);
-      ranked.forEach(({ item, dist }) => {
-        const card = document.createElement('button');
-        card.type = 'button';
-        card.className = 'product-match-card';
-        card.innerHTML = `
-          <div class="product-match-top">
-            <span class="product-match-swatch"></span>
-            <span class="badge badge-outline">Publik</span>
-          </div>
-          <div class="product-match-brand"></div>
-          <div class="product-match-product"></div>
-          <div class="product-match-name"></div>
-          <div class="product-match-sub"></div>
-          <div class="product-match-hex"></div>`;
-        card.querySelector('.product-match-swatch').style.background = item.hex;
-        card.querySelector('.product-match-brand').textContent = (item.brand || '').toUpperCase();
-        card.querySelector('.product-match-product').textContent = item.product || 'Nama produk tidak tersedia';
-        card.querySelector('.product-match-name').textContent = `Shade: ${item.shade || 'tidak tersedia'}`;
-        card.querySelector('.product-match-sub').textContent = `Jarak RGB ${Math.round(dist)}`;
-        card.querySelector('.product-match-hex').textContent = item.hex;
-        card.addEventListener('click', () => openModal(item, dist));
-        grid.appendChild(card);
-      });
+  const savedKey = `formusense_saved_shades_${document.body.dataset.userId || 'guest'}`;
+  let savedShades = [];
+  try { savedShades = JSON.parse(document.querySelector('#saved-shade-ids').textContent) || []; }
+  catch (error) { savedShades = []; }
+  const csrf = document.querySelector('#profile-save-token [name="csrfmiddlewaretoken"]')?.value || '';
+  async function saveShadeRequest(id, action) {
+    const response = await fetch("{% url 'consumer:save_shade' %}", {
+      method: 'POST', credentials: 'same-origin',
+      headers: { 'X-CSRFToken': csrf, 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ shade_id: id, action }),
     });
-
-    /* ================= spectrum chart (real data, smooth curve) ================= */
-    const FAMILY_HEX = {
-      nude: '#D3A48D', pink: '#D2879A', coral: '#D9705A', terracotta: '#B45C42',
-      red: '#B8352F', berry: '#7C3550', brown: '#8A5A45', mauve: '#A97E8B',
+    if (!response.ok || !response.headers.get('Content-Type')?.includes('application/json')) {
+      throw new Error('Gagal memperbarui shade tersimpan.');
+    }
+  }
+  document.querySelectorAll('[data-save-shade]').forEach((btn) => {
+    const update = () => {
+      const isSaved = savedShades.includes(btn.dataset.saveShade);
+      btn.setAttribute('aria-pressed', String(isSaved));
+      btn.textContent = isSaved ? '♥ Tersimpan di profil' : '♡ Simpan shade';
     };
-    let spectrum = [];
-    let spectrumIsFallback = false;
-    try { spectrum = JSON.parse(document.querySelector('#spectrum-data').textContent) || []; }
-    catch (e) { spectrum = []; }
-    if (!spectrum.length) {
-      // No real signal yet for this profile cluster — show an illustrative
-      // curve so the section is never blank, clearly labelled as simulated data.
-      spectrumIsFallback = true;
-      spectrum = [
-        { family: 'Nude', count: 3 }, { family: 'Pink', count: 5 }, { family: 'Coral', count: 8 },
-        { family: 'Terracotta', count: 12 }, { family: 'Red', count: 6 }, { family: 'Berry', count: 2 },
-      ];
-    }
-    const fallbackNote = document.createElement('p');
-    fallbackNote.className = 'fine-print';
-    fallbackNote.style.marginTop = '10px';
-    fallbackNote.innerHTML = '<span class="badge badge-outline" style="margin-right:6px">Ilustrasi</span>Belum ada sinyal nyata pada kelompok profil ini — kurva ini contoh bentuk sebaran, bukan data konsumenmu.';
-
-    function renderSpectrum(shiftBy) {
-      const svg = document.querySelector('#spectrum-svg');
-      const statsEl = document.querySelector('#spectrum-stats');
-
-      const n = spectrum.length;
-      const W = 720, H = 210, padL = 24, padR = 24, top = 14, bottom = 58;
-      const total = spectrum.reduce((a, s) => a + s.count, 0);
-      const maxIdx = spectrum.reduce((best, s, i) => (s.count > spectrum[best].count ? i : best), 0);
-      const shiftedMax = Math.max(0, Math.min(n - 1, maxIdx + (shiftBy || 0)));
-      const maxCount = Math.max(...spectrum.map((s) => s.count), 1);
-
-      const x = (i) => padL + (W - padL - padR) * (n === 1 ? 0.5 : i / (n - 1));
-      const y = (v) => (H - bottom) - (v / maxCount) * (H - bottom - top);
-
-      const pts = spectrum.map((s, i) => [x(i), y(s.count)]);
-      const line = pts.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' ');
-      const area = line + ` L${pts[pts.length - 1][0]} ${H - bottom} L${pts[0][0]} ${H - bottom} Z`;
-
-      const bandX0 = x(Math.max(0, shiftedMax - 0.5));
-      const bandX1 = x(Math.min(n - 1, shiftedMax + 0.5));
-      const gradientStops = spectrum.map((s, i) => {
-        const hex = FAMILY_HEX[String(s.family).toLowerCase()] || '#B45C42';
-        return `<stop offset="${(i / (n - 1 || 1)) * 100}%" stop-color="${hex}"/>`;
-      }).join('');
-
-      let g = `<defs>
-        <linearGradient id="specGrad" x1="0" y1="0" x2="1" y2="0">${gradientStops}</linearGradient>
-        <linearGradient id="specFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#3E171E" stop-opacity=".16"/><stop offset="100%" stop-color="#3E171E" stop-opacity="0"/></linearGradient>
-      </defs>`;
-      g += `<rect x="${bandX0}" y="${top}" width="${bandX1 - bandX0}" height="${H - bottom - top}" fill="#3E171E" opacity=".06" rx="8"/>`;
-      g += `<line x1="${bandX0}" y1="${top}" x2="${bandX0}" y2="${H - bottom}" stroke="#3E171E" stroke-width="1" stroke-dasharray="3 4" opacity=".35"/>`;
-      g += `<line x1="${bandX1}" y1="${top}" x2="${bandX1}" y2="${H - bottom}" stroke="#3E171E" stroke-width="1" stroke-dasharray="3 4" opacity=".35"/>`;
-      g += `<path d="${area}" fill="url(#specFill)"/>`;
-      g += `<path d="${line}" fill="none" stroke="#3E171E" stroke-width="2.4" stroke-linejoin="round"/>`;
-      pts.forEach((p, i) => { if (i === shiftedMax) g += `<circle cx="${p[0]}" cy="${p[1]}" r="5" fill="#3E171E"/><circle cx="${p[0]}" cy="${p[1]}" r="10" fill="#3E171E" opacity=".14"/>`; });
-      g += `<rect x="${padL}" y="${H - bottom + 14}" width="${W - padL - padR}" height="12" rx="6" fill="url(#specGrad)"/>`;
-      spectrum.forEach((s, i) => { g += `<text x="${x(i)}" y="${H - 6}" text-anchor="middle" font-size="11" fill="#6f5c55" font-family="Inter">${s.family}</text>`; });
-      svg.innerHTML = g;
-
-      const peak = spectrum[shiftedMax];
-      const peakPct = Math.round((peak.count / total) * 100);
-      const rangeLabel = n > 1
-        ? `${spectrum[Math.max(0, shiftedMax - 1)].family} → ${spectrum[Math.min(n - 1, shiftedMax + 1)].family}`
-        : peak.family;
-      statsEl.innerHTML = `
-        <div><div class="lbl">Rentang paling disukai</div><div class="val" style="font-size:1.1rem">${rangeLabel}</div></div>
-        <div><div class="lbl">Tingkat kesukaan puncak</div><div class="val">${peakPct}%</div></div>
-        <div><div class="lbl">Jumlah data</div><div class="val" style="font-size:1.1rem">${total.toLocaleString('id-ID')} interaksi</div></div>`;
-      if (spectrumIsFallback) statsEl.insertAdjacentElement('afterend', fallbackNote);
-    }
-
-    renderSpectrum(0);
-    document.querySelectorAll('#spectrum-filters button').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const nowOn = btn.getAttribute('aria-pressed') !== 'true';
-        btn.setAttribute('aria-pressed', String(nowOn));
-        const activeCount = [...document.querySelectorAll('#spectrum-filters button')].filter((b) => b.getAttribute('aria-pressed') === 'true').length;
-        renderSpectrum(activeCount >= 2 ? 0 : (nowOn ? 1 : -1));
-      });
+    update();
+    btn.addEventListener('click', async () => {
+      const id = btn.dataset.saveShade;
+      const action = savedShades.includes(id) ? 'remove' : 'save';
+      btn.disabled = true;
+      try {
+        await saveShadeRequest(id, action);
+        savedShades = action === 'save' ? [...savedShades, id] : savedShades.filter((shadeId) => shadeId !== id);
+        update();
+      } catch (error) {
+        btn.textContent = 'Gagal, coba lagi';
+        setTimeout(update, 2200);
+      } finally { btn.disabled = false; }
     });
-  })();
+  });
+  // Preserve shades saved by the earlier browser-only version of the app.
+  try {
+    const legacy = JSON.parse(localStorage.getItem(savedKey) || '[]');
+    if (Array.isArray(legacy) && legacy.length) {
+      (async () => {
+        for (const id of legacy) {
+          if (typeof id !== 'string' || savedShades.includes(id)) continue;
+          await saveShadeRequest(id, 'save');
+          savedShades.push(id);
+        }
+        localStorage.removeItem(savedKey);
+        document.querySelectorAll('[data-save-shade]').forEach((btn) => {
+          if (savedShades.includes(btn.dataset.saveShade)) {
+            btn.setAttribute('aria-pressed', 'true');
+            btn.textContent = '♥ Tersimpan di profil';
+          }
+        });
+      })().catch(() => {});
+    }
+  } catch (error) { /* Browser storage is optional. */ }
+
+  /* ================= real public-example matching by hex distance ================= */
+  function hexToRgb(hex) {
+    const h = hex.replace('#', '');
+    const n = parseInt(h.length === 3 ? h.split('').map((c) => c + c).join('') : h, 16);
+    return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+  }
+  function colorDistance(hexA, hexB) {
+    const [r1, g1, b1] = hexToRgb(hexA);
+    const [r2, g2, b2] = hexToRgb(hexB);
+    return Math.sqrt((r1 - r2) ** 2 + (g1 - g2) ** 2 + (b1 - b2) ** 2);
+  }
+  let publicExamples = [];
+  try { publicExamples = JSON.parse(document.querySelector('#public-examples-data').textContent) || []; }
+  catch (e) { publicExamples = []; }
+
+  const overlay = document.querySelector('#product-modal-overlay');
+  function openModal(item, distance) {
+    document.querySelector('#modal-swatch').style.background = item.hex;
+    document.querySelector('#modal-brand').textContent = (item.brand || '').toUpperCase();
+    document.querySelector('#modal-product').textContent = item.product || 'Nama produk tidak tersedia';
+    document.querySelector('#modal-name').textContent = `Shade: ${item.shade || 'tidak tersedia'}`;
+    document.querySelector('#modal-match').textContent = `${item.hex} · Jarak RGB ${Math.round(distance)} dari shade katalog (semakin kecil semakin dekat)`;
+    overlay.classList.add('is-open');
+  }
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.classList.remove('is-open'); });
+  document.querySelectorAll('[data-close-modal]').forEach((btn) => btn.addEventListener('click', () => overlay.classList.remove('is-open')));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') overlay.classList.remove('is-open'); });
+
+  panels.forEach((panel) => {
+    const targetHex = panel.dataset.hex;
+    const grid = panel.querySelector('[data-product-matches]');
+    const shadeExamples = publicExamples.filter((item) => item.near_demo_shade_id === panel.dataset.shadeId);
+    if (!grid || !shadeExamples.length) { if (grid) grid.innerHTML = '<p class="fine-print">Belum ada contoh swatch publik yang cocok untuk shade ini.</p>'; return; }
+    const ranked = shadeExamples
+      .map((item) => ({ item, dist: colorDistance(targetHex, item.hex) }))
+      .sort((a, b) => a.dist - b.dist)
+      .slice(0, 3);
+    ranked.forEach(({ item, dist }) => {
+      const card = document.createElement('button');
+      card.type = 'button';
+      card.className = 'product-match-card';
+      card.innerHTML = `
+        <div class="product-match-top">
+          <span class="product-match-swatch"></span>
+          <span class="badge badge-outline">Publik</span>
+        </div>
+        <div class="product-match-brand"></div>
+        <div class="product-match-product"></div>
+        <div class="product-match-name"></div>
+        <div class="product-match-sub"></div>
+        <div class="product-match-hex"></div>`;
+      card.querySelector('.product-match-swatch').style.background = item.hex;
+      card.querySelector('.product-match-brand').textContent = (item.brand || '').toUpperCase();
+      card.querySelector('.product-match-product').textContent = item.product || 'Nama produk tidak tersedia';
+      card.querySelector('.product-match-name').textContent = `Shade: ${item.shade || 'tidak tersedia'}`;
+      card.querySelector('.product-match-sub').textContent = `Jarak RGB ${Math.round(dist)}`;
+      card.querySelector('.product-match-hex').textContent = item.hex;
+      card.addEventListener('click', () => openModal(item, dist));
+      grid.appendChild(card);
+    });
+  });
+
+  /* ================= spectrum chart (real data, smooth curve) ================= */
+  const FAMILY_HEX = {
+    nude: '#D3A48D', pink: '#D2879A', coral: '#D9705A', terracotta: '#B45C42',
+    red: '#B8352F', berry: '#7C3550', brown: '#8A5A45', mauve: '#A97E8B',
+  };
+  let spectrum = [];
+  let spectrumIsFallback = false;
+  try { spectrum = JSON.parse(document.querySelector('#spectrum-data').textContent) || []; }
+  catch (e) { spectrum = []; }
+  if (!spectrum.length) {
+    // No real signal yet for this profile cluster — show an illustrative
+    // curve so the section is never blank, clearly labelled as simulated data.
+    spectrumIsFallback = true;
+    spectrum = [
+      { family: 'Nude', count: 3 }, { family: 'Pink', count: 5 }, { family: 'Coral', count: 8 },
+      { family: 'Terracotta', count: 12 }, { family: 'Red', count: 6 }, { family: 'Berry', count: 2 },
+    ];
+  }
+  const fallbackNote = document.createElement('p');
+  fallbackNote.className = 'fine-print';
+  fallbackNote.style.marginTop = '10px';
+  fallbackNote.innerHTML = '<span class="badge badge-outline" style="margin-right:6px">Ilustrasi</span>Belum ada sinyal nyata pada kelompok profil ini — kurva ini contoh bentuk sebaran, bukan data konsumenmu.';
+
+  function renderSpectrum(shiftBy) {
+    const svg = document.querySelector('#spectrum-svg');
+    const statsEl = document.querySelector('#spectrum-stats');
+
+    const n = spectrum.length;
+    const W = 720, H = 210, padL = 24, padR = 24, top = 14, bottom = 58;
+    const total = spectrum.reduce((a, s) => a + s.count, 0);
+    const maxIdx = spectrum.reduce((best, s, i) => (s.count > spectrum[best].count ? i : best), 0);
+    const shiftedMax = Math.max(0, Math.min(n - 1, maxIdx + (shiftBy || 0)));
+    const maxCount = Math.max(...spectrum.map((s) => s.count), 1);
+
+    const x = (i) => padL + (W - padL - padR) * (n === 1 ? 0.5 : i / (n - 1));
+    const y = (v) => (H - bottom) - (v / maxCount) * (H - bottom - top);
+
+    const pts = spectrum.map((s, i) => [x(i), y(s.count)]);
+    const line = pts.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' ');
+    const area = line + ` L${pts[pts.length - 1][0]} ${H - bottom} L${pts[0][0]} ${H - bottom} Z`;
+
+    const bandX0 = x(Math.max(0, shiftedMax - 0.5));
+    const bandX1 = x(Math.min(n - 1, shiftedMax + 0.5));
+    const gradientStops = spectrum.map((s, i) => {
+      const hex = FAMILY_HEX[String(s.family).toLowerCase()] || '#B45C42';
+      return `<stop offset="${(i / (n - 1 || 1)) * 100}%" stop-color="${hex}"/>`;
+    }).join('');
+
+    let g = `<defs>
+      <linearGradient id="specGrad" x1="0" y1="0" x2="1" y2="0">${gradientStops}</linearGradient>
+      <linearGradient id="specFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#3E171E" stop-opacity=".16"/><stop offset="100%" stop-color="#3E171E" stop-opacity="0"/></linearGradient>
+    </defs>`;
+    g += `<rect x="${bandX0}" y="${top}" width="${bandX1 - bandX0}" height="${H - bottom - top}" fill="#3E171E" opacity=".06" rx="8"/>`;
+    g += `<line x1="${bandX0}" y1="${top}" x2="${bandX0}" y2="${H - bottom}" stroke="#3E171E" stroke-width="1" stroke-dasharray="3 4" opacity=".35"/>`;
+    g += `<line x1="${bandX1}" y1="${top}" x2="${bandX1}" y2="${H - bottom}" stroke="#3E171E" stroke-width="1" stroke-dasharray="3 4" opacity=".35"/>`;
+    g += `<path d="${area}" fill="url(#specFill)"/>`;
+    g += `<path d="${line}" fill="none" stroke="#3E171E" stroke-width="2.4" stroke-linejoin="round"/>`;
+    pts.forEach((p, i) => { if (i === shiftedMax) g += `<circle cx="${p[0]}" cy="${p[1]}" r="5" fill="#3E171E"/><circle cx="${p[0]}" cy="${p[1]}" r="10" fill="#3E171E" opacity=".14"/>`; });
+    g += `<rect x="${padL}" y="${H - bottom + 14}" width="${W - padL - padR}" height="12" rx="6" fill="url(#specGrad)"/>`;
+    spectrum.forEach((s, i) => { g += `<text x="${x(i)}" y="${H - 6}" text-anchor="middle" font-size="11" fill="#6f5c55" font-family="Inter">${s.family}</text>`; });
+    svg.innerHTML = g;
+
+    const peak = spectrum[shiftedMax];
+    const peakPct = Math.round((peak.count / total) * 100);
+    const rangeLabel = n > 1
+      ? `${spectrum[Math.max(0, shiftedMax - 1)].family} → ${spectrum[Math.min(n - 1, shiftedMax + 1)].family}`
+      : peak.family;
+    statsEl.innerHTML = `
+      <div><div class="lbl">Most preferred range</div><div class="val" style="font-size:1.1rem">${rangeLabel}</div></div>
+      <div><div class="lbl">Peak affinity</div><div class="val">${peakPct}%</div></div>
+      <div><div class="lbl">Sample</div><div class="val" style="font-size:1.1rem">${total.toLocaleString('id-ID')} interaksi</div></div>`;
+    if (spectrumIsFallback) statsEl.insertAdjacentElement('afterend', fallbackNote);
+  }
+
+  renderSpectrum(0);
+  document.querySelectorAll('#spectrum-filters button').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const nowOn = btn.getAttribute('aria-pressed') !== 'true';
+      btn.setAttribute('aria-pressed', String(nowOn));
+      const activeCount = [...document.querySelectorAll('#spectrum-filters button')].filter((b) => b.getAttribute('aria-pressed') === 'true').length;
+      renderSpectrum(activeCount >= 2 ? 0 : (nowOn ? 1 : -1));
+    });
+  });
+})();
 </script>
 {% endblock %}

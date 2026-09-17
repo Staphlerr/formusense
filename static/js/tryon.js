@@ -145,9 +145,11 @@
       if (selected) selected.classList.remove('is-selected');
       selected = button;
       selected.classList.add('is-selected');
-      status.textContent = hasPlacement()
-        ? `Pratinjau ${button.dataset.name}. Hasil visual dapat berbeda dari produk asli.`
-        : `Warna ${button.dataset.name} dipilih. Klik empat titik bibir pada foto untuk menerapkannya.`;
+      status.textContent = !photo
+        ? `Warna ${button.dataset.name} dipilih. Tambahkan selfie untuk melihat pratinjaunya.`
+        : hasPlacement()
+          ? `Pratinjau ${button.dataset.name}. Hasil visual dapat berbeda dari produk asli.`
+          : `Warna ${button.dataset.name} dipilih. Klik empat titik bibir pada foto untuk menerapkannya.`;
       draw();
     });
   }
@@ -212,6 +214,9 @@
       const body = new FormData();
       body.append('photo', blob, 'hasil-shade.jpg');
       body.append('shade_id', selected.dataset.id);
+      for (const field of ['nickname', 'age_range', 'region']) {
+        body.append(field, document.querySelector(`#tryon [name="${field}"]`)?.value || '');
+      }
       const csrf = document.querySelector('#profile-save-token [name="csrfmiddlewaretoken"]')?.value;
       const response = await fetch(root.dataset.savePhotoUrl, {
         method: 'POST', credentials: 'same-origin',

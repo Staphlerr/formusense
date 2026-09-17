@@ -24,6 +24,9 @@ import { startLiveOverlay, stopLiveOverlay } from './live_scan.js';
   const liveOverlay = document.querySelector('#live-overlay');
   const liveStatus = document.querySelector('#live-status');
   const liveHint = document.querySelector('#live-hint');
+  const qualityPanel = document.querySelector('#camera-quality');
+  const qualityTitle = document.querySelector('#camera-quality-title');
+  const qualityList = document.querySelector('#camera-quality-list');
   let loading = document.querySelector('#scan-loading');
   if (!loading) {
     // A running Django process may still serve an older cached scan template.
@@ -54,10 +57,93 @@ import { startLiveOverlay, stopLiveOverlay } from './live_scan.js';
   let stream = null;
   let previewUrl = null;
   let submitting = false;
+  let qualityTimer = null;
+  let lightingWarning;
+  let lightingCheck = 'pending';
+  let faceWarning = null;
+  let faceCheck = 'pending';
+  let lastQualityDisplay = '';
+
+  const renderQuality = () => {
+    if (!qualityPanel || !qualityTitle || !qualityList) return;
+    const warnings = [lightingWarning, faceWarning].filter(Boolean);
+    const state = warnings.length ? 'warning'
+      : lightingCheck === 'ready' && faceCheck === 'ready' ? 'good' : 'checking';
+    const title = warnings.length ? 'Periksa foto sebelum mengambilnya'
+      : state === 'good' ? 'Kondisi foto terlihat cukup baik' : 'Memeriksa kondisi foto…';
+    const messages = warnings.length ? warnings : [
+      lightingCheck === 'pending' ? 'Mengecek pencahayaan kamera…'
+        : lightingCheck === 'unavailable' ? 'Pencahayaan belum dapat dicek otomatis. Periksa pratinjau sebelum mengambil foto.'
+        : faceCheck === 'pending' ? 'Cahaya terlihat cukup. Mengecek posisi wajah…'
+          : faceCheck === 'unavailable'
+            ? 'Cahaya terlihat cukup. Posisi wajah belum dapat dicek otomatis; periksa pratinjau sendiri.'
+            : 'Wajah dan cahaya terlihat cukup. Periksa lagi foto setelah diambil.',
+    ];
+    const displayKey = JSON.stringify([state, title, messages]);
+    if (displayKey === lastQualityDisplay) return;
+    lastQualityDisplay = displayKey;
+    qualityPanel.dataset.state = state;
+    qualityTitle.textContent = title;
+    qualityList.replaceChildren(...messages.map((message) => {
+      const item = document.createElement('li');
+      item.textContent = message;
+      return item;
+    }));
+  };
+
+  // Exposure guidance uses frame-center percentiles instead of cheek color, so
+  // naturally deeper skin tones alone do not trigger a low-light warning.
+  const exposureCanvas = document.createElement('canvas');
+  exposureCanvas.width = 80;
+  exposureCanvas.height = 60;
+  const exposureContext = exposureCanvas.getContext('2d', { willReadFrequently: true });
+  const checkLighting = () => {
+    if (!stream || video.readyState < 2) return;
+    if (!exposureContext) {
+      clearInterval(qualityTimer);
+      qualityTimer = null;
+      lightingCheck = 'unavailable';
+      renderQuality();
+      return;
+    }
+    try {
+      exposureContext.drawImage(video, 0, 0, 80, 60);
+      const pixels = exposureContext.getImageData(12, 6, 56, 48).data;
+      const levels = [];
+      let sum = 0;
+      let glare = 0;
+      for (let i = 0; i < pixels.length; i += 4) {
+        const luma = 0.299 * pixels[i] + 0.587 * pixels[i + 1] + 0.114 * pixels[i + 2];
+        levels.push(luma);
+        sum += luma;
+        if (luma > 245) glare += 1;
+      }
+      levels.sort((a, b) => a - b);
+      const mean = sum / levels.length;
+      const p20 = levels[Math.floor(levels.length * 0.2)];
+      const p80 = levels[Math.floor(levels.length * 0.8)];
+      lightingWarning = p80 < 75 && mean < 60
+        ? 'Tampilan kamera tampak kurang terang. Cari cahaya yang menghadap wajah.'
+        : (p20 > 185 && mean > 205) || glare / levels.length > 0.33
+          ? 'Tampilan kamera terlalu terang atau silau. Hindari cahaya langsung di wajah.'
+          : null;
+      lightingCheck = 'ready';
+      renderQuality();
+    } catch (cause) {
+      // A browser that disallows reading frames still permits photo capture.
+      clearInterval(qualityTimer);
+      qualityTimer = null;
+      lightingWarning = null;
+      lightingCheck = 'unavailable';
+      renderQuality();
+    }
+  };
 
   analyzeButton.disabled = true;
 
   const stopCamera = () => {
+    if (qualityTimer) clearInterval(qualityTimer);
+    qualityTimer = null;
     if (stream) stream.getTracks().forEach((track) => track.stop());
     stream = null;
     video.srcObject = null;
@@ -129,6 +215,14 @@ import { startLiveOverlay, stopLiveOverlay } from './live_scan.js';
       video.srcObject = stream;
       stage.hidden = false;
       await video.play();
+      lightingWarning = undefined;
+      lightingCheck = 'pending';
+      faceWarning = null;
+      faceCheck = 'pending';
+      lastQualityDisplay = '';
+      renderQuality();
+      qualityTimer = setInterval(checkLighting, 650);
+      checkLighting();
       captureButton.hidden = false;
       stopButton.hidden = false;
       startButton.hidden = true;
@@ -137,14 +231,28 @@ import { startLiveOverlay, stopLiveOverlay } from './live_scan.js';
       // successfully above -- if the model/CDN fails, we just hide its own
       // elements and leave the already-working capture flow untouched.
       if (liveOverlay && liveStatus && liveHint) {
+        liveOverlay.hidden = false;
+        liveStatus.hidden = false;
+        liveHint.hidden = false;
         startLiveOverlay(
-          { video, overlay: liveOverlay, statusText: liveStatus, hintText: liveHint },
+          { video, overlay: liveOverlay, statusText: liveStatus, hintText: liveHint,
+            onFaceQuality: (warning) => {
+              faceCheck = 'ready';
+              faceWarning = warning;
+              renderQuality();
+            } },
           () => {
             liveOverlay.hidden = true;
             liveStatus.hidden = true;
             liveHint.hidden = true;
+            faceCheck = 'unavailable';
+            faceWarning = null;
+            renderQuality();
           },
         );
+      } else {
+        faceCheck = 'unavailable';
+        renderQuality();
       }
     } catch (cause) {
       stopCamera();

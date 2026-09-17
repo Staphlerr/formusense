@@ -1,5 +1,5 @@
 {% extends 'research/base_research.html' %}
-{% block title %}Consumer Evidence · FormuSense{% endblock %}
+{% block title %}Consumer Evidence · LipXMatch{% endblock %}
 {% block research_content %}
 <h1>Consumer Evidence</h1><p class="lead">Keluhan pemakaian dihitung terpisah dari minat warna. Komentar internal dan masukan lokal juga dipisahkan agar asal datanya jelas.</p>
 <form method="get" class="filter-form"><label for="opportunity">Lihat keluarga warna</label><select id="opportunity" name="opportunity"><option value="">Semua shade</option>{% for item in opportunities %}<option value="{{ item.opportunity_id }}" {% if selected_opportunity.opportunity_id == item.opportunity_id %}selected{% endif %}>{{ item.target_shade_name }}</option>{% endfor %}</select><button class="button secondary" type="submit">Terapkan</button></form>
