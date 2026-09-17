@@ -12,7 +12,7 @@ DATA_DIR = Path(settings.BASE_DIR) / "data" / "formusense_demo"
 def read_demo_csv(filename):
     allowed = {
         "shade_catalog.csv", "demo_feedback.csv", "opportunities.csv",
-        "formula_draft_demo.csv", "demo_consumer_profiles.csv",
+        "opportunities_v2.csv", "formula_draft_demo.csv", "demo_consumer_profiles.csv",
     }
     if filename not in allowed:
         raise ValueError("Dataset tidak dikenal")

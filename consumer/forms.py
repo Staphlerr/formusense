@@ -18,16 +18,24 @@ class ProfileStartForm(forms.Form):
     ], required=False)
 
 
+# Choices below match services/data.py's real 30-shade catalog
+# (color_family / finish values, lowercased from the team's
+# Shade_Catalog.csv), not the old 24-row demo catalog's vocabulary --
+# so every option a wearer can pick here actually exists among the real
+# shades services.recommendation.recommend() scores against. The old demo
+# catalog additionally had coral/terracotta/berry/mauve color families and
+# satin/cream finishes, none of which appear in the real catalog; offering
+# them here would let someone "prefer" a color/finish combination no real
+# shade can ever match.
 class PreferenceForm(forms.Form):
     color = forms.ChoiceField(label="Warna yang disukai", choices=[
         ("", "Belum tahu"), ("nude", "Nude"), ("pink", "Pink"),
-        ("coral", "Coral"), ("terracotta", "Terracotta"),
-        ("red", "Merah"), ("berry", "Berry"),
-        ("mauve", "Mauve"), ("brown", "Cokelat"),
+        ("orange", "Orange"), ("peach", "Peach"),
+        ("red", "Merah"), ("brown", "Cokelat"),
     ], required=False)
     finish = forms.ChoiceField(label="Hasil akhir", choices=[
-        ("", "Belum tahu"), ("satin", "Satin"), ("matte", "Matte"),
-        ("cream", "Cream"), ("glossy", "Glossy"),
+        ("", "Belum tahu"), ("matte", "Matte"),
+        ("glossy", "Glossy"), ("glasting", "Glasting"),
     ], required=False)
     intensity = forms.ChoiceField(label="Kesan", choices=[
         ("", "Belum tahu"), ("natural", "Natural"),
@@ -46,7 +54,7 @@ class LipProfileForm(forms.Form):
         ("neutral", "Neutral"), ("olive", "Olive"),
         ("uncertain", "Belum yakin"),
     ])
-    lip_pigmentation = forms.ChoiceField(label="Kontras warna bibir terhadap kulit (perkiraan)", choices=[
+    lip_pigmentation = forms.ChoiceField(label="Pigmentasi bibir", choices=[
         ("low", "Low"), ("medium", "Medium"),
         ("medium_high", "Medium–High"), ("high", "High"),
         ("uncertain", "Belum yakin"),

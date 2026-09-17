@@ -124,6 +124,17 @@ def _harmony_score(hue_diff: float, role: str) -> float:
     return 1.5
 
 
+#: Undertones this app treats as "adjacent" for partial credit when the
+#: shade's undertone_fit doesn't exactly match the wearer's measured
+#: undertone. Both profile undertones (services/color_science.classify_undertone)
+#: and the real shade catalog's undertone_fit (services/data.py, lowercased
+#: from the team's Shade_Catalog.csv) use the same four values --
+#: warm/cool/neutral/olive -- so this replaces an older, catalog-specific
+#: "warm_olive" combined-category workaround that the previous demo catalog
+#: needed and the real one does not.
+_ADJACENT_UNDERTONES = {"warm": {"olive"}, "olive": {"warm"}, "cool": {"neutral"}, "neutral": {"cool"}}
+
+
 def _score(shade: dict, profile: dict, preference: dict, role: str) -> float:
     score = 0.0
     undertone = profile.get("undertone", "neutral")
@@ -136,7 +147,7 @@ def _score(shade: dict, profile: dict, preference: dict, role: str) -> float:
     # convention".
     if undertone == fit:
         score += 3 if has_measurement else 5
-    elif undertone in fit or fit in {"neutral", "warm_olive"} and undertone in {"warm", "olive"}:
+    elif fit in _ADJACENT_UNDERTONES.get(undertone, set()):
         score += 2 if has_measurement else 3
 
     metrics = _metrics(shade, profile)
@@ -149,31 +160,47 @@ def _score(shade: dict, profile: dict, preference: dict, role: str) -> float:
         score += 5
     if shade["finish"] == preference.get("finish", ""):
         score += 2
+    # shade["intensity"] is the real catalog's own 3-tier depth label
+    # (soft/medium/deep, from services/data.py -- lowercased from the
+    # team's Shade_Catalog.csv "Soft/Medium/Deep"). preference["intensity"]
+    # is a *different* vocabulary: the wearer's stated impression
+    # (natural/medium/bold, from PreferenceForm). These map one-to-one, so
+    # unlike the old 5-tier demo catalog (light/light-medium/medium/
+    # medium-high/bold) this is a direct comparison, not a bucketed one.
     intensity_preference = preference.get("intensity", "")
-    if intensity_preference == "natural" and shade["intensity"] in {"light", "light-medium"}:
+    if intensity_preference == "natural" and shade["intensity"] == "soft":
         score += 2
-    elif intensity_preference == "medium" and shade["intensity"] in {"medium", "medium-high"}:
+    elif intensity_preference == "medium" and shade["intensity"] == "medium":
         score += 2
-    elif intensity_preference == "bold" and shade["intensity"] == "bold":
+    elif intensity_preference == "bold" and shade["intensity"] == "deep":
         score += 2
-    if profile.get("lip_pigmentation") in {"medium_high", "high"} and shade["intensity"] in {"medium-high", "bold"}:
+    if profile.get("lip_pigmentation") in {"medium_high", "high"} and shade["intensity"] == "deep":
         score += 2
-    if profile.get("skin_tone") in {"tan", "deep"} and shade["intensity"] == "light":
+    if profile.get("skin_tone") in {"tan", "deep"} and shade["intensity"] == "soft":
         score -= 2
-    if profile.get("skin_tone") == "deep" and shade["intensity"] in {"medium-high", "bold"}:
+    if profile.get("skin_tone") == "deep" and shade["intensity"] == "deep":
         score += 2
     if any(word in profile.get("visible_lip_condition", "").lower() for word in {"dry", "kering"}):
-        score += 2 if shade["finish"] in {"satin", "cream"} else -2 if shade["finish"] == "matte" else 0
+        # "satin"/"cream" (the old demo catalog's more emollient-reading
+        # finishes) don't exist in the real catalog's finish set
+        # (matte/glossy/glasting -- see services/data.py); "glossy" and
+        # "glasting" are this app's closest real equivalents for a finish
+        # that reads as more comfortable on dry lips than matte.
+        score += 2 if shade["finish"] in {"glossy", "glasting"} else -2 if shade["finish"] == "matte" else 0
     family = shade["color_family"]
     intensity = shade["intensity"]
     if role == "daily":
         score += 6 if family == "nude" else 0
-        score += 2 if intensity in {"light", "light-medium", "medium"} else 0
+        score += 2 if intensity in {"soft", "medium"} else 0
     elif role == "energized":
+        # The real catalog's color_family set (brown/nude/orange/peach/
+        # pink/red -- see services/data.py) doesn't currently include
+        # "terracotta" or "coral"; those branches are kept (harmless, no
+        # match today) in case the catalog grows to include them later.
         score += 6 if family == "terracotta" else 5 if family in {"coral", "pink"} else 0
-        score += 2 if intensity in {"medium", "medium-high"} else 0
+        score += 2 if intensity == "medium" else 0
     else:
-        score += 6 if intensity == "bold" else 0
+        score += 6 if intensity == "deep" else 0
         score += 2 if family in {"red", "berry"} else 0
     return score
 

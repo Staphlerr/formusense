@@ -1,19 +1,68 @@
 {% extends 'research/base_research.html' %}
 {% block title %}Formula Lab · FormuSense{% endblock %}
 {% block research_content %}
-<h1>Formula Lab</h1><p class="lead">Buat arahan percobaan dari peluang shade dan sinyal feedback. Ini brief untuk formulator, bukan formula produksi atau hasil uji lab.</p>
-<form method="post" class="card filter-form">{% csrf_token %}<label for="opportunity">Peluang shade</label><select id="opportunity" name="opportunity">{% for item in opportunities %}<option value="{{ item.opportunity_id }}" {% if selected_id == item.opportunity_id %}selected{% endif %}>{{ item.target_shade_name }}</option>{% endfor %}</select><button class="button" type="submit">Buat draf arah formulasi</button></form>
+<div><h1>Formula Lab</h1><p class="lead">Brief arah percobaan untuk formulator, dibangun dari peluang shade dan formula referensi terdekat yang sudah ada.</p></div>
+
+<form method="post" class="card filter-form">{% csrf_token %}<label for="opportunity">Peluang shade</label><select id="opportunity" name="opportunity">{% for item in opportunities %}<option value="{{ item.opportunity_id }}" {% if selected_id == item.opportunity_id %}selected{% endif %}>{{ item.target_shade_name }}</option>{% endfor %}</select><button class="button" type="submit" data-loading-text="Menyusun brief...">Buat brief</button></form>
+
 {% if brief %}
-<div class="card note"><span class="eyebrow">Brief dibuat dari data demo + feedback lokal saat ini</span><h2>{{ brief.opportunity.target_shade_name }}</h2><p>Target: {{ brief.opportunity.family }} · {{ brief.opportunity.preferred_finish }} · {{ brief.opportunity.target_segment }}</p>
-<p>{{ brief.opportunity.demo_interest }} minat positif demo pada konsep; {{ brief.opportunity.local_requests }} permintaan lokal; {{ brief.opportunity.related_issues }} feedback pemakaian bermasalah pada keluarga warna.</p></div>
-<div class="card note"><span class="eyebrow">{{ rationale_source }}</span><p>{{ formula_rationale }}</p></div>
-<div class="two-column"><div class="card"><h2>Arah pigmen untuk dicoba</h2><ul>{% for direction in brief.pigment_direction %}<li>{{ direction }}</li>{% endfor %}</ul></div>
-<div class="card"><h2>Basis & tekstur</h2><p>{{ brief.base_direction }}</p>{% if brief.top_issue %}<p>Keluhan paling sering pada kelompok terkait: <strong>{{ brief.top_issue }}</strong> ({{ brief.issues_sample }} penyebutan keluhan).</p>{% else %}<p>Belum ada keluhan pemakaian pada kelompok terkait.</p>{% endif %}</div></div>
-{% if brief.illustrative_composition %}<div class="card"><h2>Contoh angka dari CSV sintetis · {{ brief.illustrative_composition.draft_id }}</h2><p>Angka ini ditampilkan sebagai contoh struktur draf yang sudah disiapkan untuk hackathon. Tombol di atas tidak menghitung rasio pigmen baru.</p><dl class="formula-list">
-<dt>Red oxide</dt><dd>{{ brief.illustrative_composition.pigment_red_oxide }}%</dd><dt>Yellow oxide</dt><dd>{{ brief.illustrative_composition.pigment_yellow_oxide }}%</dd>
-<dt>Titanium dioxide</dt><dd>{{ brief.illustrative_composition.pigment_titanium_dioxide }}%</dd><dt>D&C Red</dt><dd>{{ brief.illustrative_composition.pigment_dc_red }}%</dd>
-<dt>Black oxide</dt><dd>{{ brief.illustrative_composition.pigment_black_oxide }}%</dd><dt>Basis/binder</dt><dd>{{ brief.illustrative_composition.base_binder_adjustment }}%</dd>
-<dt>Total</dt><dd>{{ brief.illustrative_composition.total_formula_check }}%</dd></dl></div>{% endif %}
-<div class="card"><h2>Rencana validasi</h2><ol>{% for step in brief.validation_steps %}<li>{{ step }}</li>{% endfor %}</ol></div>
+<div class="two-column">
+    <div class="card manifesto">
+        <span class="rd-kicker" style="color:rgba(253,249,246,.65)">{{ brief.opportunity.family|title }} · {{ brief.opportunity.preferred_finish|title }}</span>
+        <h2 style="color:var(--paper)">{{ brief.opportunity.target_shade_name }}</h2>
+        {% if brief.target_hex %}<div class="actions" style="align-items:center;margin:14px 0;flex-wrap:nowrap">
+        <span class="mini-swatch" style="width:56px;height:56px;border-radius:14px;flex:none;background:{{ brief.target_hex }}"></span>
+        <div><strong style="color:var(--paper);font-size:1.1rem">{{ brief.target_hex }}</strong><br><small style="color:rgba(253,249,246,.7)">L {{ brief.target_lab.0 }} · a {{ brief.target_lab.1 }} · b {{ brief.target_lab.2 }}{% if brief.baseline %} · {{ brief.baseline.distance }} dE76 dari referensi terdekat{% endif %}</small></div>
+    </div>{% else %}<p>Belum ada swatch target (hex) untuk konsep ini.</p>{% endif %}
+        <p>{{ brief.opportunity.demo_interest }} minat positif · {{ brief.opportunity.local_requests }} permintaan lokal · {{ brief.opportunity.related_issues }} feedback bermasalah pada keluarga warna ini.</p>
+    </div>
+    <div class="card" style="border-top:3px solid {% if brief.needs_target_color %}var(--review){% elif brief.needs_reference %}var(--gap){% else %}var(--ok){% endif %}">
+        <span class="rd-kicker">Status brief</span>
+        {% if brief.needs_target_color %}<div class="message warning"><strong>Belum ada warna target.</strong> Lengkapi swatch hex untuk konsep ini dulu — tanpa itu sistem tidak bisa mencari formula referensi terdekat.</div>
+        {% elif brief.needs_reference %}<div class="message error"><strong>Belum ada formula referensi yang cukup dekat.</strong> Kandidat terdekat masih di luar ambang batas warna. Bisa dilihat di kanan sebagai konteks, tapi jangan dipakai sebagai dasar draf.</div>
+        {% else %}<div class="message"><strong>Formula referensi ditemukan.</strong></div>{% if formula_rationale %}<p style="margin-top:12px">{{ formula_rationale }}</p><p class="fine-print">{{ rationale_source }}</p>{% endif %}
+        {% endif %}
+    </div>
+</div>
+
+<div class="two-column">
+    <div class="card" style="border-top:3px solid var(--terracotta)"><h2>Formula referensi terdekat</h2>
+        {% if brief.nearest_formulas %}<p class="fine-print">Diurutkan berdasarkan jarak warna terukur (CIELAB dE76) ke target, bukan tebakan.</p>
+        <div class="product-match-grid">{% for candidate in brief.nearest_formulas %}<div class="product-match-card" style="cursor:default;display:flex;flex-direction:column;{% if forloop.first %}border:2px solid var(--terracotta);box-shadow:0 14px 28px -20px rgba(193,97,59,.45){% endif %}">
+            <div class="product-match-top" style="flex-wrap:nowrap;gap:8px"><span class="product-match-brand" style="white-space:nowrap">Kandidat {{ forloop.counter }}{% if forloop.first %} · terdekat{% endif %}</span><strong style="color:var(--wine);white-space:nowrap;flex:none">{{ candidate.distance }}<small style="font-weight:600;font-size:.68rem;color:var(--muted)"> dE76</small></strong></div>
+            <span class="product-match-name">{{ candidate.shade_name }}</span>
+            <span class="product-match-sub">{{ candidate.color_family|title }} · hasil {{ candidate.finish|title }}</span>
+        </div>{% endfor %}</div>
+        {% else %}<div class="message rd-empty">Belum ada kandidat formula referensi — konsep ini perlu warna target lebih dulu.</div>{% endif %}
+    </div>
+    <div class="card" style="border-top:3px solid {% if brief.top_issue %}var(--gap){% else %}var(--line){% endif %}"><h2>Basis &amp; tekstur</h2>{% if brief.top_issue %}<p>Keluhan pemakaian paling sering pada kelompok terkait: <strong style="color:var(--gap)">{{ brief.top_issue }}</strong>, disebut {{ brief.issues_sample }} kali dalam feedback saat ini.</p>{% else %}<div class="message rd-empty">Belum ada keluhan pemakaian pada kelompok terkait.</div>{% endif %}</div>
+</div>
+
+{% if brief.baseline %}<div class="card" style="border-top:3px solid var(--wine)"><h2>Komposisi formula referensi · {{ brief.baseline.shade_name }}</h2>
+    <p class="fine-print">Komposisi formula referensi dari data R&amp;D tim, {{ brief.baseline.distance }} dE76 dari target — data prototipe, perlu validasi lab sebelum dipakai. Bukan formula final.</p>
+    <div style="display:flex;gap:2px;border-radius:12px;overflow:hidden;height:44px;margin:16px 0;background:var(--paper)" role="img" aria-label="Komposisi: Wax {{ brief.baseline_composition.wax_pct }}%, Pigment {{ brief.baseline_composition.pigment_pct }}%, Emollient/Oil {{ brief.baseline_composition.emollient_oil_pct }}%, Mattifying agent {{ brief.baseline_composition.mattifying_agent_pct }}%, Film former {{ brief.baseline_composition.film_former_pct }}%, Additives {{ brief.baseline_composition.additives_pct }}%">
+        <div style="flex:{{ brief.baseline_composition.wax_pct|stringformat:'.2f' }};background:var(--wine);display:flex;align-items:center;justify-content:center;min-width:0" title="Wax {{ brief.baseline_composition.wax_pct }}%">{% if brief.baseline_composition.wax_pct >= 8 %}<span style="color:var(--paper);font-size:.7rem;font-weight:700;white-space:nowrap">{{ brief.baseline_composition.wax_pct|floatformat:0 }}%</span>{% endif %}</div>
+        <div style="flex:{{ brief.baseline_composition.pigment_pct|stringformat:'.2f' }};background:var(--terracotta);display:flex;align-items:center;justify-content:center;min-width:0" title="Pigment {{ brief.baseline_composition.pigment_pct }}%">{% if brief.baseline_composition.pigment_pct >= 8 %}<span style="color:var(--paper);font-size:.7rem;font-weight:700;white-space:nowrap">{{ brief.baseline_composition.pigment_pct|floatformat:0 }}%</span>{% endif %}</div>
+        <div style="flex:{{ brief.baseline_composition.emollient_oil_pct|stringformat:'.2f' }};background:var(--gold);display:flex;align-items:center;justify-content:center;min-width:0" title="Emollient/Oil {{ brief.baseline_composition.emollient_oil_pct }}%">{% if brief.baseline_composition.emollient_oil_pct >= 8 %}<span style="color:var(--ink);font-size:.7rem;font-weight:700;white-space:nowrap">{{ brief.baseline_composition.emollient_oil_pct|floatformat:0 }}%</span>{% endif %}</div>
+        <div style="flex:{{ brief.baseline_composition.mattifying_agent_pct|stringformat:'.2f' }};background:var(--review);display:flex;align-items:center;justify-content:center;min-width:0" title="Mattifying agent {{ brief.baseline_composition.mattifying_agent_pct }}%">{% if brief.baseline_composition.mattifying_agent_pct >= 8 %}<span style="color:var(--paper);font-size:.7rem;font-weight:700;white-space:nowrap">{{ brief.baseline_composition.mattifying_agent_pct|floatformat:0 }}%</span>{% endif %}</div>
+        <div style="flex:{{ brief.baseline_composition.film_former_pct|stringformat:'.2f' }};background:var(--outline);display:flex;align-items:center;justify-content:center;min-width:0" title="Film former {{ brief.baseline_composition.film_former_pct }}%">{% if brief.baseline_composition.film_former_pct >= 8 %}<span style="color:var(--paper);font-size:.7rem;font-weight:700;white-space:nowrap">{{ brief.baseline_composition.film_former_pct|floatformat:0 }}%</span>{% endif %}</div>
+        <div style="flex:{{ brief.baseline_composition.additives_pct|stringformat:'.2f' }};background:var(--muted);display:flex;align-items:center;justify-content:center;min-width:0" title="Additives {{ brief.baseline_composition.additives_pct }}%">{% if brief.baseline_composition.additives_pct >= 8 %}<span style="color:var(--paper);font-size:.7rem;font-weight:700;white-space:nowrap">{{ brief.baseline_composition.additives_pct|floatformat:0 }}%</span>{% endif %}</div>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:14px 20px">
+        <span style="display:inline-flex;align-items:center;gap:6px"><span style="width:9px;height:9px;border-radius:50%;background:var(--wine);flex:none"></span><span class="fine-print">Wax <strong style="color:var(--ink)">{{ brief.baseline_composition.wax_pct }}%</strong></span></span>
+        <span style="display:inline-flex;align-items:center;gap:6px"><span style="width:9px;height:9px;border-radius:50%;background:var(--terracotta);flex:none"></span><span class="fine-print">Pigment <strong style="color:var(--ink)">{{ brief.baseline_composition.pigment_pct }}%</strong></span></span>
+        <span style="display:inline-flex;align-items:center;gap:6px"><span style="width:9px;height:9px;border-radius:50%;background:var(--gold);flex:none"></span><span class="fine-print">Emollient/Oil <strong style="color:var(--ink)">{{ brief.baseline_composition.emollient_oil_pct }}%</strong></span></span>
+        <span style="display:inline-flex;align-items:center;gap:6px"><span style="width:9px;height:9px;border-radius:50%;background:var(--review);flex:none"></span><span class="fine-print">Mattifying agent <strong style="color:var(--ink)">{{ brief.baseline_composition.mattifying_agent_pct }}%</strong></span></span>
+        <span style="display:inline-flex;align-items:center;gap:6px"><span style="width:9px;height:9px;border-radius:50%;background:var(--outline);flex:none"></span><span class="fine-print">Film former <strong style="color:var(--ink)">{{ brief.baseline_composition.film_former_pct }}%</strong></span></span>
+        <span style="display:inline-flex;align-items:center;gap:6px"><span style="width:9px;height:9px;border-radius:50%;background:var(--muted);flex:none"></span><span class="fine-print">Additives <strong style="color:var(--ink)">{{ brief.baseline_composition.additives_pct }}%</strong></span></span>
+    </div>
+</div>{% endif %}
+
+<div class="card" style="border-top:3px solid var(--outline)"><h2>Rencana validasi</h2>
+    <div style="display:grid;gap:12px">{% for step in brief.validation_steps %}<div class="card note" style="display:flex;gap:14px;align-items:flex-start;margin-bottom:0;padding:16px 18px">
+        <span style="flex:none;width:26px;height:26px;border-radius:50%;background:var(--wine);color:var(--paper);display:grid;place-items:center;font-weight:700;font-size:.85rem">{{ forloop.counter }}</span>
+        <span style="padding-top:3px">{{ step }}</span>
+    </div>{% endfor %}</div>
+</div>
 {% else %}<div class="card"><h2>{{ selected_opportunity.target_shade_name }}</h2><p>Pilih peluang lalu klik tombol untuk membuat brief dari data saat ini.</p></div>{% endif %}
 {% endblock %}
