@@ -2,8 +2,9 @@
 {% load static %}
 {% block title %}Rekomendasi shade · FormuSense{% endblock %}
 {% block content %}
-<section class="page"><span class="eyebrow">Dari katalog demo yang tersedia</span><h1>Tiga cara memakai shade favoritmu</h1>
-<p class="lead">Pilihan diurutkan dari profil dan preferensimu. Kecocokan warna tetap perlu dicoba langsung.</p>
+<section class="page"><span class="eyebrow">Dari 30 shade katalog tim</span><h1>Tiga cara memakai shade favoritmu</h1>
+<p class="lead">Pilihan diurutkan dari profil, preferensi, penilaian hedonik sintetis, dan review demo sebelumnya. Kecocokan warna tetap perlu dicoba langsung.</p>
+{% if finish_gap %}<div class="card note">Finish {{ finish_gap|title }} belum ada di katalog 30 shade ini. Kami menampilkan alternatif; permintaan finish tetap bisa kamu sampaikan lewat feedback.</div>{% endif %}
 <section class="card tryon" id="tryon" data-photo-scanned="{{ photo_scanned|yesno:'true,false' }}">
   {{ lip_points|json_script:"lip-points-data" }}
   {{ lip_contours|json_script:"lip-contours-data" }}
@@ -19,7 +20,7 @@
       <div class="actions"><button class="button secondary" id="tryon-align" type="button" disabled>Atur posisi bibir</button><button class="button secondary" id="tryon-download" type="button" disabled>Simpan pratinjau</button><button class="button secondary" id="tryon-clear" type="button" disabled>Hapus foto</button></div>
     </div>
     <div>
-      <h3>Shade rekomendasi dari katalog demo</h3>
+      <h3>Shade rekomendasi dari katalog tim</h3>
       <div class="tryon-shades">{% for shade in picks %}<button type="button" class="tryon-shade {% if shade.role == 'energized' %}is-selected{% endif %}" data-tryon-shade data-hex="{{ shade.hex }}" data-name="{{ shade.shade_name }}"><span class="tryon-swatch" style="background:{{ shade.hex }}"></span><span>{{ shade.shade_name }}<small> · {{ shade.role_label }}</small></span></button>{% endfor %}</div>
       <h3>Contoh swatch lipstik dari dataset publik</h3>
       <p class="fine-print">Contoh warna terdekat secara RGB dari dataset Capstone Colors; ini bukan bukti kecocokan pada undertone atau ketersediaan produknya.</p>
@@ -33,14 +34,15 @@
 {% for shade in picks %}<article class="shade-card">
   <div class="shade-color" style="background: {{ shade.hex }}"></div>
   <div class="shade-body"><small>{{ shade.role_label }}</small><h2>{{ shade.shade_name }}</h2>
-  <dl><dt>Keluarga warna</dt><dd>{{ shade.color_family }}</dd><dt>Hasil akhir</dt><dd>{{ shade.finish }}</dd><dt>Intensitas</dt><dd>{{ shade.intensity }}</dd></dl>
-  <p class="affinity-line">{% if shade.affinity.sample %}{{ shade.affinity.positive }} dari {{ shade.affinity.sample }} tertarik{% if shade.affinity.cohort %} pada profil warna serupa{% else %} di semua profil{% endif %} <small>· {{ shade.affinity.demo_sample }} demo, {{ shade.affinity.local_sample }} lokal</small>{% else %}Belum ada penilaian minat untuk shade ini.{% endif %}</p>
+  <dl><dt>Brand dataset</dt><dd>{{ shade.brand }}</dd><dt>Keluarga warna</dt><dd>{{ shade.color_family }}</dd><dt>Hasil akhir</dt><dd>{{ shade.finish }}</dd><dt>Intensitas</dt><dd>{{ shade.intensity }}</dd></dl>
+  <p class="affinity-line">{% if shade.affinity.sample %}{{ shade.affinity.positive }} dari {{ shade.affinity.sample }} tertarik{% if shade.affinity.cohort %} pada profil warna serupa{% else %} di semua profil{% endif %} <small>· {{ shade.affinity.historical_sample }} review historis demo, {{ shade.affinity.local_sample }} lokal</small>{% else %}Belum ada penilaian minat untuk shade ini.{% endif %}</p>
+  <p class="fine-print">{% if shade.hedonic.hedonic_sample %}Hedonik sintetis {{ shade.hedonic.hedonic_mean }}/9 (n={{ shade.hedonic.hedonic_sample }}, {{ shade.hedonic.hedonic_cohort }}).{% endif %}</p>
   <p>{{ shade.reason }}</p><a class="button full" href="{% url 'consumer:feedback' shade.shade_id %}">Lihat & beri feedback</a></div>
 </article>{% endfor %}
 </div>
 <div class="card note"><span class="eyebrow">{{ note_source }}</span><p>{{ personal_note }}</p></div>
-<div class="card"><h2>Spektrum minat profil serupa</h2><p>Jumlah sinyal positif sebelum pemakaian. Sebagian besar berasal dari data simulasi; jumlah kecil ini belum mewakili konsumen Indonesia.</p>
-  {% if spectrum %}<div class="spectrum-list">{% for item in spectrum %}<div class="spectrum-row"><span>{{ item.family|title }}</span><div class="bar-track"><span class="bar-fill" style="width: {{ item.width }}%"></span></div><b>{{ item.count }}</b></div>{% endfor %}</div>{% else %}<p>Belum ada sinyal pada kelompok profil ini.</p>{% endif %}
+<div class="card"><h2>Kesukaan warna dalam dataset tim</h2><p>Rata-rata nilai hedonik sintetis untuk {{ spectrum.cohort }} (skala 1–9). Ini sinyal demo, bukan bukti kesukaan populasi Indonesia.</p>
+  {% if spectrum.families %}<div class="spectrum-list">{% for item in spectrum.families %}<div class="spectrum-row hedonic-spectrum"><span>{{ item.family|title }}</span><div class="bar-track"><span class="bar-fill" style="width: {{ item.width }}%"></span></div><b>{{ item.mean }}</b><small>n={{ item.sample }}</small></div>{% endfor %}</div>{% else %}<p>Belum ada nilai pada kelompok profil ini.</p>{% endif %}
 </div>
 </section>
 {% endblock %}

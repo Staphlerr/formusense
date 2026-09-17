@@ -2,6 +2,10 @@
 {% block title %}R&D Overview · FormuSense{% endblock %}
 {% block research_content %}
 <h1>R&D Intelligence Overview</h1><p class="lead">Ringkasan data simulasi dan feedback baru dari aplikasi lokal.</p>
+<section class="card"><span class="eyebrow">Lima dataset tim · demo, asal data belum diverifikasi</span><h2>Data yang dipakai di alur baru</h2>
+<div class="dataset-grid"><div><strong>{{ team.catalog_count }}</strong><span>shade katalog untuk rekomendasi</span></div><div><strong>{{ team.hedonic_count }}</strong><span>nilai hedonik untuk skor kesukaan</span></div><div><strong>{{ team.feedback_count }}</strong><span>review historis demo</span></div><div><strong>{{ team.formula_count }}</strong><span>base formula acuan</span></div><div><strong>{{ team.gap_count }}</strong><span>kandidat gap dari file tim</span></div></div>
+<p class="fine-print">{{ team.gap_catalog_matches }} dari {{ team.gap_count }} shade asal pada file gap cocok nama dan brand-nya dengan katalog 30 shade. Sisanya tidak boleh dianggap bukti bahwa portofolio Paragon kosong.</p>
+<p><a class="button secondary" href="{% url 'research:unmet_demand' %}">Tinjau kandidat gap</a></p></section>
 <div class="metric-grid"><div class="card metric"><small>Feedback demo sintetis</small><strong>{{ demo_feedback_count }}</strong></div>
 <div class="card metric"><small>Feedback lokal baru</small><strong>{{ local_feedback_count }}</strong></div>
 <div class="card metric"><small>Minat warna / uji pakai</small><strong>{{ interest_count }} / {{ wear_count }}</strong></div>

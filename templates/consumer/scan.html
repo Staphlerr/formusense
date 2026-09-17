@@ -4,7 +4,7 @@
 {% block content %}
 <section class="page narrow"><span class="eyebrow">Langkah 4 dari 4</span><h1>Kenali profil bibirmu</h1>
   <p class="lead">Ambil foto langsung dengan kamera atau unggah foto. Hadapkan wajah ke depan, pastikan bibir terlihat, gunakan cahaya alami, dan hindari lipstik tebal. Kamu juga bisa memakai profil manual atau contoh demo.</p>
-  <p class="status-pill">{% if local_vision_available %}Deteksi wajah lokal siap · tanpa token AI untuk foto{% else %}Model deteksi lokal belum tersedia · profil manual dan demo siap dipakai{% endif %}</p>
+  <p class="status-pill">{% if local_vision_available %}Deteksi wajah lokal siap{% else %}Model deteksi lokal belum tersedia{% endif %}{% if photo_ai_consent and ai_available %} · AI cadangan diizinkan{% else %} · foto tidak dikirim ke AI eksternal{% endif %}</p>
   {% if photo_consent %}
   <form method="post" enctype="multipart/form-data" class="card form-card" id="scan-form">{% csrf_token %}
     <div><strong>1 · Buka kamera</strong>
@@ -29,7 +29,7 @@
   </form>
   <div class="scan-loading" id="scan-loading" role="status" aria-live="polite" aria-label="Foto sedang diproses" hidden>
     <div class="scan-loading-inner">
-      <span class="eyebrow">Analisis foto lokal</span>
+      <span class="eyebrow">Analisis foto{% if photo_ai_consent and ai_available %} · AI cadangan diizinkan{% else %} · lokal saja{% endif %}</span>
       <h1>Mengenali profil bibirmu...</h1>
       <p class="lead">Tunggu sebentar. Foto diproses di server demo dan hasilnya bisa kamu periksa sebelum melihat rekomendasi.</p>
       <div class="scan-progress" aria-hidden="true"><span></span></div>

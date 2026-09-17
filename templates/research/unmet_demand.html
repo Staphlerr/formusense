@@ -1,7 +1,18 @@
 {% extends 'research/base_research.html' %}
 {% block title %}Unmet Demand · FormuSense{% endblock %}
 {% block research_content %}
-<h1>Unmet Demand</h1><p class="lead">Tiga konsep peluang berasal dari CSV demo. Hitungan di bawah diperbarui dari feedback yang dikirim melalui aplikasi lokal.</p>
+<h1>Unmet Demand</h1><p class="lead">File gap tim berisi {{ team.gap_count }} kandidat perbandingan. Ini usulan demo yang perlu diverifikasi terhadap portofolio nyata sebelum disebut kebutuhan pasar.</p>
+<section class="card"><h2>Perbandingan finish dengan katalog 30 shade</h2><p>Permintaan diambil dari kolom preferensi 600 penilaian hedonik sintetis dan feedback lokal. Ini hanya menunjukkan yang belum ada di <em>katalog demo ini</em>.</p>
+<div class="finish-coverage"><div><strong>Finish</strong><strong>Shade katalog</strong><strong>Preferensi sintetis</strong><strong>Permintaan lokal</strong></div>
+{% for item in finish_coverage %}<div><span>{{ item.finish|title }}{% if item.missing_in_demo %} · belum ada{% endif %}</span><b>{{ item.catalog_count }}</b><span>{{ item.historic_requests }}</span><span>{{ item.local_requests }}</span></div>{% endfor %}</div></section>
+<section class="card"><h2>Gap comparison dari dataset tim</h2><p>{{ team.gap_catalog_matches }} dari {{ team.gap_count }} nama dan brand shade asal cocok dengan katalog 30 shade yang tersedia di aplikasi. Tidak cocok belum berarti produk tidak dimiliki Paragon.</p>
+<h3>Jenis gap dalam file</h3><ul>{% for kind, count in team.gap_types %}<li>{{ kind }} · {{ count }}</li>{% endfor %}</ul>
+<details><summary>Lihat {{ team.gap_count }} kandidat gap dan pilih untuk Formula Lab</summary>
+<div class="stack">{% for gap in gap_candidates %}<article class="card"><span class="eyebrow">Kandidat {{ forloop.counter }} · {{ gap.gap_type }}</span><h3>{{ gap.opportunity_shade }}</h3>
+<p>Shade asal: {{ gap.existing_shade }} · {% if gap.catalog_match %}cocok nama dan brand di katalog 30{% else %}tidak cocok nama dan brand di katalog 30{% endif %}.</p>
+<p>{{ gap.gap_description }}</p><p class="fine-print">Target file: {{ gap.desired_attributes }}</p>
+<a class="button secondary" href="{% url 'research:formula_lab' %}?gap={{ gap.index }}">Buat draf dari base formula</a></article>{% endfor %}</div></details></section>
+<h2>Peluang dari dataset demo lama</h2><p class="fine-print">Tiga konsep di bawah berasal dari file terpisah dan tidak dijoin ke 100 kandidat gap tim. Hitungan lokal berubah saat pengguna memberi feedback.</p>
 <div class="stack">{% for item in opportunities %}<article class="card"><span class="eyebrow">{{ item.opportunity_id }} · konsep R&D</span>
 <h2>{{ item.target_shade_name }}</h2><p>Segmen sasaran: {{ item.target_segment }} · Finish sasaran: {{ item.preferred_finish }}</p>
 <div class="signal-grid"><div><strong>{{ item.demo_interest }}</strong><small>minat positif demo pada konsep</small></div><div><strong>{{ item.local_requests }}</strong><small>permintaan baru pengguna lokal</small></div><div><strong>{{ item.related_issues }}</strong><small>feedback pemakaian bermasalah pada keluarga warna</small></div></div>

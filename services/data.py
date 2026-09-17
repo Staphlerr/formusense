@@ -28,4 +28,9 @@ def shades(available_only=False):
 
 
 def shade_by_id(shade_id, available_only=False):
+    from services.team_data import catalog_shade_by_id
+
+    team_shade = catalog_shade_by_id(shade_id)
+    if team_shade:
+        return team_shade
     return next((row for row in shades(available_only) if row["shade_id"] == shade_id), None)

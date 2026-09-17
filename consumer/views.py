@@ -7,11 +7,12 @@ from django.shortcuts import redirect, render
 from accounts.access import consumer_required
 from consumer.forms import FeedbackForm, LipProfileForm, PreferenceForm, ProfileStartForm
 from services.ai_client import AIUnavailable, analyze_photo, generate_personal_note
-from services.analytics import affinity, community_spectrum
+from services.analytics import affinity
 from services.data import shade_by_id
 from services.dataset_insights import public_swatches_near
 from services.local_vision import LocalVisionError, analyze_photo_local, model_available
 from services.recommendation import personalize, recommend
+from services.team_data import catalog_shades, hedonic_spectrum
 
 
 DEMO_PROFILE = {
@@ -49,7 +50,9 @@ def profile_start(request):
 @consumer_required
 def consent(request):
     if request.method == "POST":
-        request.session["photo_consent"] = request.POST.get("choice") == "photo"
+        choice = request.POST.get("choice")
+        request.session["photo_consent"] = choice in {"photo", "photo_local", "photo_external"}
+        request.session["photo_ai_consent"] = choice == "photo_external"
         if not request.session["photo_consent"]:
             request.session["photo_scanned"] = False
         return redirect("consumer:preferences")
@@ -97,6 +100,7 @@ def scan(request):
                     "photo_consent": True,
                     "local_vision_available": model_available(),
                     "ai_available": _ai_vision_available(),
+                    "photo_ai_consent": request.session.get("photo_ai_consent", False),
                 })
             request.session["photo_scanned"] = True
             # Three-tier fallback, in order of how grounded/explainable the result is:
@@ -113,18 +117,22 @@ def scan(request):
                     "foto (bukan AI). Periksa dan koreksi hasilnya jika perlu.",
                 )
             except LocalVisionError as error:
-                try:
-                    request.session["lip_profile"] = analyze_photo(photo_bytes, photo.content_type)
-                    messages.info(
-                        request,
-                        f"{error} Menggunakan perkiraan AI vision sebagai cadangan; "
-                        "periksa dan koreksi hasilnya jika perlu.",
-                    )
-                except AIUnavailable:
+                if request.session.get("photo_ai_consent") and _ai_vision_available():
+                    try:
+                        request.session["lip_profile"] = analyze_photo(photo_bytes, photo.content_type)
+                        messages.info(
+                            request,
+                            f"{error} Menggunakan perkiraan AI vision sebagai cadangan; "
+                            "periksa dan koreksi hasilnya jika perlu.",
+                        )
+                    except AIUnavailable:
+                        request.session["lip_profile"] = MANUAL_PROFILE.copy()
+                        messages.warning(request, f"{error} AI cadangan tidak tersedia. Isi profil secara manual.")
+                else:
                     request.session["lip_profile"] = MANUAL_PROFILE.copy()
                     messages.warning(
                         request,
-                        f"{error} Analisis AI juga tidak tersedia. Silakan isi profil secara manual; "
+                        f"{error} Silakan isi profil secara manual; "
                         "foto tetap bisa dipakai untuk mencoba shade.",
                     )
             return redirect("consumer:profile_result")
@@ -132,6 +140,7 @@ def scan(request):
         "photo_consent": request.session.get("photo_consent", False),
         "local_vision_available": model_available(),
         "ai_available": _ai_vision_available(),
+        "photo_ai_consent": request.session.get("photo_ai_consent", False),
     })
 
 
@@ -198,7 +207,11 @@ def recommendations(request):
             pass
     return render(request, "consumer/recommendations.html", {
         "picks": picks, "profile": profile, "personal_note": note,
-        "note_source": note_source, "spectrum": community_spectrum(profile),
+        "note_source": note_source, "spectrum": hedonic_spectrum(profile),
+        "finish_gap": (preference.get("finish")
+                       if preference.get("finish")
+                       and preference["finish"] not in {row["finish"] for row in catalog_shades()}
+                       else None),
         "public_examples": public_swatches_near(picks),
         "photo_scanned": request.session.get("photo_scanned", False),
         # Shape differs by which fallback tier produced the profile:

@@ -8,7 +8,7 @@ from django.contrib.auth.views import redirect_to_login
 CONSUMER_GROUP = "consumer"
 RESEARCH_GROUP = "rd"
 CONSUMER_SESSION_KEYS = (
-    "basic_profile", "photo_consent", "preference", "photo_scanned",
+    "basic_profile", "photo_consent", "photo_ai_consent", "preference", "photo_scanned",
     "lip_profile", "personal_note_cache", "last_feedback",
 )
 

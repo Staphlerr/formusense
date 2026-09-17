@@ -847,3 +847,9 @@ p {
   font-size: 0.85rem;
   color: var(--muted);
 }
+.hedonic-spectrum { grid-template-columns: 100px 1fr 45px 55px; }
+.hedonic-spectrum small { text-align: right; color: var(--muted); }
+.finish-coverage { display: grid; gap: 0; }
+.finish-coverage > div { display: grid; grid-template-columns: 1.3fr repeat(3,1fr); gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.finish-coverage > div > :not(:first-child) { text-align: right; }
+@media (max-width: 650px) { .finish-coverage { overflow-x: auto; } .finish-coverage > div { min-width: 600px; } }

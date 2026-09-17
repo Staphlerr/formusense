@@ -2,8 +2,8 @@
 {% block title %}Persetujuan foto · FormuSense{% endblock %}
 {% block content %}
 <section class="page narrow"><span class="eyebrow">Langkah 2 dari 4</span><h1>Foto kamu, pilihan kamu</h1>
-<p class="lead">Jika setuju, foto dikirim ke server demo ini untuk analisis wajah dan bibir secara lokal dengan MediaPipe dan OpenCV. Foto tidak dikirim ke penyedia AI eksternal dan tidak disimpan sebagai foto di server; profil serta koordinat bibir disimpan sementara dalam sesi. Salinan kecil foto tersimpan di tab browsermu agar kamu bisa mencoba shade, dan dapat dihapus di halaman rekomendasi. Hasil analisis bisa kamu koreksi.</p>
+<p class="lead">Pilih cara analisis foto. Analisis lokal memakai MediaPipe dan OpenCV di server demo. Jika kamu memilih cadangan AI, foto dapat dikirim ke penyedia API hanya saat analisis lokal gagal. Foto tidak disimpan sebagai file di server; profil dan koordinat bibir disimpan sementara dalam sesi. Salinan kecil foto tersimpan di tab browsermu untuk mencoba shade. Hasilnya bisa kamu koreksi.</p>
 <div class="card"><p>Analisis ini bukan pemeriksaan kesehatan. Kamu bisa lanjut tanpa foto dan mengisi profil manual.</p>
-<form method="post" class="actions">{% csrf_token %}<button class="button" name="choice" value="photo">Saya setuju menggunakan foto</button><button class="button secondary" name="choice" value="manual">Lanjut tanpa foto</button></form></div>
+<form method="post" class="actions">{% csrf_token %}<button class="button" name="choice" value="photo_local">Setuju analisis lokal saja</button><button class="button secondary" name="choice" value="photo_external">Setuju AI cadangan jika lokal gagal</button><button class="button secondary" name="choice" value="manual">Lanjut tanpa foto</button></form></div>
 </section>
 {% endblock %}
