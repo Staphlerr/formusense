@@ -653,6 +653,15 @@ p { margin: 0 0 1rem; }
   font: inherit; font-weight: 600; font-size: .85rem; color: var(--muted); cursor: pointer; transition: .15s;
 }
 .spectrum-filters button[aria-pressed="true"] { background: var(--wine); border-color: var(--wine); color: var(--paper); }
+
+/* ---------- Formula Lab: source tabs (opportunity vs gap) ---------- */
+.source-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+.source-tab {
+  padding: 10px 18px; border-radius: 99px; border: 1px solid var(--line); background: var(--surface);
+  font-weight: 700; font-size: .88rem; color: var(--muted); text-decoration: none; transition: .15s;
+}
+.source-tab.is-active { background: var(--wine); border-color: var(--wine); color: var(--paper); }
+.source-tab:hover:not(.is-active) { border-color: var(--terracotta); color: var(--wine); }
 .spectrum-stats { display: flex; gap: 32px; flex-wrap: wrap; margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--line); }
 .spectrum-stats .lbl { font-size: .78rem; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; font-weight: 700; }
 .spectrum-stats .val { font-family: var(--font-head); font-size: 1.5rem; font-weight: 700; color: var(--wine); letter-spacing: -.02em; margin-top: 4px; }
