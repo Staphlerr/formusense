@@ -10,6 +10,7 @@
   const status = document.querySelector('#tryon-status');
   const align = document.querySelector('#tryon-align');
   const download = document.querySelector('#tryon-download');
+  const saveProfile = document.querySelector('#tryon-save-profile');
   const clear = document.querySelector('#tryon-clear');
   const opacity = document.querySelector('#tryon-opacity');
   const opacityValue = document.querySelector('#tryon-opacity-value');
@@ -106,6 +107,7 @@
       empty.hidden = true;
       align.disabled = false;
       download.disabled = editing;
+      saveProfile.disabled = editing;
       clear.disabled = false;
       status.textContent = useEstimatedPoints && estimatedPoints
         ? 'Posisi awal bibir diperkirakan dari foto. Tekan “Atur posisi bibir” bila belum pas.'
@@ -161,6 +163,7 @@
     contours = null;
     editing = true;
     download.disabled = true;
+    saveProfile.disabled = true;
     canvas.classList.add('is-placing');
     status.textContent = `Klik ${steps[0]} pada foto.`;
     draw();
@@ -177,6 +180,7 @@
     if (points.length === 4) {
       editing = false;
       download.disabled = false;
+      saveProfile.disabled = false;
       canvas.classList.remove('is-placing');
       status.textContent = `Posisi bibir disesuaikan. Pratinjau shade ${selected.dataset.name} siap.`;
     } else {
@@ -192,10 +196,36 @@
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = 'formusense-pratinjau-shade.png';
+      link.download = 'lipxmatch-pratinjau-shade.png';
       link.click();
       setTimeout(() => URL.revokeObjectURL(url), 1000);
     }, 'image/png');
+  });
+
+  saveProfile.addEventListener('click', async () => {
+    if (!photo || !hasPlacement() || !selected?.dataset.id) return;
+    saveProfile.disabled = true;
+    saveProfile.textContent = 'Menyimpan…';
+    try {
+      const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', .8));
+      if (!blob) throw new Error('Foto hasil tidak dapat dibuat.');
+      const body = new FormData();
+      body.append('photo', blob, 'hasil-shade.jpg');
+      body.append('shade_id', selected.dataset.id);
+      const csrf = document.querySelector('#profile-save-token [name="csrfmiddlewaretoken"]')?.value;
+      const response = await fetch(root.dataset.savePhotoUrl, {
+        method: 'POST', credentials: 'same-origin',
+        headers: { 'X-CSRFToken': csrf || '' }, body,
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || 'Foto gagal disimpan.');
+      status.textContent = `Foto hasil ${selected.dataset.name} tersimpan di profilmu.`;
+    } catch (error) {
+      status.textContent = error.message || 'Foto gagal disimpan. Coba lagi.';
+    } finally {
+      saveProfile.textContent = 'Simpan foto hasil ke profil';
+      saveProfile.disabled = false;
+    }
   });
 
   clear.addEventListener('click', () => {
@@ -209,6 +239,7 @@
     upload.value = '';
     align.disabled = true;
     download.disabled = true;
+    saveProfile.disabled = true;
     clear.disabled = true;
     status.textContent = 'Foto dihapus dari pratinjau browser ini.';
     try { sessionStorage.removeItem(photoKey); } catch (cause) { /* Storage is optional. */ }

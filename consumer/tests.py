@@ -10,15 +10,15 @@ from django.test import SimpleTestCase, TestCase
 from django.urls import reverse
 from unittest.mock import patch
 
-from consumer.models import Feedback
+from consumer.models import Feedback, SavedPhoto, SavedShade
 from services.analytics import affinity, opportunities, overview
 from services.formula_lab import build_formula_brief
 from services.ai_client import AIUnavailable, analyze_photo
-from services.dataset_insights import dataset_insights, public_swatches_near
+from services.dataset_insights import dataset_insights, public_lipstick_stats, public_swatches_near
 from services.recommendation import recommend
 from services.team_data import (
     build_gap_formula_brief, catalog_shades, gap_candidates,
-    shade_evidence, team_dataset_summary,
+    same_brand_shades, shade_evidence, shade_feedback_examples, team_dataset_summary,
 )
 from services.color_science import classify_skin_tone
 from services.local_vision import (
@@ -168,7 +168,7 @@ class DemoFlowTests(TestCase):
             "feedback_type": "color_interest", "color_response": "like_it",
         })
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Saya setuju feedback")
+        self.assertContains(response, "Saya setuju penilaian")
         self.assertEqual(Feedback.objects.count(), 0)
 
     def test_photo_with_consent_uses_local_vision_result(self):
@@ -360,6 +360,29 @@ class AIAdapterTests(SimpleTestCase):
 
 
 class DatasetIntegrationTests(SimpleTestCase):
+    def test_shade_detail_uses_its_own_demo_feedback_and_swatches(self):
+        maple = next(shade for shade in catalog_shades()
+                     if shade["shade_name"] == "Maple" and shade["brand"] == "Ronaa.")
+        caramel = next(shade for shade in catalog_shades() if shade["shade_name"] == "Caramel")
+        profile = {"skin_tone": "medium", "undertone": "warm"}
+        maple_feedback = shade_feedback_examples(maple, profile)
+        caramel_feedback = shade_feedback_examples(caramel, profile)
+        self.assertEqual(len(maple_feedback), 3)
+        self.assertTrue(all(item["feedback_id"] in {f"F{number:03d}" for number in range(21, 31)}
+                            for item in maple_feedback))
+        self.assertFalse({item["feedback_id"] for item in maple_feedback}
+                         & {item["feedback_id"] for item in caramel_feedback})
+        swatches = public_swatches_near([maple, caramel], per_pick=3)
+        self.assertEqual(sum(item["near_demo_shade_id"] == maple["shade_id"] for item in swatches), 3)
+        self.assertEqual(sum(item["near_demo_shade_id"] == caramel["shade_id"] for item in swatches), 3)
+        self.assertTrue(all(item["brand"] and item["product"] and item["shade"] for item in swatches))
+        self.assertEqual(public_lipstick_stats()["swatches"], 191)
+        self.assertGreater(public_lipstick_stats()["brands"], 1)
+        maple_peers = same_brand_shades(maple)
+        self.assertEqual(len(maple_peers), 3)
+        self.assertTrue(all(peer["brand"] == maple["brand"]
+                            and peer["shade_id"] != maple["shade_id"] for peer in maple_peers))
+
     def test_source_counts_and_hedonic_track_stay_separate(self):
         insight = dataset_insights()
         self.assertEqual(insight["public_lipstick_count"], 191)
@@ -397,6 +420,34 @@ class TeamDataFlowTests(TestCase):
         self.rd_user = get_user_model().objects.create_user("team_rd", password="StrongDemoPass123!")
         self.rd_user.groups.add(Group.objects.get(name="rd"))
 
+    def test_recommendations_show_maple_specific_detail(self):
+        self.client.force_login(self.consumer)
+        session = self.client.session
+        session["lip_profile"] = {"skin_tone": "medium", "undertone": "warm",
+                                  "lip_pigmentation": "medium"}
+        session["preference"] = {"color": "orange", "finish": "glasting"}
+        session.save()
+        with patch("consumer.views._ai_text_available", return_value=False), \
+                patch("consumer.views.generate_personal_note", return_value="Catatan uji"):
+            page = self.client.get(reverse("consumer:recommendations"))
+        self.assertEqual(page.status_code, 200)
+        self.assertContains(page, "Apa kata konsumen tentang Maple")
+        maple = next(pick for pick in page.context["picks"] if pick["shade_name"] == "Maple")
+        self.assertEqual(len(maple["feedback_examples"]), 3)
+        self.assertTrue(all(item["feedback_id"] in {f"F{number:03d}" for number in range(21, 31)}
+                            for item in maple["feedback_examples"]))
+        self.assertEqual(sum(item["near_demo_shade_id"] == maple["shade_id"]
+                             for item in page.context["public_examples"]), 3)
+        self.assertEqual(len(maple["brand_peers"]), 3)
+        self.assertContains(page, "Shade lain dari Ronaa.")
+        self.assertContains(page, "Contoh produk lipstik dari merek publik")
+        self.assertNotContains(page, "★ AI")
+        maple_index = next(index for index, pick in enumerate(page.context["picks"])
+                           if pick["shade_id"] == maple["shade_id"])
+        self.assertContains(page, f'data-select-preview="detail-{maple_index}"')
+        self.assertContains(page, f'data-open-detail="detail-{maple_index}"')
+        self.assertNotContains(page, 'shade-detail-panel is-open')
+
     def test_catalog_recommendation_feedback_and_rd_formula_flow(self):
         self.client.force_login(self.consumer)
         session = self.client.session
@@ -405,8 +456,8 @@ class TeamDataFlowTests(TestCase):
         session["preference"] = {"finish": "satin"}
         session.save()
         page = self.client.get(reverse("consumer:recommendations"))
-        self.assertContains(page, "30 shade katalog tim")
-        self.assertContains(page, "Finish Satin belum ada")
+        self.assertEqual(len(page.context["picks"]), 3)
+        self.assertEqual(page.context["finish_gap"], "satin")
         shade = recommend(session["lip_profile"], session["preference"])[0]
         response = self.client.post(reverse("consumer:feedback", args=[shade["shade_id"]]), {
             "feedback_type": "color_interest", "color_response": "like_it",
@@ -417,13 +468,12 @@ class TeamDataFlowTests(TestCase):
 
         self.client.force_login(self.rd_user)
         gap_page = self.client.get(reverse("research:unmet_demand"))
-        self.assertContains(gap_page, "Perbandingan finish")
-        self.assertContains(gap_page, "100 kandidat")
-        self.assertContains(gap_page, "Satin")
+        self.assertContains(gap_page, "Unmet Demand")
+        self.assertTrue(gap_page.context["opportunities"])
         satin = next(item for item in gap_page.context["finish_coverage"] if item["finish"] == "satin")
         self.assertEqual(satin["catalog_count"], 0)
         self.assertEqual(satin["local_requests"], 1)
-        self.assertContains(self.client.get(reverse("research:evidence")), "300 review")
+        self.assertContains(self.client.get(reverse("research:evidence")), "300 penilaian contoh")
         brief_page = self.client.post(reverse("research:formula_lab"), {"gap": "0"})
         self.assertContains(brief_page, "Komposisi awal untuk diuji")
         self.assertEqual(brief_page.context["team_brief"]["total"], 100)
@@ -460,3 +510,61 @@ class ColorScienceUnitTests(SimpleTestCase):
         dark_lip = (30.0, 20.0, 10.0)    # large contrast -> high
         self.assertEqual(classify_lip_pigmentation(skin_lab, light_lip), "low")
         self.assertEqual(classify_lip_pigmentation(skin_lab, dark_lip), "high")
+
+
+class AccountCollectionTests(TestCase):
+    def setUp(self):
+        self.owner = get_user_model().objects.create_user("saved_owner", password="StrongDemoPass123!")
+        self.other = get_user_model().objects.create_user("saved_other", password="StrongDemoPass123!")
+        consumer_group = Group.objects.get(name="consumer")
+        self.owner.groups.add(consumer_group)
+        self.other.groups.add(consumer_group)
+        self.client.force_login(self.owner)
+
+    def test_saved_shade_belongs_to_account_and_can_be_removed(self):
+        url = reverse("consumer:save_shade")
+        self.assertEqual(self.client.post(url, {"shade_id": "SHD001", "action": "save"}).status_code, 200)
+        self.client.post(url, {"shade_id": "SHD001", "action": "save"})
+        self.assertEqual(SavedShade.objects.filter(user=self.owner).count(), 1)
+        self.assertContains(self.client.get(reverse("consumer:account_profile")), "Soft Warm Nude")
+        self.assertEqual(self.client.post(url, {"shade_id": "SHD009", "action": "save"}).status_code, 400)
+        self.client.force_login(self.other)
+        self.assertNotContains(self.client.get(reverse("consumer:account_profile")), "Soft Warm Nude")
+        self.client.force_login(self.owner)
+        self.assertRedirects(self.client.post(url, {"shade_id": "SHD001", "action": "remove",
+                                                     "from_profile": "1"}), reverse("consumer:account_profile"))
+        self.assertFalse(SavedShade.objects.filter(user=self.owner).exists())
+
+    def test_photo_history_is_explicit_private_and_deletable(self):
+        from django.core.files.uploadedfile import SimpleUploadedFile
+        from PIL import Image
+
+        image = io.BytesIO()
+        Image.new("RGB", (32, 32), "#b05f49").save(image, format="PNG")
+        upload = SimpleUploadedFile("hasil.png", image.getvalue(), content_type="image/png")
+        response = self.client.post(reverse("consumer:save_photo"), {
+            "shade_id": "SHD001", "photo": upload,
+        })
+        self.assertEqual(response.status_code, 200)
+        entry = SavedPhoto.objects.get(user=self.owner)
+        self.assertTrue(entry.image_jpeg.startswith(b"\xff\xd8"))
+        photo_url = reverse("consumer:profile_photo", args=[entry.pk])
+        self.assertEqual(self.client.get(photo_url).status_code, 200)
+        self.assertContains(self.client.get(reverse("consumer:account_profile")), photo_url)
+        self.client.force_login(self.other)
+        self.assertEqual(self.client.get(photo_url).status_code, 404)
+        self.assertEqual(self.client.post(reverse("consumer:delete_photo", args=[entry.pk])).status_code, 404)
+        self.client.force_login(self.owner)
+        self.assertRedirects(self.client.post(reverse("consumer:delete_photo", args=[entry.pk])),
+                             reverse("consumer:account_profile"))
+        self.assertFalse(SavedPhoto.objects.exists())
+
+    def test_photo_history_rejects_non_image(self):
+        from django.core.files.uploadedfile import SimpleUploadedFile
+
+        response = self.client.post(reverse("consumer:save_photo"), {
+            "shade_id": "SHD001",
+            "photo": SimpleUploadedFile("hasil.png", b"not an image", content_type="image/png"),
+        })
+        self.assertEqual(response.status_code, 400)
+        self.assertFalse(SavedPhoto.objects.exists())

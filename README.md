@@ -1,4 +1,4 @@
-# FormuSense — prototipe hackathon
+# LipXMatch — prototipe hackathon
 
 Prototipe Django untuk alur konsumen (profil → persetujuan → preferensi → foto/isi manual → rekomendasi → feedback) dan dashboard R&D. Lima CSV tim di folder `data/` kini dipakai dalam alur utama; data lama di `data/formusense_demo/` tetap mendukung kartu peluang dan grafik lama. Tim tidak memiliki dataset Paragon. Semuanya diperlakukan sebagai **data demo**, bukan bukti permintaan pasar atau hasil uji laboratorium.
 
@@ -16,10 +16,10 @@ Buka `http://127.0.0.1:8000/`. Django 5.2 atau 6 pada Python yang didukung dapat
 
 ## Akun dan batas akses
 
-- **Konsumen:** buat akun di `/accounts/register/`, lalu masuk di `/accounts/consumer/login/`. Pendaftaran publik hanya memberi role `consumer`. Profil foto dan rekomendasi berada di sesi akun yang sedang aktif.
+- **Konsumen:** buat akun di `/accounts/register/`, lalu masuk di `/accounts/consumer/login/`. Pendaftaran publik hanya memberi role `consumer`. Profil warna dan rekomendasi aktif berada di sesi; shade dan foto hasil yang dipilih untuk disimpan tersedia di `/my-profile/`.
 - **R&D:** buat akun secara lokal dengan `python manage.py create_rd_user nama_pengguna`, lalu masukkan password ketika diminta. Masuk di `/accounts/rd/login/`. Tidak ada pendaftaran R&D dari website. Superuser Django juga dapat mengakses R&D.
 - Pengunjung tanpa akun hanya melihat beranda dan penjelasan. Semua halaman profil, rekomendasi, feedback, dan dashboard R&D diperiksa role-nya di server untuk GET maupun POST. Akun dengan role salah mendapat 403. Keluar memakai tombol **Keluar**.
-- Foto untuk coba shade disimpan sementara di `sessionStorage` dengan kunci per akun, dan dihapus oleh tombol keluar pada browser. Saat berganti akun, data profil konsumen di sesi server dibersihkan.
+- Foto untuk coba shade disimpan sementara di `sessionStorage` dengan kunci per akun, dan dihapus oleh tombol keluar pada browser. Foto hasil yang disimpan secara terpisah melalui tombol **Simpan foto hasil ke profil** berada di database lokal, dibatasi delapan foto per akun, hanya dapat dibuka oleh pemilik akun, dan dapat dihapus dari profil.
 
 Untuk demo dua sisi pada satu komputer, pakai dua jendela browser berbeda (misalnya jendela biasa dan incognito), masing-masing login sebagai konsumen dan R&D.
 
@@ -37,7 +37,7 @@ Form feedback membedakan minat berdasarkan gambar dari pengalaman setelah pemaka
 
 ## Analisis foto lokal dan AI text
 
-Setelah persetujuan, foto dikirim ke server Django untuk dianalisis **secara lokal**. Model resmi MediaPipe Face Landmarker di `services/models/face_landmarker.task` mencari kontur bibir. OpenCV mengubah sampel warna pipi dan bibir menjadi CIELAB. Warna pipi dicocokkan ke 10 swatch referensi Monk dengan jarak CIELAB terdekat, lalu dipetakan ke lima kategori katalog. Ini hanya proksi pada foto kamera yang tidak dikalibrasi, bukan pengukuran/klasifikasi Monk yang tervalidasi. Kontras bibir-kulit dihitung dari selisih L*. Undertone hanya diberi label bila sinyal warna cukup kuat, selain itu `Belum yakin`. Semua kategori dapat dikoreksi. Foto tidak disimpan sebagai file di server. Jika pengguna secara terpisah mengizinkan AI cadangan dan analisis lokal gagal, foto dapat dikirim ke penyedia API vision; pilihan lokal saja tidak mengirim foto ke API. Sistem ini tidak mereplikasi metode k-means dari paper.
+Setelah persetujuan, foto dikirim ke server Django untuk dianalisis **secara lokal**. Model resmi MediaPipe Face Landmarker di `services/models/face_landmarker.task` mencari kontur bibir. OpenCV mengubah sampel warna pipi dan bibir menjadi CIELAB. Warna pipi dicocokkan ke 10 swatch referensi Monk dengan jarak CIELAB terdekat, lalu dipetakan ke lima kategori katalog. Ini hanya proksi pada foto kamera yang tidak dikalibrasi, bukan pengukuran/klasifikasi Monk yang tervalidasi. Kontras bibir-kulit dihitung dari selisih L*. Undertone hanya diberi label bila sinyal warna cukup kuat, selain itu `Belum yakin`. Semua kategori dapat dikoreksi. Foto analisis tidak otomatis disimpan; penyimpanan foto hasil coba shade memerlukan tindakan terpisah dari pengguna. Jika pengguna secara terpisah mengizinkan AI cadangan dan analisis lokal gagal, foto dapat dikirim ke penyedia API vision; pilihan lokal saja tidak mengirim foto ke API. Sistem ini tidak mereplikasi metode k-means dari paper.
 
 Model kontur berasal dari [panduan resmi MediaPipe](https://developers.google.com/edge/mediapipe/solutions/vision/face_landmarker/python). File model yang disertakan diunduh dari [aset Face Landmarker resmi](https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/latest/face_landmarker.task); SHA-256: `64184e229b263107bc2b804c6625db1341ff2bb731874b0bcc2fe6544e0bc9ff`. Nilai hex swatch mengikuti [tabel Monk di presentasi FDA](https://www.fda.gov/media/175828/download). Analisis lokal diuji pada foto contoh MediaPipe. Ketepatan kategori warna pada berbagai kamera, pencahayaan, dan warna kulit **belum diuji**; untuk demo, pakai hasil sebagai titik awal yang harus diperiksa pengguna.
 
@@ -45,7 +45,7 @@ Model kontur berasal dari [panduan resmi MediaPipe](https://developers.google.co
 
 Kamera langsung memakai izin browser dan hanya muncul setelah persetujuan foto. Saat dipotret, browser membuat file JPEG sementara untuk formulir analisis; alur servernya sama dengan unggah foto. Akses kamera browser membutuhkan **HTTPS atau localhost**. Jika dibuka dari ponsel lewat alamat IP komputer dengan HTTP biasa, gunakan unggah foto atau siapkan HTTPS terlebih dahulu. Foto kamera tidak otomatis dikirim sebelum tombol **Analisis foto** ditekan.
 
-Untuk fitur coba shade, browser menyimpan versi foto yang diperkecil di `sessionStorage` tab yang sama ketika formulir analisis dikirim. Server hanya menyimpan koordinat kontur dan kategori profil dalam sesi, bukan foto. Foto otomatis hilang ketika sesi tab browser berakhir; tombol **Hapus foto** menghapusnya lebih awal. Kontur MediaPipe dipakai untuk menaruh warna pada area bibir, sambil menghindari bukaan mulut. Jika kontur tidak ada atau meleset, pengguna menandai empat titik secara manual. Overlay warna di kanvas tetap **simulasi visual**, bukan prediksi warna produk yang terkalibrasi.
+Untuk fitur coba shade, browser menyimpan versi foto yang diperkecil di `sessionStorage` tab yang sama ketika formulir analisis dikirim. Server hanya menyimpan koordinat kontur dan kategori profil dalam sesi, bukan foto analisis. Foto sementara hilang ketika sesi tab browser berakhir; tombol **Hapus foto** menghapusnya lebih awal. Pengguna dapat memilih menyimpan foto hasil yang sudah diberi shade ke profil; gambar diperkecil dan disimpan privat di SQLite lokal sampai dihapus dari profil. Kontur MediaPipe dipakai untuk menaruh warna pada area bibir, sambil menghindari bukaan mulut. Jika kontur tidak ada atau meleset, pengguna menandai empat titik secara manual. Overlay warna di kanvas tetap **simulasi visual**, bukan prediksi warna produk yang terkalibrasi.
 
 Halaman rekomendasi memuat tiga contoh swatch lipstik yang dipilih menurut kedekatan RGB dari **191 baris lipstik** dalam dataset publik Capstone Colors. Contoh tersebut untuk mencoba warna saja; tidak ikut menentukan tiga rekomendasi. Tiga rekomendasi berasal dari katalog 30 shade tim, dengan skor profil/preferensi dan bobot kecil dari 600 penilaian hedonik sintetis serta 300 review demo. Dashboard lama masih menampilkan 5.000 penilaian hedonik sintetis, 500 shade sintetis, dan 200 formula dari jalur eksperimen terpisah; ID seri `S`/`F` tidak digabung dengan CSV tim maupun katalog lama `SHD`. Foundation The Pudding dan formulasi shampoo Nature/Figshare juga tetap referensi terpisah.
 
@@ -65,7 +65,7 @@ python manage.py runserver
 | Lokasi | Tugas |
 | --- | --- |
 | `accounts/` | Pendaftaran, login, role, dan pembatasan akses konsumen/R&D |
-| `consumer/` | Alur konsumen, form, dan penyimpanan feedback |
+| `consumer/` | Alur konsumen, form, feedback, shade tersimpan, dan foto hasil privat |
 | `research/` | Halaman dashboard R&D |
 | `services/data.py` | Pembaca CSV demo |
 | `services/team_data.py` | Adapter lima CSV tim, ringkasan hedonik/review, gap finish, dan draf komposisi dari base formula |

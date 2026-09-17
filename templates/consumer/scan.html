@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}Analisis foto · FormuSense{% endblock %}
+{% block title %}Analisis foto · LipXMatch{% endblock %}
 {% block content %}
 <section class="page narrow"><span class="eyebrow">Langkah 4 dari 4</span><h1>Kenali profil bibirmu</h1>
-  <p class="lead">Ambil foto langsung dengan kamera atau unggah foto. Hadapkan wajah ke depan, pastikan bibir terlihat, gunakan cahaya alami, dan hindari lipstik tebal. Kamu juga bisa memakai profil manual atau contoh demo.</p>
+  <p class="lead">Ambil foto langsung dengan kamera atau unggah foto. Hadapkan wajah ke depan, pastikan bibir terlihat, gunakan cahaya alami, dan hindari lipstik tebal. Kamu juga bisa memakai profil manual atau profil contoh.</p>
   <p class="status-pill">{% if local_vision_available %}Deteksi wajah lokal siap{% else %}Model deteksi lokal belum tersedia{% endif %}{% if photo_ai_consent and ai_available %} · AI cadangan diizinkan{% else %} · foto tidak dikirim ke AI eksternal{% endif %}</p>
   {% if photo_consent %}
   <form method="post" enctype="multipart/form-data" class="card form-card" id="scan-form">{% csrf_token %}
@@ -36,7 +36,7 @@
     <div class="scan-loading-inner">
       <span class="eyebrow">Analisis foto{% if photo_ai_consent and ai_available %} · AI cadangan diizinkan{% else %} · lokal saja{% endif %}</span>
       <h1>Mengenali profil bibirmu...</h1>
-      <p class="lead">Tunggu sebentar. Foto diproses di server demo dan hasilnya bisa kamu periksa sebelum melihat rekomendasi.</p>
+      <p class="lead">Tunggu sebentar. Foto diproses di server aplikasi ini dan hasilnya bisa kamu periksa sebelum melihat rekomendasi.</p>
       <div class="scan-progress" aria-hidden="true"><span></span></div>
       <ol class="scan-loading-steps">
         <li id="loading-photo" class="is-active"><span class="scan-step-icon">1</span><span>Menyiapkan foto</span><small>Sedang diproses</small></li>
@@ -60,6 +60,6 @@
     })();
   </script>
   {% endif %}
-  <form method="post" class="actions">{% csrf_token %}<button class="button secondary" name="action" value="manual">Isi profil manual</button><button class="button secondary" name="action" value="demo">Gunakan profil demo</button></form>
+  <form method="post" class="actions">{% csrf_token %}<button class="button secondary" name="action" value="manual">Isi profil manual</button><button class="button secondary" name="action" value="demo">Gunakan profil contoh</button></form>
 </section>
 {% endblock %}

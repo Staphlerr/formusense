@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
-{% block title %}Profil · FormuSense{% endblock %}
+{% block title %}Profil · LipXMatch{% endblock %}
 {% block content %}
 <section class="page narrow"><span class="eyebrow">Langkah 1 dari 4</span><h1>Buat profil singkat</h1>
-<p class="lead">Nama, usia, dan wilayah boleh dikosongkan untuk mencoba demo.</p>
+<p class="lead">Nama, usia, dan wilayah boleh dikosongkan untuk mencoba dengan profil contoh.</p>
 <form method="post" class="card form-card">{% csrf_token %}{{ form.as_div }}<button class="button" type="submit">Lanjut</button></form>
 </section>
 {% endblock %}

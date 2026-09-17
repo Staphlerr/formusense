@@ -55,6 +55,22 @@ def catalog_shade_by_id(shade_id):
     return next((row for row in catalog_shades() if row["shade_id"] == shade_id), None)
 
 
+def same_brand_shades(shade, limit=3):
+    """Nearby colors from the same team-supplied demo brand, excluding this shade."""
+    target = shade["hex"].lstrip("#")
+
+    def distance(row):
+        candidate = row["hex"].lstrip("#")
+        return sum((int(target[index:index + 2], 16)
+                    - int(candidate[index:index + 2], 16)) ** 2
+                   for index in (0, 2, 4))
+
+    peers = (row for row in catalog_shades()
+             if row["brand"].casefold() == shade["brand"].casefold()
+             and row["shade_id"] != shade["shade_id"])
+    return sorted(peers, key=distance)[:limit]
+
+
 def _tone_group(value):
     value = (value or "").lower().replace("_", " ")
     if value in {"fair", "light", "light medium"}:
@@ -92,6 +108,35 @@ def shade_evidence(shade, profile):
         "review_positive": positives, "review_sample": len(r_selected),
         "review_cohort": r_cohort,
     }
+
+
+def shade_feedback_examples(shade, profile, limit=3):
+    """Show source-labelled demo responses for this exact shade, never invented quotes."""
+    rows = [row for row in team_rows("feedback") if row["shade_id"] == shade["shade_id"]]
+    tone = _tone_group(profile.get("skin_tone"))
+    undertone = (profile.get("undertone") or "").lower()
+    rows.sort(key=lambda row: (
+        _tone_group(row["Skintone"]) != tone,
+        row["Undertone"].lower() != undertone,
+        row["feedback_id"],
+    ))
+    labels = {
+        "Love it": "Suka sekali", "Like it": "Suka", "Not sure": "Belum yakin",
+        "Not for me": "Kurang cocok", "Just right": "pas", "Too pale": "terlalu pucat",
+        "Too dark": "terlalu gelap", "Comfortable": "nyaman", "Too dry": "terlalu kering",
+        "Too sticky": "terlalu lengket", "Too thick": "terlalu tebal",
+        "Too matte": "terlalu matte", "Too glossy": "terlalu glossy",
+    }
+    return [{
+        "feedback_id": row["feedback_id"],
+        "appeal": labels.get(row["appealing"], row["appealing"]),
+        "color": labels.get(row["color"], row["color"]),
+        "texture": labels.get(row["texture"], row["texture"]),
+        "finish": labels.get(row["finish"], row["finish"]),
+        "rating": row["overall_rating"],
+        "skin_tone": row["Skintone"],
+        "undertone": row["Undertone"],
+    } for row in rows[:limit]]
 
 
 def hedonic_spectrum(profile):

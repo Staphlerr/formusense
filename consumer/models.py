@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 
 
 class Feedback(models.Model):
@@ -24,3 +25,27 @@ class Feedback(models.Model):
 
     def __str__(self):
         return f"{self.shade_name}: {self.get_feedback_type_display()}"
+
+
+class SavedShade(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+                             related_name="saved_shades")
+    shade_id = models.CharField(max_length=12)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=["user", "shade_id"],
+                                               name="unique_saved_shade_per_user")]
+        ordering = ["-created_at"]
+
+
+class SavedPhoto(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+                             related_name="saved_photos")
+    shade_id = models.CharField(max_length=12)
+    shade_name = models.CharField(max_length=100)
+    image_jpeg = models.BinaryField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]

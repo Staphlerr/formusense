@@ -1,8 +1,8 @@
 {% extends 'research/base_research.html' %}
-{% block title %}Unmet Demand · FormuSense{% endblock %}
+{% block title %}Unmet Demand · LipXMatch{% endblock %}
 {% block research_content %}
 <h1>Unmet Demand</h1>
-<p class="lead">Tiga konsep peluang berasal dari CSV demo. Hitungan di bawah diperbarui dari feedback yang dikirim melalui aplikasi lokal.</p>
+<p class="lead">Tiga konsep peluang berasal dari data simulasi. Hitungan di bawah diperbarui dari penilaian yang dikirim melalui aplikasi ini.</p>
 <div class="stack">
 {% for item in opportunities %}<article class="card">
   <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px">
@@ -12,7 +12,7 @@
   <h2>{{ item.target_shade_name }}</h2>
   <p>Segmen sasaran: {{ item.target_segment }} · Finish sasaran: {{ item.preferred_finish }}</p>
   <div class="signal-grid">
-    <div><strong>{{ item.demo_interest }}</strong><small>minat positif demo pada konsep</small></div>
+    <div><strong>{{ item.demo_interest }}</strong><small>minat positif dari simulasi</small></div>
     <div><strong>{{ item.local_requests }}</strong><small>permintaan baru pengguna lokal</small></div>
     <div><strong>{{ item.related_issues }}</strong><small>feedback pemakaian bermasalah pada keluarga warna</small></div>
   </div>

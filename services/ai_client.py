@@ -239,7 +239,8 @@ def refine_shade_pick(role_label, candidates, profile, preference):
         "EXACTLY one of the given candidates -- never invent one, never "
         "return a shade not in the list. Return JSON only: "
         '{"shade_id": "...", "reason": "one short Indonesian sentence, no '
-        'invented facts, no health or performance claims"}.',
+        'invented facts, no health or performance claims; use data simulasi '
+        'rather than demo or dataset in user-facing wording"}.',
         facts, max_tokens=150,
     )
     valid_ids = {c["shade_id"] for c in candidates}
@@ -262,8 +263,10 @@ def generate_opportunity_summary(opportunity):
     return _text_completion(
         "Write two short Indonesian sentences for a cosmetics R&D team. Explain the provided "
         "numbers and suggest a lab review. Distinguish synthetic demo counts from local user "
-        "feedback. Do not claim statistical significance, future trend prediction, product "
-        "safety, clinical evidence, or a validated formula. Do not invent numbers.",
+        "feedback. Use the Indonesian phrase data simulasi in user-facing wording; "
+        "do not use demo or dataset. Do not claim statistical significance, future trend "
+        "prediction, product safety, clinical evidence, or a validated formula. "
+        "Do not invent numbers.",
         facts,
     )
 
@@ -285,6 +288,7 @@ def generate_formula_rationale(brief):
         "Write two short Indonesian sentences explaining why this is a reasonable DRAFT "
         "direction for a lipstick formulator to test. Use only the supplied facts. Make clear "
         "that a formulator and laboratory must validate it. Do not output percentages, a "
-        "manufacturing recipe, ingredient safety claims, or invented study results.",
+        "manufacturing recipe, ingredient safety claims, or invented study results. "
+        "Use data simulasi for simulated counts; do not use demo or dataset in the output.",
         facts,
     )

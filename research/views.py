@@ -35,11 +35,11 @@ def unmet_demand(request):
         context["summary_opportunity_id"] = selected_id
         try:
             context["ai_summary"] = generate_opportunity_summary(selected)
-            context["summary_source"] = "Ringkasan AI · data demo + feedback lokal"
+            context["summary_source"] = "Ringkasan AI · simulasi dan penilaian lokal"
         except AIUnavailable:
             context["ai_summary"] = (
                 f"Konsep {selected['target_shade_name']} memiliki {selected['demo_interest']} "
-                f"sinyal minat demo dan {selected['local_requests']} permintaan lokal. "
+                f"sinyal minat dari simulasi dan {selected['local_requests']} permintaan lokal. "
                 "Tim formulasi perlu meninjau bukti dan menguji prototipe di lab."
             )
             context["summary_source"] = "Ringkasan aturan · AI tidak tersedia"

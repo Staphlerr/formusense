@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}Terima kasih · FormuSense{% endblock %}
+{% block title %}Terima kasih · LipXMatch{% endblock %}
 {% block content %}
 <section class="page narrow center">
   <span class="eyebrow">Feedback tersimpan</span>
@@ -10,7 +10,7 @@
     <div style="display:flex;align-items:flex-start;gap:12px">
       <span class="hub">◎</span>
       <div>
-        <span class="badge badge-ok"><span class="dot"></span>Closed-loop signal ready</span>
+        <span class="badge badge-ok"><span class="dot"></span>Penilaian tersimpan</span>
         <p style="margin:8px 0 2px;font-weight:700;color:var(--ink)">Feedback kamu menghasilkan 1 sinyal langsung ke dashboard R&D.</p>
         <p class="fine-print" style="margin:0">Pengembangan shade baru tetap memerlukan peninjauan formulator dan pengujian lab.</p>
       </div>
@@ -18,7 +18,7 @@
   </div>
 
   <div class="actions center">
-    <a class="button" href="{% url 'research:overview' %}">Lihat dampak di R&D</a>
+    <a class="button" href="{% url 'consumer:how_it_works' %}">Lihat cara kerjanya</a>
     <a class="button secondary" href="{% url 'consumer:recommendations' %}">Lihat shade lain</a>
   </div>
 </section>

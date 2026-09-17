@@ -1,9 +1,9 @@
 {% extends 'research/base_research.html' %}
-{% block title %}Formula Lab · FormuSense{% endblock %}
+{% block title %}Formula Lab · LipXMatch{% endblock %}
 {% block research_content %}
 <h1>Formula Lab</h1><p class="lead">Buat arahan percobaan dari peluang shade dan sinyal feedback. Ini brief untuk formulator, bukan formula produksi atau hasil uji lab.</p>
 {% if selected_gap %}
-<div class="card note"><span class="eyebrow">Gap comparison dataset tim · kandidat {{ selected_gap.index|add:1 }}</span><h2>{{ selected_gap.opportunity_shade }}</h2>
+<div class="card note"><span class="eyebrow">Perbandingan kebutuhan dan katalog · kandidat {{ selected_gap.index|add:1 }}</span><h2>{{ selected_gap.opportunity_shade }}</h2>
 <p>{{ selected_gap.gap_description }}</p><p>Shade asal: {{ selected_gap.existing_shade }}. {% if selected_gap.catalog_match %}Nama dan brand cocok dengan katalog 30 shade.{% else %}Nama dan brand belum cocok dengan katalog 30 shade.{% endif %}</p>
 <p class="fine-print">Target yang tertulis di file: {{ selected_gap.desired_attributes }}</p></div>
 <form method="post" class="card">{% csrf_token %}<input type="hidden" name="gap" value="{{ selected_gap.index }}"><button class="button" type="submit">Hitung draf dari 500 base formula</button></form>
@@ -17,12 +17,12 @@
 {% else %}
 <form method="post" class="card filter-form">{% csrf_token %}<label for="opportunity">Peluang shade</label><select id="opportunity" name="opportunity">{% for item in opportunities %}<option value="{{ item.opportunity_id }}" {% if selected_id == item.opportunity_id %}selected{% endif %}>{{ item.target_shade_name }}</option>{% endfor %}</select><button class="button" type="submit">Buat draf arah formulasi</button></form>
 {% if brief %}
-<div class="card note"><span class="eyebrow">Brief dibuat dari data demo + feedback lokal saat ini</span><h2>{{ brief.opportunity.target_shade_name }}</h2><p>Target: {{ brief.opportunity.family }} · {{ brief.opportunity.preferred_finish }} · {{ brief.opportunity.target_segment }}</p>
-<p>{{ brief.opportunity.demo_interest }} minat positif demo pada konsep; {{ brief.opportunity.local_requests }} permintaan lokal; {{ brief.opportunity.related_issues }} feedback pemakaian bermasalah pada keluarga warna.</p></div>
+<div class="card note"><span class="eyebrow">Brief dari data simulasi dan penilaian lokal saat ini</span><h2>{{ brief.opportunity.target_shade_name }}</h2><p>Target: {{ brief.opportunity.family }} · {{ brief.opportunity.preferred_finish }} · {{ brief.opportunity.target_segment }}</p>
+<p>{{ brief.opportunity.demo_interest }} minat positif dari simulasi; {{ brief.opportunity.local_requests }} permintaan lokal; {{ brief.opportunity.related_issues }} penilaian pemakaian bermasalah pada keluarga warna.</p></div>
 <div class="card note"><span class="eyebrow">{{ rationale_source }}</span><p>{{ formula_rationale }}</p></div>
 <div class="two-column"><div class="card"><h2>Arah pigmen untuk dicoba</h2><ul>{% for direction in brief.pigment_direction %}<li>{{ direction }}</li>{% endfor %}</ul></div>
 <div class="card"><h2>Basis & tekstur</h2><p>{{ brief.base_direction }}</p>{% if brief.top_issue %}<p>Keluhan paling sering pada kelompok terkait: <strong>{{ brief.top_issue }}</strong> ({{ brief.issues_sample }} penyebutan keluhan).</p>{% else %}<p>Belum ada keluhan pemakaian pada kelompok terkait.</p>{% endif %}</div></div>
-{% if brief.illustrative_composition %}<div class="card"><h2>Contoh angka dari CSV sintetis · {{ brief.illustrative_composition.draft_id }}</h2><p>Angka ini ditampilkan sebagai contoh struktur draf yang sudah disiapkan untuk hackathon. Tombol di atas tidak menghitung rasio pigmen baru.</p><dl class="formula-list">
+{% if brief.illustrative_composition %}<div class="card"><h2>Contoh angka komposisi sintetis · {{ brief.illustrative_composition.draft_id }}</h2><p>Angka ini ditampilkan sebagai contoh struktur draf yang sudah disiapkan untuk hackathon. Tombol di atas tidak menghitung rasio pigmen baru.</p><dl class="formula-list">
 <dt>Red oxide</dt><dd>{{ brief.illustrative_composition.pigment_red_oxide }}%</dd><dt>Yellow oxide</dt><dd>{{ brief.illustrative_composition.pigment_yellow_oxide }}%</dd>
 <dt>Titanium dioxide</dt><dd>{{ brief.illustrative_composition.pigment_titanium_dioxide }}%</dd><dt>D&C Red</dt><dd>{{ brief.illustrative_composition.pigment_dc_red }}%</dd>
 <dt>Black oxide</dt><dd>{{ brief.illustrative_composition.pigment_black_oxide }}%</dd><dt>Basis/binder</dt><dd>{{ brief.illustrative_composition.base_binder_adjustment }}%</dd>
