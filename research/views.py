@@ -80,7 +80,7 @@ def formula_lab(request):
         if not raw_gap.isdigit() or int(raw_gap) >= len(gap_candidates()):
             raise Http404("Kandidat gap tidak ditemukan")
         gap = gap_candidates()[int(raw_gap)]
-        context = {"selected_gap": gap, "opportunities": opportunity_data()}
+        context = {"selected_gap": gap, "opportunities": opportunity_data(), "gap_candidates": gap_candidates()}
         if request.method == "POST":
             context["team_brief"] = build_gap_formula_brief(int(raw_gap))
         return render(request, "research/formula_lab.html", context)

@@ -1,9 +1,44 @@
 {% extends 'research/base_research.html' %}
 {% block title %}Formula Lab · FormuSense{% endblock %}
 {% block research_content %}
-<h1>Formula Lab</h1><p class="lead">Buat arahan percobaan dari peluang shade dan sinyal feedback. Ini brief untuk formulator, bukan formula produksi atau hasil uji lab.</p>
+<h1>Formula Lab</h1><p class="lead">Buat arahan percobaan dari peluang shade atau gap katalog, sesuai sinyal feedback. Ini brief untuk formulator, bukan formula produksi atau hasil uji lab.</p>
+
+<nav class="source-tabs" aria-label="Sumber draf formulasi">
+    <a class="source-tab {% if not selected_gap %}is-active{% endif %}" href="{% url 'research:formula_lab' %}">Dari peluang konsumen</a>
+    <a class="source-tab {% if selected_gap %}is-active{% endif %}" href="{% url 'research:formula_lab' %}?gap=0">Dari gap katalog</a>
+</nav>
+
+{% if not selected_gap %}
 <form method="post" class="card filter-form">{% csrf_token %}<label for="opportunity">Peluang shade</label><select id="opportunity" name="opportunity">{% for item in opportunities %}<option value="{{ item.opportunity_id }}" {% if selected_id == item.opportunity_id %}selected{% endif %}>{{ item.target_shade_name }}</option>{% endfor %}</select><button class="button" type="submit">Buat draf arah formulasi</button></form>
-{% if brief %}
+{% else %}
+<form method="get" class="card filter-form"><label for="gap">Gap katalog</label><select id="gap" name="gap" onchange="this.form.submit()">{% for g in gap_candidates %}<option value="{{ g.index }}" {% if g.index == selected_gap.index %}selected{% endif %}>{{ g.color_family|title }} · {{ g.gap_type }}</option>{% endfor %}</select><noscript><button class="button secondary" type="submit">Tampilkan</button></noscript></form>
+{% endif %}
+
+{% if selected_gap %}
+<div class="card note"><span class="eyebrow">{{ selected_gap.gap_type }}{% if selected_gap.catalog_match %} · sudah ada di katalog{% else %} · belum ada di katalog{% endif %}</span><h2>{{ selected_gap.color_family|title }}</h2>
+    <p>Shade existing pembanding: {{ selected_gap.existing_shade }}</p>
+    <p class="fine-print">{{ selected_gap.desired_attributes }}</p></div>
+{% if team_brief %}
+<div class="two-column">
+    <div class="card"><h2>Target dari gap ini</h2>
+        <p>Finish target: {{ team_brief.target_finish|default:"tidak disebutkan" }}{% if team_brief.target_finish and not team_brief.target_finish_in_base %} <strong>(belum ada di data formula dasar)</strong>{% endif %}</p>
+        <p>Target L*: {{ team_brief.target_l|default:"tidak disebutkan" }} · Target pigment: {{ team_brief.target_pigment|default:"tidak disebutkan" }}% · Target wax: {{ team_brief.target_wax|default:"tidak disebutkan" }}%</p>
+    </div>
+    <div class="card"><h2>Formula referensi yang dipakai</h2><ul>{% for ref in team_brief.references %}<li>{{ ref.shade_name }} · {{ ref.family }} / {{ ref.finish }} · jarak {{ ref.distance }}</li>{% endfor %}</ul></div>
+</div>
+<div class="card"><h2>Komposisi hasil blend</h2><p class="fine-print">Rata-rata tertimbang dari beberapa formula referensi terdekat di atas, bukan formula produksi atau hasil uji lab.</p><dl class="formula-list">
+    <dt>Wax</dt><dd>{{ team_brief.parts.wax_pct }}%</dd>
+    <dt>Emollient oil</dt><dd>{{ team_brief.parts.emollient_oil_pct }}%</dd>
+    <dt>Mattifying agent</dt><dd>{{ team_brief.parts.mattifying_agent_pct }}%</dd>
+    <dt>Film former</dt><dd>{{ team_brief.parts.film_former_pct }}%</dd>
+    <dt>Pigment</dt><dd>{{ team_brief.parts.pigment_pct }}%</dd>
+    <dt>Additives</dt><dd>{{ team_brief.parts.additives_pct }}%</dd>
+    <dt>Total</dt><dd>{{ team_brief.total }}%</dd>
+</dl></div>
+{% else %}
+<form method="post" class="card"><input type="hidden" name="gap" value="{{ selected_gap.index }}">{% csrf_token %}<button class="button" type="submit">Buat draf komposisi dari gap ini</button></form>
+{% endif %}
+{% elif brief %}
 <div class="card note"><span class="eyebrow">Brief dibuat dari data saat ini</span><h2>{{ brief.opportunity.target_shade_name }}</h2><p>Target: {{ brief.opportunity.family }} · {{ brief.opportunity.preferred_finish }} · {{ brief.opportunity.target_segment }}</p>
     <p>{{ brief.opportunity.demo_interest }} minat positif pada konsep; {{ brief.opportunity.local_requests }} permintaan lokal; {{ brief.opportunity.related_issues }} feedback pemakaian bermasalah pada keluarga warna.</p></div>
 {% if brief.needs_target_color %}
