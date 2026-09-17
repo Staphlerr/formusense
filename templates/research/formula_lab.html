@@ -2,6 +2,19 @@
 {% block title %}Formula Lab · FormuSense{% endblock %}
 {% block research_content %}
 <h1>Formula Lab</h1><p class="lead">Buat arahan percobaan dari peluang shade dan sinyal feedback. Ini brief untuk formulator, bukan formula produksi atau hasil uji lab.</p>
+{% if selected_gap %}
+<div class="card note"><span class="eyebrow">Gap comparison dataset tim · kandidat {{ selected_gap.index|add:1 }}</span><h2>{{ selected_gap.opportunity_shade }}</h2>
+<p>{{ selected_gap.gap_description }}</p><p>Shade asal: {{ selected_gap.existing_shade }}. {% if selected_gap.catalog_match %}Nama dan brand cocok dengan katalog 30 shade.{% else %}Nama dan brand belum cocok dengan katalog 30 shade.{% endif %}</p>
+<p class="fine-print">Target yang tertulis di file: {{ selected_gap.desired_attributes }}</p></div>
+<form method="post" class="card">{% csrf_token %}<input type="hidden" name="gap" value="{{ selected_gap.index }}"><button class="button" type="submit">Hitung draf dari 500 base formula</button></form>
+{% if team_brief %}<div class="card"><span class="eyebrow">Draf komposisi berbasis 3 formula terdekat · belum divalidasi</span><h2>Komposisi awal untuk diuji</h2>
+<p>Komposisi dihitung dari kemiripan keluarga warna, finish, dan angka target L*, pigmen, serta wax yang tersedia. Ini bukan model terlatih atau prediksi stabilitas, payoff, keamanan, maupun hasil warna akhir.</p>
+{% if not team_brief.target_finish_in_base %}<p class="message warning">Finish target {{ team_brief.target_finish|default:'tidak disebutkan'|title }} tidak ada di 500 base formula. Draf di bawah hanya pendekatan komposisi; finish itu belum dapat diprediksi dari file ini.</p>{% endif %}
+<dl class="formula-list"><dt>Wax</dt><dd>{{ team_brief.parts.wax_pct }}%</dd><dt>Emollient oil</dt><dd>{{ team_brief.parts.emollient_oil_pct }}%</dd><dt>Mattifying agent</dt><dd>{{ team_brief.parts.mattifying_agent_pct }}%</dd><dt>Film former</dt><dd>{{ team_brief.parts.film_former_pct }}%</dd><dt>Pigment</dt><dd>{{ team_brief.parts.pigment_pct }}%</dd><dt>Additives</dt><dd>{{ team_brief.parts.additives_pct }}%</dd><dt>Total</dt><dd>{{ team_brief.total }}%</dd></dl>
+<h3>Formula acuan dari CSV</h3><ul>{% for row in team_brief.references %}<li>{{ row.shade_name }} · {{ row.family }} · {{ row.finish }} (jarak aturan {{ row.distance }})</li>{% endfor %}</ul>
+<p class="fine-print">Formulator perlu mengecek izin dan batas bahan, membuat batch, lalu menguji drawdown, payoff, tekstur, stabilitas, dan kesukaan konsumen.</p></div>{% endif %}
+<a href="{% url 'research:unmet_demand' %}">Kembali ke daftar gap</a>
+{% else %}
 <form method="post" class="card filter-form">{% csrf_token %}<label for="opportunity">Peluang shade</label><select id="opportunity" name="opportunity">{% for item in opportunities %}<option value="{{ item.opportunity_id }}" {% if selected_id == item.opportunity_id %}selected{% endif %}>{{ item.target_shade_name }}</option>{% endfor %}</select><button class="button" type="submit">Buat draf arah formulasi</button></form>
 {% if brief %}
 <div class="card note"><span class="eyebrow">Brief dibuat dari data demo + feedback lokal saat ini</span><h2>{{ brief.opportunity.target_shade_name }}</h2><p>Target: {{ brief.opportunity.family }} · {{ brief.opportunity.preferred_finish }} · {{ brief.opportunity.target_segment }}</p>
@@ -16,4 +29,5 @@
 <dt>Total</dt><dd>{{ brief.illustrative_composition.total_formula_check }}%</dd></dl></div>{% endif %}
 <div class="card"><h2>Rencana validasi</h2><ol>{% for step in brief.validation_steps %}<li>{{ step }}</li>{% endfor %}</ol></div>
 {% else %}<div class="card"><h2>{{ selected_opportunity.target_shade_name }}</h2><p>Pilih peluang lalu klik tombol untuk membuat brief dari data saat ini.</p></div>{% endif %}
+{% endif %}
 {% endblock %}

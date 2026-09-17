@@ -2,6 +2,10 @@
 {% block title %}Consumer Evidence · FormuSense{% endblock %}
 {% block research_content %}
 <h1>Consumer Evidence</h1><p class="lead">Keluhan pemakaian dihitung terpisah dari minat warna. Komentar demo dan masukan lokal juga dipisahkan agar asal datanya jelas.</p>
+<section class="card"><span class="eyebrow">ALL DATASET - Feedback.csv · review demo historis</span><h2>{{ team_feedback.count }} review dalam dataset tim</h2><p>Rata-rata rating {{ team_feedback.mean_rating }}/5. Kolom tekstur dan finish tersedia, tetapi file tidak membuktikan apakah setiap responden benar-benar mencoba produknya.</p>
+<div class="signal-grid"><div><h3>Respons warna</h3><ul>{% for issue, count in team_feedback.color_issues %}<li>{{ issue }} · {{ count }}</li>{% empty %}<li>Tidak ada.</li>{% endfor %}</ul></div>
+<div><h3>Respons tekstur</h3><ul>{% for issue, count in team_feedback.texture_issues %}<li>{{ issue }} · {{ count }}</li>{% empty %}<li>Tidak ada.</li>{% endfor %}</ul></div>
+<div><h3>Respons finish</h3><ul>{% for issue, count in team_feedback.finish_issues %}<li>{{ issue }} · {{ count }}</li>{% empty %}<li>Tidak ada.</li>{% endfor %}</ul></div></div></section>
 <form method="get" class="filter-form"><label for="opportunity">Lihat keluarga warna</label><select id="opportunity" name="opportunity"><option value="">Semua shade</option>{% for item in opportunities %}<option value="{{ item.opportunity_id }}" {% if selected_opportunity.opportunity_id == item.opportunity_id %}selected{% endif %}>{{ item.target_shade_name }}</option>{% endfor %}</select><button class="button secondary" type="submit">Terapkan</button></form>
 {% if selected_opportunity %}<div class="card note"><strong>{{ selected_opportunity.target_shade_name }}</strong><p>{{ selected_opportunity.demo_interest }} minat positif demo pada konsep · {{ selected_opportunity.local_requests }} permintaan warna baru dari feedback lokal.</p></div>{% endif %}
 <div class="two-column"><div class="card"><h2>Keluhan pemakaian · demo</h2><ul>{% for issue, count in demo_issues %}<li>{{ issue|title }} · {{ count }}</li>{% empty %}<li>Belum ada keluhan demo pada pilihan ini.</li>{% endfor %}</ul></div>

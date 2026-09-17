@@ -27,7 +27,7 @@ class PreferenceForm(forms.Form):
     ], required=False)
     finish = forms.ChoiceField(label="Hasil akhir", choices=[
         ("", "Belum tahu"), ("satin", "Satin"), ("matte", "Matte"),
-        ("cream", "Cream"), ("glossy", "Glossy"),
+        ("cream", "Cream"), ("glossy", "Glossy"), ("glasting", "Glasting"),
     ], required=False)
     intensity = forms.ChoiceField(label="Kesan", choices=[
         ("", "Belum tahu"), ("natural", "Natural"),
@@ -74,7 +74,7 @@ class FeedbackForm(forms.ModelForm):
         choices=[
             ("", "Tidak ada / belum tahu"), ("satin", "Satin"),
             ("matte", "Matte"), ("cream", "Cream"),
-            ("glossy", "Glossy"),
+            ("glossy", "Glossy"), ("glasting", "Glasting"),
         ],
     )
     rating = forms.TypedChoiceField(

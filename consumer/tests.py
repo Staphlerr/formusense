@@ -16,8 +16,13 @@ from services.formula_lab import build_formula_brief
 from services.ai_client import AIUnavailable, analyze_photo
 from services.dataset_insights import dataset_insights, public_swatches_near
 from services.recommendation import recommend
+from services.team_data import (
+    build_gap_formula_brief, catalog_shades, gap_candidates,
+    shade_evidence, team_dataset_summary,
+)
+from services.color_science import classify_skin_tone
 from services.local_vision import (
-    LocalVisionError, _depth_from_lab, _pigmentation_from_contrast,
+    LocalVisionError, _pigmentation_from_contrast,
     _undertone_from_lab, analyze_photo_local, model_available,
 )
 
@@ -230,6 +235,37 @@ class DemoFlowTests(TestCase):
         self.assertEqual(self.client.session["lip_profile"]["confidence"], "manual")
         self.assertTrue(self.client.session["photo_scanned"])
 
+    def test_local_only_photo_consent_does_not_call_external_vision(self):
+        from django.core.files.uploadedfile import SimpleUploadedFile
+
+        self.client.post(reverse("consumer:consent"), {"choice": "photo_local"})
+        with patch("consumer.views.analyze_photo_local", side_effect=LocalVisionError("Wajah tidak terdeteksi.")), \
+                patch("consumer.views._ai_vision_available", return_value=True), \
+                patch("consumer.views.analyze_photo") as external_vision:
+            self.client.post(reverse("consumer:scan"), {
+                "action": "analyze",
+                "photo": SimpleUploadedFile("face.jpg", b"\xff\xd8\xffexample", content_type="image/jpeg"),
+            })
+        external_vision.assert_not_called()
+        self.assertEqual(self.client.session["lip_profile"]["confidence"], "manual")
+
+    def test_explicit_external_photo_consent_enables_ai_fallback(self):
+        from django.core.files.uploadedfile import SimpleUploadedFile
+
+        self.client.post(reverse("consumer:consent"), {"choice": "photo_external"})
+        with patch("consumer.views.analyze_photo_local", side_effect=LocalVisionError("Wajah tidak terdeteksi.")), \
+                patch("consumer.views._ai_vision_available", return_value=True), \
+                patch("consumer.views.analyze_photo", return_value={
+                    "skin_tone": "medium", "undertone": "warm", "lip_pigmentation": "medium",
+                    "confidence": "medium",
+                }) as external_vision:
+            self.client.post(reverse("consumer:scan"), {
+                "action": "analyze",
+                "photo": SimpleUploadedFile("face.jpg", b"\xff\xd8\xffexample", content_type="image/jpeg"),
+            })
+        external_vision.assert_called_once()
+        self.assertEqual(self.client.session["lip_profile"]["undertone"], "warm")
+
 
 class LocalVisionTests(SimpleTestCase):
     def test_bundled_model_is_available_and_blank_photo_falls_back(self):
@@ -247,7 +283,7 @@ class LocalVisionTests(SimpleTestCase):
 
         skin_lab = cv2.cvtColor(np.asarray([[[215, 189, 150]]], dtype=np.float32) / 255,
                                 cv2.COLOR_RGB2LAB)[0, 0]
-        self.assertEqual(_depth_from_lab(skin_lab), "medium")
+        self.assertEqual(classify_skin_tone(tuple(float(v) for v in skin_lab))[0], "medium")
         self.assertEqual(_pigmentation_from_contrast(70, 58), "medium_high")
         self.assertEqual(_undertone_from_lab(15, 18), "uncertain")
 
@@ -334,95 +370,66 @@ class DatasetIntegrationTests(SimpleTestCase):
         examples = public_swatches_near(picks)
         self.assertEqual(len(examples), 3)
         self.assertTrue(all(row["hex"].startswith("#") for row in examples))
-"""Additions for consumer/tests.py.
 
-These are NEW test cases to merge into the existing tests.py you already
-have (the one with DemoFlowTests / AIAdapterTests / DatasetIntegrationTests).
-They do not replace anything -- append the new test methods into
-DemoFlowTests, and add the new ColorScienceTests class alongside
-AIAdapterTests. Nothing here requires mediapipe to actually run: the pure
-math functions (classify_skin_tone/undertone/lip_pigmentation) are tested
-directly with known Lab values, and the view-level fallback chain is tested
-by mocking analyze_photo_objective / analyze_photo, the same pattern the
-existing tests.py already uses for analyze_photo.
-
-Add this import near the top of tests.py, alongside the existing imports:
-
-    from services.color_science import (
-        LandmarkNotFound, classify_skin_tone, classify_undertone,
-        classify_lip_pigmentation, srgb_to_lab,
-    )
-"""
-
-from unittest.mock import patch
-
-from django.test import SimpleTestCase, TestCase
-from django.urls import reverse
-
-from services.color_science import (
-    LandmarkNotFound, classify_lip_pigmentation, classify_skin_tone,
-    classify_undertone, srgb_to_lab,
-)
+    def test_five_team_datasets_have_the_expected_links_and_formula_total(self):
+        summary = team_dataset_summary()
+        self.assertEqual((summary["catalog_count"], summary["hedonic_count"],
+                          summary["feedback_count"], summary["formula_count"],
+                          summary["gap_count"]), (30, 600, 300, 500, 100))
+        shade = catalog_shades()[0]
+        evidence = shade_evidence(shade, {"skin_tone": "medium", "undertone": "warm"})
+        self.assertGreater(evidence["hedonic_sample"], 0)
+        self.assertGreater(evidence["review_sample"], 0)
+        picks = recommend({"skin_tone": "medium", "undertone": "warm"}, {})
+        self.assertEqual(len({pick["shade_id"] for pick in picks}), 3)
+        self.assertTrue(all(pick["shade_id"] in {row["shade_id"] for row in catalog_shades()}
+                            for pick in picks))
+        self.assertEqual(len(gap_candidates()), 100)
+        brief = build_gap_formula_brief(0)
+        self.assertEqual(brief["total"], 100)
+        self.assertEqual(len(brief["references"]), 3)
 
 
-# --- Append these methods into the existing DemoFlowTests(TestCase) class --
+class TeamDataFlowTests(TestCase):
+    def setUp(self):
+        self.consumer = get_user_model().objects.create_user("team_consumer", password="StrongDemoPass123!")
+        self.consumer.groups.add(Group.objects.get(name="consumer"))
+        self.rd_user = get_user_model().objects.create_user("team_rd", password="StrongDemoPass123!")
+        self.rd_user.groups.add(Group.objects.get(name="rd"))
 
-class ObjectivePhotoFallbackTests(TestCase):
-    """New test class -- exercises the 3-tier fallback added to consumer/views.scan().
-
-    Tier 1: services.color_science.analyze_photo_objective (deterministic, local)
-    Tier 2: services.ai_client.analyze_photo (AI vision, only if tier 1 raises LandmarkNotFound)
-    Tier 3: MANUAL_PROFILE (only if both above are unavailable)
-    """
-
-    def _post_photo(self):
-        from django.core.files.uploadedfile import SimpleUploadedFile
-
-        self.client.post(reverse("consumer:consent"), {"choice": "photo"})
-        return self.client.post(reverse("consumer:scan"), {
-            "action": "analyze",
-            "photo": SimpleUploadedFile("face.png", b"\x89PNG\r\n\x1a\nexample", content_type="image/png"),
+    def test_catalog_recommendation_feedback_and_rd_formula_flow(self):
+        self.client.force_login(self.consumer)
+        session = self.client.session
+        session["lip_profile"] = {"skin_tone": "medium", "undertone": "warm",
+                                  "lip_pigmentation": "medium"}
+        session["preference"] = {"finish": "satin"}
+        session.save()
+        page = self.client.get(reverse("consumer:recommendations"))
+        self.assertContains(page, "30 shade katalog tim")
+        self.assertContains(page, "Finish Satin belum ada")
+        shade = recommend(session["lip_profile"], session["preference"])[0]
+        response = self.client.post(reverse("consumer:feedback", args=[shade["shade_id"]]), {
+            "feedback_type": "color_interest", "color_response": "like_it",
+            "desired_finish": "satin", "rd_consent": "on",
         })
+        self.assertRedirects(response, reverse("consumer:feedback_success"))
+        self.assertEqual(Feedback.objects.first().shade_id, shade["shade_id"])
 
-    def test_objective_measurement_used_when_landmarks_found(self):
-        measured = {
-            "skin_tone": "medium", "undertone": "warm", "lip_pigmentation": "medium",
-            "visible_lip_condition": "", "confidence": "measured",
-            "lip_points": {"left": [0.4, 0.6], "top": [0.5, 0.58],
-                           "right": [0.6, 0.6], "bottom": [0.5, 0.65]},
-            "measurement": {"method": "mediapipe_face_mesh+cielab", "monk_skin_tone_index": 5,
-                            "monk_skin_tone_distance": 3.2, "skin_lab": (60.0, 12.0, 20.0),
-                            "lip_lab": (45.0, 25.0, 10.0)},
-        }
-        with patch("consumer.views.analyze_photo_objective", return_value=measured) as objective:
-            response = self._post_photo()
-        self.assertRedirects(response, reverse("consumer:profile_result"))
-        self.assertEqual(self.client.session["lip_profile"]["confidence"], "measured")
-        self.assertEqual(self.client.session["lip_profile"]["undertone"], "warm")
-        objective.assert_called_once()
-        page = self.client.get(reverse("consumer:profile_result"))
-        self.assertContains(page, "Diukur otomatis dari foto")
-
-    def test_falls_back_to_ai_vision_when_landmarks_not_found(self):
-        ai_result = {
-            "skin_tone": "tan", "undertone": "olive", "lip_pigmentation": "high",
-            "visible_lip_condition": "two-toned", "confidence": "medium",
-        }
-        with patch("consumer.views.analyze_photo_objective", side_effect=LandmarkNotFound("no face")), \
-                patch("consumer.views.analyze_photo", return_value=ai_result) as vision:
-            response = self._post_photo()
-        self.assertRedirects(response, reverse("consumer:profile_result"))
-        self.assertEqual(self.client.session["lip_profile"]["undertone"], "olive")
-        vision.assert_called_once()
-
-    def test_falls_back_to_manual_when_both_unavailable(self):
-        from services.ai_client import AIUnavailable
-
-        with patch("consumer.views.analyze_photo_objective", side_effect=LandmarkNotFound("no face")), \
-                patch("consumer.views.analyze_photo", side_effect=AIUnavailable("no key")):
-            response = self._post_photo()
-        self.assertRedirects(response, reverse("consumer:profile_result"))
-        self.assertEqual(self.client.session["lip_profile"]["confidence"], "manual")
+        self.client.force_login(self.rd_user)
+        gap_page = self.client.get(reverse("research:unmet_demand"))
+        self.assertContains(gap_page, "Perbandingan finish")
+        self.assertContains(gap_page, "100 kandidat")
+        self.assertContains(gap_page, "Satin")
+        satin = next(item for item in gap_page.context["finish_coverage"] if item["finish"] == "satin")
+        self.assertEqual(satin["catalog_count"], 0)
+        self.assertEqual(satin["local_requests"], 1)
+        self.assertContains(self.client.get(reverse("research:evidence")), "300 review")
+        brief_page = self.client.post(reverse("research:formula_lab"), {"gap": "0"})
+        self.assertContains(brief_page, "Komposisi awal untuk diuji")
+        self.assertEqual(brief_page.context["team_brief"]["total"], 100)
+from services.color_science import (
+    classify_lip_pigmentation, classify_undertone, srgb_to_lab,
+)
 
 
 class ColorScienceUnitTests(SimpleTestCase):
@@ -442,7 +449,7 @@ class ColorScienceUnitTests(SimpleTestCase):
         self.assertEqual(label, "medium")
 
     def test_classify_undertone_warm_vs_cool(self):
-        warm_lab = (60.0, 10.0, 25.0)   # b* well above a*, warm per documented heuristic
+        warm_lab = (60.0, 10.0, 17.0)   # warm band, below the olive cutoff
         cool_lab = (60.0, 10.0, 3.0)    # low b*, cool per documented heuristic
         self.assertEqual(classify_undertone(warm_lab), "warm")
         self.assertEqual(classify_undertone(cool_lab), "cool")

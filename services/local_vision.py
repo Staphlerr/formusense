@@ -59,6 +59,18 @@ def model_available() -> bool:
     return MODEL_PATH.is_file() and MODEL_PATH.stat().st_size > 1_000_000
 
 
+def create_face_landmarker():
+    """Create one detector; batch callers may reuse it within a context manager."""
+    options = mp.tasks.vision.FaceLandmarkerOptions(
+        base_options=mp.tasks.BaseOptions(model_asset_path=str(MODEL_PATH)),
+        running_mode=mp.tasks.vision.RunningMode.IMAGE,
+        num_faces=2,
+        min_face_detection_confidence=0.6,
+        min_face_presence_confidence=0.6,
+    )
+    return mp.tasks.vision.FaceLandmarker.create_from_options(options)
+
+
 def _read_photo(photo_bytes: bytes) -> np.ndarray:
     try:
         with Image.open(io.BytesIO(photo_bytes)) as image:
@@ -137,7 +149,7 @@ def _pigmentation_from_contrast(skin_l: float, lip_l: float) -> str:
     return "high"
 
 
-def analyze_photo_local(photo_bytes: bytes, mime_type: str) -> dict:
+def analyze_photo_local(photo_bytes: bytes, mime_type: str, *, face_landmarker=None) -> dict:
     """Return editable estimates and normalized lip contours; never store a photo."""
     if mime_type not in {"image/jpeg", "image/png"}:
         raise LocalVisionError("Gunakan foto JPG atau PNG.")
@@ -148,16 +160,13 @@ def analyze_photo_local(photo_bytes: bytes, mime_type: str) -> dict:
     if min(height, width) < 240:
         raise LocalVisionError("Resolusi foto terlalu kecil untuk mendeteksi bibir.")
 
-    options = mp.tasks.vision.FaceLandmarkerOptions(
-        base_options=mp.tasks.BaseOptions(model_asset_path=str(MODEL_PATH)),
-        running_mode=mp.tasks.vision.RunningMode.IMAGE,
-        num_faces=2,
-        min_face_detection_confidence=0.6,
-        min_face_presence_confidence=0.6,
-    )
     try:
-        with mp.tasks.vision.FaceLandmarker.create_from_options(options) as landmarker:
-            result = landmarker.detect(mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb))
+        image = mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb)
+        if face_landmarker is None:
+            with create_face_landmarker() as landmarker:
+                result = landmarker.detect(image)
+        else:
+            result = face_landmarker.detect(image)
     except Exception as error:
         raise LocalVisionError("Analisis lokal belum berhasil. Gunakan profil manual atau foto lain.") from error
     if not result.face_landmarks:
@@ -194,6 +203,9 @@ def analyze_photo_local(photo_bytes: bytes, mime_type: str) -> dict:
     # Reject severely under/overexposed photos instead of inventing colour labels.
     if not 18 <= skin_l <= 88:
         profile["analysis_note"] = "Kontur terdeteksi, tetapi pencahayaan membuat warna sulit diperkirakan. Isi profil manual."
+        return profile
+    if (skin_a ** 2 + skin_b ** 2) ** 0.5 < 3:
+        profile["analysis_note"] = "Kontur terdeteksi, tetapi foto hampir tanpa informasi warna. Isi profil warna manual."
         return profile
 
     skin_tone_label, mst_index, mst_distance = classify_skin_tone((skin_l, skin_a, skin_b))
