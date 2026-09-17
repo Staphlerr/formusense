@@ -2,7 +2,8 @@
 {% block title %}Hasil profil · FormuSense{% endblock %}
 {% block content %}
 <section class="page narrow"><span class="eyebrow">{{ source_label }}</span><h1>Periksa profilmu</h1>
-<p class="lead">Nilai di bawah dapat kamu ubah. Hasil AI adalah perkiraan penampilan yang terlihat, bukan diagnosis.</p>
+<p class="lead">Nilai di bawah dapat kamu ubah. Perkiraan warna dari foto dipengaruhi cahaya dan kamera; ini bukan diagnosis.</p>
+{% if analysis_note %}<p class="message">{{ analysis_note }}</p>{% endif %}
 <form method="post" class="card form-card">{% csrf_token %}{{ form.as_div }}<button class="button" type="submit">Lihat rekomendasi shade</button></form>
 </section>
 {% endblock %}

@@ -4,7 +4,7 @@
 {% block content %}
 <section class="page narrow"><span class="eyebrow">Langkah 4 dari 4</span><h1>Kenali profil bibirmu</h1>
 <p class="lead">Ambil foto langsung dengan kamera atau unggah foto. Hadapkan wajah ke depan, pastikan bibir terlihat, gunakan cahaya alami, dan hindari lipstik tebal. Kamu juga bisa memakai profil manual atau contoh demo.</p>
-<p class="status-pill">{% if ai_available %}AI vision dikonfigurasi · jika gagal, isi manual{% else %}AI vision belum dikonfigurasi · profil manual dan demo siap dipakai{% endif %}</p>
+<p class="status-pill">{% if local_vision_available %}Deteksi wajah lokal siap · tanpa token AI untuk foto{% else %}Model deteksi lokal belum tersedia · profil manual dan demo siap dipakai{% endif %}</p>
 {% if photo_consent %}
 <form method="post" enctype="multipart/form-data" class="card form-card" id="scan-form">{% csrf_token %}
   <div><strong>1 · Buka kamera</strong>
@@ -17,6 +17,20 @@
   <div id="photo-preview-wrap" hidden><strong id="photo-ready" class="photo-ready" role="status"></strong><img id="photo-preview" class="photo-preview" alt="Pratinjau foto yang akan dianalisis"><p id="photo-name"></p></div>
   <button class="button" id="analyze-button" name="action" value="analyze">3 · Analisis foto</button>
 </form>
+<div class="scan-loading" id="scan-loading" role="status" aria-live="polite" aria-label="Foto sedang diproses" hidden>
+  <div class="scan-loading-inner">
+    <span class="eyebrow">Analisis foto lokal</span>
+    <h1>Mengenali profil bibirmu...</h1>
+    <p class="lead">Tunggu sebentar. Foto diproses di server demo dan hasilnya bisa kamu periksa sebelum melihat rekomendasi.</p>
+    <div class="scan-progress" aria-hidden="true"><span></span></div>
+    <ol class="scan-loading-steps">
+      <li id="loading-photo" class="is-active"><span class="scan-step-icon">1</span><span>Menyiapkan foto</span><small>Sedang diproses</small></li>
+      <li id="loading-face"><span class="scan-step-icon">2</span><span>Mencari wajah dan kontur bibir</span><small>Menunggu</small></li>
+      <li id="loading-color"><span class="scan-step-icon">3</span><span>Memperkirakan warna dari foto</span><small>Menunggu</small></li>
+    </ol>
+    <p class="fine-print">Jika wajah tidak terdeteksi atau cahayanya kurang baik, kamu tetap bisa mengisi profil secara manual.</p>
+  </div>
+</div>
 <script src="{% static 'js/camera.js' %}" defer></script>
 {% endif %}
 <form method="post" class="actions">{% csrf_token %}<button class="button secondary" name="action" value="manual">Isi profil manual</button><button class="button secondary" name="action" value="demo">Gunakan profil demo</button></form>

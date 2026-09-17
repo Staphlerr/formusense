@@ -18,34 +18,59 @@
   let photo = null;
   let points = [];
   let editing = false;
+  let contours = null;
   let selected = document.querySelector('.tryon-shade.is-selected') || shadeButtons[0];
   let estimatedPoints = null;
+  let estimatedContours = null;
   try { estimatedPoints = JSON.parse(document.querySelector('#lip-points-data').textContent); }
   catch (cause) { /* Manual placement remains available. */ }
+  try {
+    const parsed = JSON.parse(document.querySelector('#lip-contours-data').textContent);
+    if (parsed && Array.isArray(parsed.outer) && parsed.outer.length >= 12
+      && Array.isArray(parsed.inner) && parsed.inner.length >= 12
+      && [...parsed.outer, ...parsed.inner].every((point) => Array.isArray(point)
+        && point.length === 2 && point.every((value) => Number.isFinite(value) && value >= 0 && value <= 1))) {
+      estimatedContours = parsed;
+    }
+  } catch (cause) { /* Manual placement remains available. */ }
+
+  const hasPlacement = () => Boolean(contours) || points.length === 4;
+  const traceContour = (vertices) => {
+    vertices.forEach(([x, y], index) => {
+      if (index === 0) context.moveTo(x * canvas.width, y * canvas.height);
+      else context.lineTo(x * canvas.width, y * canvas.height);
+    });
+    context.closePath();
+  };
 
   const draw = () => {
     if (!photo) return;
     context.clearRect(0, 0, canvas.width, canvas.height);
     context.drawImage(photo, 0, 0, canvas.width, canvas.height);
-    if (points.length === 4) {
-      const [left, top, right, bottom] = points;
-      const width = right.x - left.x;
+    if (contours || points.length === 4) {
       context.save();
       context.beginPath();
-      context.moveTo(left.x, left.y);
-      context.bezierCurveTo(left.x + width * .22, left.y - canvas.height * .015,
-        top.x - width * .16, top.y, top.x, top.y);
-      context.bezierCurveTo(top.x + width * .16, top.y,
-        right.x - width * .22, right.y - canvas.height * .015, right.x, right.y);
-      context.bezierCurveTo(right.x - width * .18, right.y + canvas.height * .012,
-        bottom.x + width * .25, bottom.y, bottom.x, bottom.y);
-      context.bezierCurveTo(bottom.x - width * .25, bottom.y,
-        left.x + width * .18, left.y + canvas.height * .012, left.x, left.y);
-      context.closePath();
+      if (contours) {
+        traceContour(contours.outer);
+        traceContour(contours.inner);
+      } else {
+        const [left, top, right, bottom] = points;
+        const width = right.x - left.x;
+        context.moveTo(left.x, left.y);
+        context.bezierCurveTo(left.x + width * .22, left.y - canvas.height * .015,
+          top.x - width * .16, top.y, top.x, top.y);
+        context.bezierCurveTo(top.x + width * .16, top.y,
+          right.x - width * .22, right.y - canvas.height * .015, right.x, right.y);
+        context.bezierCurveTo(right.x - width * .18, right.y + canvas.height * .012,
+          bottom.x + width * .25, bottom.y, bottom.x, bottom.y);
+        context.bezierCurveTo(bottom.x - width * .25, bottom.y,
+          left.x + width * .18, left.y + canvas.height * .012, left.x, left.y);
+        context.closePath();
+      }
       context.globalCompositeOperation = 'multiply';
       context.globalAlpha = Number(opacity.value) / 100;
       context.fillStyle = selected.dataset.hex;
-      context.fill();
+      context.fill(contours ? 'evenodd' : 'nonzero');
       context.restore();
     }
     if (editing) {
@@ -68,13 +93,14 @@
       canvas.width = Math.round(image.width * scale);
       canvas.height = Math.round(image.height * scale);
       photo = image;
+      contours = useEstimatedPoints ? estimatedContours : null;
       points = useEstimatedPoints && estimatedPoints
         ? ['left', 'top', 'right', 'bottom'].map((name) => ({
           x: estimatedPoints[name][0] * canvas.width,
           y: estimatedPoints[name][1] * canvas.height,
         }))
         : [];
-      editing = points.length !== 4;
+      editing = !hasPlacement();
       canvas.classList.toggle('is-placing', editing);
       canvas.hidden = false;
       empty.hidden = true;
@@ -82,7 +108,9 @@
       download.disabled = editing;
       clear.disabled = false;
       status.textContent = useEstimatedPoints && estimatedPoints
-        ? 'Posisi awal diperkirakan AI dari foto. Tekan “Atur posisi bibir” bila belum pas.'
+        ? 'Posisi awal bibir diperkirakan dari foto. Tekan “Atur posisi bibir” bila belum pas.'
+        : useEstimatedPoints && contours
+          ? 'Kontur bibir ditemukan secara lokal. Tekan “Atur posisi bibir” bila warnanya belum pas.'
         : `Klik ${steps[0]} pada foto, lalu titik atas, kanan, dan bawah bibir.`;
       draw();
     };
@@ -115,7 +143,7 @@
       if (selected) selected.classList.remove('is-selected');
       selected = button;
       selected.classList.add('is-selected');
-      status.textContent = points.length === 4
+      status.textContent = hasPlacement()
         ? `Pratinjau ${button.dataset.name}. Hasil visual dapat berbeda dari produk asli.`
         : `Warna ${button.dataset.name} dipilih. Klik empat titik bibir pada foto untuk menerapkannya.`;
       draw();
@@ -130,6 +158,7 @@
   align.addEventListener('click', () => {
     if (!photo) return;
     points = [];
+    contours = null;
     editing = true;
     download.disabled = true;
     canvas.classList.add('is-placing');
@@ -157,7 +186,7 @@
   });
 
   download.addEventListener('click', () => {
-    if (!photo || points.length !== 4) return;
+    if (!photo || !hasPlacement()) return;
     canvas.toBlob((blob) => {
       if (!blob) return;
       const url = URL.createObjectURL(blob);
@@ -172,6 +201,7 @@
   clear.addEventListener('click', () => {
     photo = null;
     points = [];
+    contours = null;
     editing = false;
     canvas.hidden = true;
     canvas.classList.remove('is-placing');

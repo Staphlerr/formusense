@@ -14,6 +14,10 @@ from services.formula_lab import build_formula_brief
 from services.ai_client import AIUnavailable, analyze_photo
 from services.dataset_insights import dataset_insights, public_swatches_near
 from services.recommendation import recommend
+from services.local_vision import (
+    LocalVisionError, _depth_from_lab, _pigmentation_from_contrast,
+    _undertone_from_lab, analyze_photo_local, model_available,
+)
 
 
 @patch.dict(os.environ, {"AI_API_KEY": ""})
@@ -140,16 +144,17 @@ class DemoFlowTests(TestCase):
         self.assertContains(response, "Saya setuju feedback")
         self.assertEqual(Feedback.objects.count(), 0)
 
-    def test_photo_with_consent_uses_vision_result(self):
+    def test_photo_with_consent_uses_local_vision_result(self):
         from django.core.files.uploadedfile import SimpleUploadedFile
 
         self.client.post(reverse("consumer:consent"), {"choice": "photo"})
-        with patch("consumer.views.analyze_photo", return_value={
+        with patch("consumer.views.analyze_photo_local", return_value={
             "skin_tone": "tan", "undertone": "olive",
             "lip_pigmentation": "high", "visible_lip_condition": "two-toned",
             "confidence": "medium",
             "lip_points": {"left": [0.4, 0.6], "top": [0.5, 0.58],
                            "right": [0.6, 0.6], "bottom": [0.5, 0.65]},
+            "lip_contours": {"outer": [[0.4, 0.6]] * 20, "inner": [[0.5, 0.6]] * 20},
         }) as vision:
             response = self.client.post(reverse("consumer:scan"), {
                 "action": "analyze",
@@ -164,6 +169,7 @@ class DemoFlowTests(TestCase):
         })
         self.assertEqual(self.client.session["lip_profile"]["lip_points"]["top"], [0.5, 0.58])
         self.assertContains(self.client.get(reverse("consumer:recommendations")), "lip-points-data")
+        self.assertContains(self.client.get(reverse("consumer:recommendations")), "lip-contours-data")
 
     def test_camera_ui_requires_photo_consent_and_jpeg_uses_same_scan(self):
         from django.core.files.uploadedfile import SimpleUploadedFile
@@ -174,7 +180,8 @@ class DemoFlowTests(TestCase):
         page = self.client.get(scan_url)
         self.assertContains(page, "Buka kamera")
         self.assertContains(page, "js/camera.js")
-        with patch("consumer.views.analyze_photo", return_value={
+        self.assertContains(page, "Mengenali profil bibirmu")
+        with patch("consumer.views.analyze_photo_local", return_value={
             "skin_tone": "medium", "undertone": "warm",
             "lip_pigmentation": "medium", "visible_lip_condition": "",
             "confidence": "low",
@@ -187,6 +194,40 @@ class DemoFlowTests(TestCase):
             })
         self.assertRedirects(response, reverse("consumer:profile_result"))
         self.assertEqual(vision.call_args.args[1], "image/jpeg")
+
+    def test_local_vision_failure_keeps_manual_profile(self):
+        from django.core.files.uploadedfile import SimpleUploadedFile
+
+        self.client.post(reverse("consumer:consent"), {"choice": "photo"})
+        with patch("consumer.views.analyze_photo_local", side_effect=LocalVisionError("Wajah tidak terdeteksi.")):
+            response = self.client.post(reverse("consumer:scan"), {
+                "action": "analyze",
+                "photo": SimpleUploadedFile("foto.jpg", b"\xff\xd8\xffexample", content_type="image/jpeg"),
+            })
+        self.assertRedirects(response, reverse("consumer:profile_result"))
+        self.assertEqual(self.client.session["lip_profile"]["confidence"], "manual")
+        self.assertTrue(self.client.session["photo_scanned"])
+
+
+class LocalVisionTests(SimpleTestCase):
+    def test_bundled_model_is_available_and_blank_photo_falls_back(self):
+        from PIL import Image
+
+        self.assertTrue(model_available())
+        image = io.BytesIO()
+        Image.new("RGB", (500, 500), (220, 220, 220)).save(image, format="PNG")
+        with self.assertRaisesRegex(LocalVisionError, "Wajah tidak terdeteksi"):
+            analyze_photo_local(image.getvalue(), "image/png")
+
+    def test_colour_rules_are_provisional_and_leave_ambiguous_undertone_unknown(self):
+        import cv2
+        import numpy as np
+
+        skin_lab = cv2.cvtColor(np.asarray([[[215, 189, 150]]], dtype=np.float32) / 255,
+                                cv2.COLOR_RGB2LAB)[0, 0]
+        self.assertEqual(_depth_from_lab(skin_lab), "medium")
+        self.assertEqual(_pigmentation_from_contrast(70, 58), "medium_high")
+        self.assertEqual(_undertone_from_lab(15, 18), "uncertain")
 
 
 class AIAdapterTests(SimpleTestCase):

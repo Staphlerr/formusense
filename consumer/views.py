@@ -1,14 +1,13 @@
-import os
-
 from django.contrib import messages
 from django.http import Http404
 from django.shortcuts import redirect, render
 
 from consumer.forms import FeedbackForm, LipProfileForm, PreferenceForm, ProfileStartForm
-from services.ai_client import AIUnavailable, analyze_photo, generate_personal_note
+from services.ai_client import AIUnavailable, generate_personal_note
 from services.analytics import affinity, community_spectrum
 from services.data import shade_by_id
 from services.dataset_insights import public_swatches_near
+from services.local_vision import LocalVisionError, analyze_photo_local, model_available
 from services.recommendation import recommend
 
 
@@ -79,19 +78,20 @@ def scan(request):
             )
             if not matches_type:
                 messages.error(request, "Isi file tidak sesuai format JPG/PNG.")
-                return render(request, "consumer/scan.html", {"photo_consent": True,
-                    "ai_available": bool(os.environ.get("AI_API_KEY") and os.environ.get("AI_VISION_MODEL"))})
+                return render(request, "consumer/scan.html", {
+                    "photo_consent": True, "local_vision_available": model_available(),
+                })
             request.session["photo_scanned"] = True
             try:
-                request.session["lip_profile"] = analyze_photo(photo_bytes, photo.content_type)
-                messages.info(request, "Hasil AI adalah perkiraan. Periksa dan ubah jika perlu.")
-            except AIUnavailable:
+                request.session["lip_profile"] = analyze_photo_local(photo_bytes, photo.content_type)
+                messages.info(request, "Analisis lokal selesai. Periksa dan koreksi hasil warna jika perlu.")
+            except LocalVisionError as error:
                 request.session["lip_profile"] = MANUAL_PROFILE.copy()
-                messages.warning(request, "Analisis AI tidak tersedia. Silakan isi profil secara manual.")
+                messages.warning(request, f"{error} Isi profil secara manual; foto tetap bisa dipakai untuk coba shade.")
             return redirect("consumer:profile_result")
     return render(request, "consumer/scan.html", {
         "photo_consent": request.session.get("photo_consent", False),
-        "ai_available": bool(os.environ.get("AI_API_KEY") and os.environ.get("AI_VISION_MODEL")),
+        "local_vision_available": model_available(),
     })
 
 
@@ -101,11 +101,13 @@ def profile_result(request):
     if request.method == "POST" and form.is_valid():
         request.session["lip_profile"] = {**current, **form.cleaned_data, "confidence": "user_reviewed"}
         return redirect("consumer:recommendations")
-    source_labels = {"demo": "Profil contoh", "manual": "Input manual", "low": "Perkiraan AI · periksa kembali",
+    source_labels = {"demo": "Profil contoh", "manual": "Input manual", "local_low": "Kontur lokal · isi warna manual",
+                     "local_estimate": "Perkiraan foto lokal · periksa kembali", "low": "Perkiraan AI · periksa kembali",
                      "medium": "Perkiraan AI · periksa kembali", "high": "Perkiraan AI · periksa kembali",
                      "user_reviewed": "Sudah diperiksa pengguna"}
     return render(request, "consumer/profile_result.html", {
         "form": form, "source_label": source_labels.get(current.get("confidence"), "Perkiraan awal"),
+        "analysis_note": current.get("analysis_note", ""),
     })
 
 
@@ -136,6 +138,7 @@ def recommendations(request):
         "public_examples": public_swatches_near(picks),
         "photo_scanned": request.session.get("photo_scanned", False),
         "lip_points": profile.get("lip_points") if request.session.get("photo_scanned") else None,
+        "lip_contours": profile.get("lip_contours") if request.session.get("photo_scanned") else None,
     })
 
 

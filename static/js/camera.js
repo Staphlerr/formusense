@@ -14,6 +14,9 @@
   const name = document.querySelector('#photo-name');
   const ready = document.querySelector('#photo-ready');
   const analyzeButton = document.querySelector('#analyze-button');
+  const loading = document.querySelector('#scan-loading');
+  const loadingPhoto = document.querySelector('#loading-photo');
+  const loadingFace = document.querySelector('#loading-face');
   const tryOnPhotoKey = 'formusense_tryon_photo_v1';
   let stream = null;
   let previewUrl = null;
@@ -145,13 +148,24 @@
     if (submitting || !input.files[0]) return;
     event.preventDefault();
     stopCamera();
+    loading.hidden = false;
+    document.body.classList.add('scan-is-loading');
     analyzeButton.textContent = 'Menganalisis foto…';
     analyzeButton.setAttribute('aria-busy', 'true');
     analyzeButton.disabled = true;
     await cachePhotoForTryOn(input.files[0]);
+    loadingPhoto.classList.remove('is-active');
+    loadingPhoto.classList.add('is-done');
+    loadingPhoto.querySelector('small').textContent = 'Selesai';
+    loadingFace.classList.add('is-active');
+    loadingFace.querySelector('small').textContent = 'Sedang diproses';
     analyzeButton.disabled = false;
     submitting = true;
     form.requestSubmit(analyzeButton);
+  });
+  window.addEventListener('pageshow', () => {
+    loading.hidden = true;
+    document.body.classList.remove('scan-is-loading');
   });
   document.querySelectorAll('button[name="action"][value="manual"], button[name="action"][value="demo"]')
     .forEach((button) => button.addEventListener('click', () => {
