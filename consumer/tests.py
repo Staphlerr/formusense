@@ -334,3 +334,122 @@ class DatasetIntegrationTests(SimpleTestCase):
         examples = public_swatches_near(picks)
         self.assertEqual(len(examples), 3)
         self.assertTrue(all(row["hex"].startswith("#") for row in examples))
+"""Additions for consumer/tests.py.
+
+These are NEW test cases to merge into the existing tests.py you already
+have (the one with DemoFlowTests / AIAdapterTests / DatasetIntegrationTests).
+They do not replace anything -- append the new test methods into
+DemoFlowTests, and add the new ColorScienceTests class alongside
+AIAdapterTests. Nothing here requires mediapipe to actually run: the pure
+math functions (classify_skin_tone/undertone/lip_pigmentation) are tested
+directly with known Lab values, and the view-level fallback chain is tested
+by mocking analyze_photo_objective / analyze_photo, the same pattern the
+existing tests.py already uses for analyze_photo.
+
+Add this import near the top of tests.py, alongside the existing imports:
+
+    from services.color_science import (
+        LandmarkNotFound, classify_skin_tone, classify_undertone,
+        classify_lip_pigmentation, srgb_to_lab,
+    )
+"""
+
+from unittest.mock import patch
+
+from django.test import SimpleTestCase, TestCase
+from django.urls import reverse
+
+from services.color_science import (
+    LandmarkNotFound, classify_lip_pigmentation, classify_skin_tone,
+    classify_undertone, srgb_to_lab,
+)
+
+
+# --- Append these methods into the existing DemoFlowTests(TestCase) class --
+
+class ObjectivePhotoFallbackTests(TestCase):
+    """New test class -- exercises the 3-tier fallback added to consumer/views.scan().
+
+    Tier 1: services.color_science.analyze_photo_objective (deterministic, local)
+    Tier 2: services.ai_client.analyze_photo (AI vision, only if tier 1 raises LandmarkNotFound)
+    Tier 3: MANUAL_PROFILE (only if both above are unavailable)
+    """
+
+    def _post_photo(self):
+        from django.core.files.uploadedfile import SimpleUploadedFile
+
+        self.client.post(reverse("consumer:consent"), {"choice": "photo"})
+        return self.client.post(reverse("consumer:scan"), {
+            "action": "analyze",
+            "photo": SimpleUploadedFile("face.png", b"\x89PNG\r\n\x1a\nexample", content_type="image/png"),
+        })
+
+    def test_objective_measurement_used_when_landmarks_found(self):
+        measured = {
+            "skin_tone": "medium", "undertone": "warm", "lip_pigmentation": "medium",
+            "visible_lip_condition": "", "confidence": "measured",
+            "lip_points": {"left": [0.4, 0.6], "top": [0.5, 0.58],
+                           "right": [0.6, 0.6], "bottom": [0.5, 0.65]},
+            "measurement": {"method": "mediapipe_face_mesh+cielab", "monk_skin_tone_index": 5,
+                            "monk_skin_tone_distance": 3.2, "skin_lab": (60.0, 12.0, 20.0),
+                            "lip_lab": (45.0, 25.0, 10.0)},
+        }
+        with patch("consumer.views.analyze_photo_objective", return_value=measured) as objective:
+            response = self._post_photo()
+        self.assertRedirects(response, reverse("consumer:profile_result"))
+        self.assertEqual(self.client.session["lip_profile"]["confidence"], "measured")
+        self.assertEqual(self.client.session["lip_profile"]["undertone"], "warm")
+        objective.assert_called_once()
+        page = self.client.get(reverse("consumer:profile_result"))
+        self.assertContains(page, "Diukur otomatis dari foto")
+
+    def test_falls_back_to_ai_vision_when_landmarks_not_found(self):
+        ai_result = {
+            "skin_tone": "tan", "undertone": "olive", "lip_pigmentation": "high",
+            "visible_lip_condition": "two-toned", "confidence": "medium",
+        }
+        with patch("consumer.views.analyze_photo_objective", side_effect=LandmarkNotFound("no face")), \
+                patch("consumer.views.analyze_photo", return_value=ai_result) as vision:
+            response = self._post_photo()
+        self.assertRedirects(response, reverse("consumer:profile_result"))
+        self.assertEqual(self.client.session["lip_profile"]["undertone"], "olive")
+        vision.assert_called_once()
+
+    def test_falls_back_to_manual_when_both_unavailable(self):
+        from services.ai_client import AIUnavailable
+
+        with patch("consumer.views.analyze_photo_objective", side_effect=LandmarkNotFound("no face")), \
+                patch("consumer.views.analyze_photo", side_effect=AIUnavailable("no key")):
+            response = self._post_photo()
+        self.assertRedirects(response, reverse("consumer:profile_result"))
+        self.assertEqual(self.client.session["lip_profile"]["confidence"], "manual")
+
+
+class ColorScienceUnitTests(SimpleTestCase):
+    """Pure-function tests -- no mediapipe/image decoding involved, just the
+    documented classification math. These are what let you show a judge
+    "here is a known input, here is the deterministic output" without
+    needing a live camera demo.
+    """
+
+    def test_classify_skin_tone_matches_nearest_monk_swatch(self):
+        # Monk swatch #6 is "#a07e56" -- feed its own Lab value back in and
+        # expect it to match itself with ~0 distance.
+        lab = srgb_to_lab(0xA0 / 255, 0x7E / 255, 0x56 / 255)
+        label, mst_index, distance = classify_skin_tone(lab)
+        self.assertEqual(mst_index, 6)
+        self.assertLess(distance, 0.5)
+        self.assertEqual(label, "medium")
+
+    def test_classify_undertone_warm_vs_cool(self):
+        warm_lab = (60.0, 10.0, 25.0)   # b* well above a*, warm per documented heuristic
+        cool_lab = (60.0, 10.0, 3.0)    # low b*, cool per documented heuristic
+        self.assertEqual(classify_undertone(warm_lab), "warm")
+        self.assertEqual(classify_undertone(cool_lab), "cool")
+
+    def test_classify_lip_pigmentation_is_relative_to_skin(self):
+        skin_lab = (65.0, 10.0, 15.0)
+        light_lip = (60.0, 20.0, 10.0)   # small contrast -> low
+        dark_lip = (30.0, 20.0, 10.0)    # large contrast -> high
+        self.assertEqual(classify_lip_pigmentation(skin_lab, light_lip), "low")
+        self.assertEqual(classify_lip_pigmentation(skin_lab, dark_lip), "high")

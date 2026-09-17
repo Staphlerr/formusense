@@ -1,7 +1,17 @@
 """Local, provisional cosmetic photo analysis for the hackathon prototype.
 
-Face landmarks come from Google's MediaPipe model. Colour categories below are
-transparent demo heuristics, not a trained skin-tone or undertone classifier.
+Face landmarks come from Google's MediaPipe FaceLandmarker (Tasks API).
+Skin-tone classification and the CIELAB reference swatches come from
+services/color_science.py -- this module does NOT keep its own copy of the
+Monk Skin Tone hex values or skin-tone bucketing, so there is one source of
+truth for that part of the pipeline. Undertone and lip-pigmentation
+classification stay local to this module (see the note below the imports
+for why those two were NOT also merged into color_science.py).
+
+Colour categories below are transparent demo heuristics, not a trained
+skin-tone or undertone classifier. Nothing here calls any AI/LLM API --
+generative AI (services/ai_client.py) is only used afterwards, to phrase a
+sentence about a profile this module already produced.
 """
 
 from __future__ import annotations
@@ -15,22 +25,34 @@ import numpy as np
 from django.conf import settings
 from PIL import Image, ImageOps, UnidentifiedImageError
 
+from services.color_science import classify_skin_tone
 
-MODEL_PATH = Path(settings.BASE_DIR) / "models" / "face_landmarker.task"
+
+# Same file you already downloaded per services/color_science.py's earlier
+# setup instructions -- services/models/face_landmarker.task. Both modules
+# now agree on this single location; nothing to re-download.
+MODEL_PATH = Path(settings.BASE_DIR) / "services" / "models" / "face_landmarker.task"
+# NOTE: earlier drafts of this module used Path(settings.BASE_DIR) /
+# "models" (project root, not inside services/). Standardized on the path
+# above because that's where the model was already downloaded and
+# confirmed working per services/color_science.py's original setup
+# instructions -- no need to download the file a second time.
 
 # Ordered Face Landmarker contour indices from Google's face mesh topology.
 OUTER_LIP = (61, 146, 91, 181, 84, 17, 314, 405, 321, 375, 291,
              409, 270, 269, 267, 0, 37, 39, 40, 185)
 INNER_LIP = (78, 95, 88, 178, 87, 14, 317, 402, 318, 324, 308,
              415, 310, 311, 312, 13, 82, 81, 80, 191)
-# Monk reference swatches A-J as reproduced in the FDA presentation linked
-# in README. Matching an uncalibrated selfie to a swatch is only a demo proxy.
-MST_HEX = ("#f7ede4", "#f3e7da", "#f6ead0", "#ead9bb", "#d7bd96",
-           "#9f7d54", "#815d44", "#604234", "#3a312a", "#2a2420")
 
 
 class LocalVisionError(Exception):
-    """A photo cannot be analysed reliably; manual input remains available."""
+    """A photo cannot be analysed reliably; manual input remains available.
+
+    Callers (consumer/views.py) should catch this and fall back to
+    services.ai_client.analyze_photo (AI vision, secondary), and finally to
+    the manual profile form -- the same three-step fallback philosophy used
+    elsewhere in this app. This module never calls an AI/LLM API itself.
+    """
 
 
 def model_available() -> bool:
@@ -86,18 +108,12 @@ def _lip_mask(shape: tuple[int, ...], landmarks) -> np.ndarray:
     return mask
 
 
-def _depth_from_lab(skin_lab: np.ndarray) -> str:
-    rgb = np.asarray([[tuple(int(code[i:i + 2], 16) for i in (1, 3, 5))
-                       for code in MST_HEX]], dtype=np.float32) / 255.0
-    swatch_lab = cv2.cvtColor(rgb, cv2.COLOR_RGB2LAB)[0]
-    closest = int(np.argmin(np.linalg.norm(swatch_lab - skin_lab, axis=1)))
-    return ("light", "light", "light_medium", "light_medium", "medium",
-            "tan", "tan", "deep", "deep", "deep")[closest]
-
-
 def _undertone_from_lab(a_star: float, b_star: float) -> str:
     # Only strong yellow/red balance is labelled. Most photos stay uncertain
     # because white balance and illumination change these values substantially.
+    # Kept local rather than calling color_science.classify_undertone: that
+    # function never returns "uncertain", which this app's forms expect as a
+    # valid fallback category -- see color_science.py's docstring note.
     if a_star <= 0 or b_star <= 0:
         return "uncertain"
     ratio = b_star / a_star
@@ -109,6 +125,8 @@ def _undertone_from_lab(a_star: float, b_star: float) -> str:
 
 
 def _pigmentation_from_contrast(skin_l: float, lip_l: float) -> str:
+    # Kept local (not color_science.classify_lip_pigmentation) -- see that
+    # function's docstring note on the two different threshold sets.
     contrast = skin_l - lip_l
     if contrast < 3:
         return "low"
@@ -172,16 +190,28 @@ def analyze_photo_local(photo_bytes: bytes, mime_type: str) -> dict:
         return profile
 
     skin_l, skin_a, skin_b = (float(value) for value in skin)
-    lip_l = float(lips[0])
+    lip_l, lip_a, lip_b = (float(value) for value in lips)
     # Reject severely under/overexposed photos instead of inventing colour labels.
     if not 18 <= skin_l <= 88:
         profile["analysis_note"] = "Kontur terdeteksi, tetapi pencahayaan membuat warna sulit diperkirakan. Isi profil manual."
         return profile
+
+    skin_tone_label, mst_index, mst_distance = classify_skin_tone((skin_l, skin_a, skin_b))
     profile.update({
-        "skin_tone": _depth_from_lab(skin),
+        "skin_tone": skin_tone_label,
         "undertone": _undertone_from_lab(skin_a, skin_b),
         "lip_pigmentation": _pigmentation_from_contrast(skin_l, lip_l),
         "confidence": "local_estimate",
         "analysis_note": "Perkiraan dari warna area pipi dan kontras bibir-kulit pada foto ini. Periksa dan koreksi jika meleset.",
+        # Raw numbers behind the categorical labels above, for transparency /
+        # evidence display -- "not a black box" is only true if these are
+        # actually shown somewhere (e.g. profile_result.html).
+        "measurement": {
+            "method": "mediapipe_face_landmarker+cielab(opencv)",
+            "monk_skin_tone_index": mst_index,
+            "monk_skin_tone_distance": round(mst_distance, 2),
+            "skin_lab": (round(skin_l, 1), round(skin_a, 1), round(skin_b, 1)),
+            "lip_lab": (round(lip_l, 1), round(lip_a, 1), round(lip_b, 1)),
+        },
     })
     return profile

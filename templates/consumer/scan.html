@@ -3,36 +3,46 @@
 {% block title %}Analisis foto · FormuSense{% endblock %}
 {% block content %}
 <section class="page narrow"><span class="eyebrow">Langkah 4 dari 4</span><h1>Kenali profil bibirmu</h1>
-<p class="lead">Ambil foto langsung dengan kamera atau unggah foto. Hadapkan wajah ke depan, pastikan bibir terlihat, gunakan cahaya alami, dan hindari lipstik tebal. Kamu juga bisa memakai profil manual atau contoh demo.</p>
-<p class="status-pill">{% if local_vision_available %}Deteksi wajah lokal siap · tanpa token AI untuk foto{% else %}Model deteksi lokal belum tersedia · profil manual dan demo siap dipakai{% endif %}</p>
-{% if photo_consent %}
-<form method="post" enctype="multipart/form-data" class="card form-card" id="scan-form">{% csrf_token %}
-  <div><strong>1 · Buka kamera</strong>
-    <div class="actions camera-actions"><button class="button secondary" id="start-camera" type="button">Buka kamera</button><button class="button secondary" id="stop-camera" type="button" hidden>Tutup kamera</button></div>
-    <p class="fine-print">Setelah kamera terbuka, tombol <strong>Ambil foto</strong> ada tepat di bawah gambar. Kamera berhenti setelah foto diambil atau halaman ditutup.</p>
-    <p class="message error" id="camera-error" role="alert" hidden></p>
+  <p class="lead">Ambil foto langsung dengan kamera atau unggah foto. Hadapkan wajah ke depan, pastikan bibir terlihat, gunakan cahaya alami, dan hindari lipstik tebal. Kamu juga bisa memakai profil manual atau contoh demo.</p>
+  <p class="status-pill">{% if local_vision_available %}Deteksi wajah lokal siap · tanpa token AI untuk foto{% else %}Model deteksi lokal belum tersedia · profil manual dan demo siap dipakai{% endif %}</p>
+  {% if photo_consent %}
+  <form method="post" enctype="multipart/form-data" class="card form-card" id="scan-form">{% csrf_token %}
+    <div><strong>1 · Buka kamera</strong>
+      <div class="actions camera-actions"><button class="button secondary" id="start-camera" type="button">Buka kamera</button><button class="button secondary" id="stop-camera" type="button" hidden>Tutup kamera</button></div>
+      <p class="fine-print">Setelah kamera terbuka, tombol <strong>Ambil foto</strong> ada tepat di bawah gambar. Kamera berhenti setelah foto diambil atau halaman ditutup.</p>
+      <p class="message error" id="camera-error" role="alert" hidden></p>
+    </div>
+    <div class="camera-stage" id="camera-stage" hidden>
+      <div class="camera-viewport">
+        <video id="camera-video" autoplay playsinline muted aria-label="Pratinjau kamera langsung"></video>
+        <canvas id="live-overlay" aria-hidden="true"></canvas>
+        <span class="camera-guide" aria-hidden="true"></span>
+        <p class="live-status" id="live-status" role="status" aria-live="polite"></p>
+        <p class="live-hint" id="live-hint"></p>
+      </div>
+      <p class="fine-print">Posisikan wajah dan bibir di tengah bingkai.</p>
+      <div class="camera-capture-actions"><button class="button" id="capture-photo" type="button" hidden>2 · Ambil foto sekarang</button></div>
+    </div>
+    <div><label for="photo">Atau pilih foto JPG/PNG, maksimal 10 MB</label><input id="photo" name="photo" type="file" accept="image/jpeg,image/png" required></div>
+    <div id="photo-preview-wrap" hidden><strong id="photo-ready" class="photo-ready" role="status"></strong><img id="photo-preview" class="photo-preview" alt="Pratinjau foto yang akan dianalisis"><p id="photo-name"></p></div>
+    <button class="button" id="analyze-button" name="action" value="analyze">3 · Analisis foto</button>
+  </form>
+  <div class="scan-loading" id="scan-loading" role="status" aria-live="polite" aria-label="Foto sedang diproses" hidden>
+    <div class="scan-loading-inner">
+      <span class="eyebrow">Analisis foto lokal</span>
+      <h1>Mengenali profil bibirmu...</h1>
+      <p class="lead">Tunggu sebentar. Foto diproses di server demo dan hasilnya bisa kamu periksa sebelum melihat rekomendasi.</p>
+      <div class="scan-progress" aria-hidden="true"><span></span></div>
+      <ol class="scan-loading-steps">
+        <li id="loading-photo" class="is-active"><span class="scan-step-icon">1</span><span>Menyiapkan foto</span><small>Sedang diproses</small></li>
+        <li id="loading-face"><span class="scan-step-icon">2</span><span>Mencari wajah dan kontur bibir</span><small>Menunggu</small></li>
+        <li id="loading-color"><span class="scan-step-icon">3</span><span>Memperkirakan warna dari foto</span><small>Menunggu</small></li>
+      </ol>
+      <p class="fine-print">Jika wajah tidak terdeteksi atau cahayanya kurang baik, kamu tetap bisa mengisi profil secara manual.</p>
+    </div>
   </div>
-  <div class="camera-stage" id="camera-stage" hidden><video id="camera-video" autoplay playsinline muted aria-label="Pratinjau kamera langsung"></video><span class="camera-guide" aria-hidden="true"></span><p class="fine-print">Posisikan wajah dan bibir di tengah bingkai.</p><div class="camera-capture-actions"><button class="button" id="capture-photo" type="button" hidden>2 · Ambil foto sekarang</button></div></div>
-  <div><label for="photo">Atau pilih foto JPG/PNG, maksimal 10 MB</label><input id="photo" name="photo" type="file" accept="image/jpeg,image/png" required></div>
-  <div id="photo-preview-wrap" hidden><strong id="photo-ready" class="photo-ready" role="status"></strong><img id="photo-preview" class="photo-preview" alt="Pratinjau foto yang akan dianalisis"><p id="photo-name"></p></div>
-  <button class="button" id="analyze-button" name="action" value="analyze">3 · Analisis foto</button>
-</form>
-<div class="scan-loading" id="scan-loading" role="status" aria-live="polite" aria-label="Foto sedang diproses" hidden>
-  <div class="scan-loading-inner">
-    <span class="eyebrow">Analisis foto lokal</span>
-    <h1>Mengenali profil bibirmu...</h1>
-    <p class="lead">Tunggu sebentar. Foto diproses di server demo dan hasilnya bisa kamu periksa sebelum melihat rekomendasi.</p>
-    <div class="scan-progress" aria-hidden="true"><span></span></div>
-    <ol class="scan-loading-steps">
-      <li id="loading-photo" class="is-active"><span class="scan-step-icon">1</span><span>Menyiapkan foto</span><small>Sedang diproses</small></li>
-      <li id="loading-face"><span class="scan-step-icon">2</span><span>Mencari wajah dan kontur bibir</span><small>Menunggu</small></li>
-      <li id="loading-color"><span class="scan-step-icon">3</span><span>Memperkirakan warna dari foto</span><small>Menunggu</small></li>
-    </ol>
-    <p class="fine-print">Jika wajah tidak terdeteksi atau cahayanya kurang baik, kamu tetap bisa mengisi profil secara manual.</p>
-  </div>
-</div>
-<script src="{% static 'js/camera.js' %}" defer></script>
-{% endif %}
-<form method="post" class="actions">{% csrf_token %}<button class="button secondary" name="action" value="manual">Isi profil manual</button><button class="button secondary" name="action" value="demo">Gunakan profil demo</button></form>
+  <script type="module" src="{% static 'js/camera.js' %}"></script>
+  {% endif %}
+  <form method="post" class="actions">{% csrf_token %}<button class="button secondary" name="action" value="manual">Isi profil manual</button><button class="button secondary" name="action" value="demo">Gunakan profil demo</button></form>
 </section>
 {% endblock %}

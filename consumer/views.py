@@ -1,15 +1,17 @@
+import os
+
 from django.contrib import messages
 from django.http import Http404
 from django.shortcuts import redirect, render
 
 from accounts.access import consumer_required
 from consumer.forms import FeedbackForm, LipProfileForm, PreferenceForm, ProfileStartForm
-from services.ai_client import AIUnavailable, generate_personal_note
+from services.ai_client import AIUnavailable, analyze_photo, generate_personal_note
 from services.analytics import affinity, community_spectrum
 from services.data import shade_by_id
 from services.dataset_insights import public_swatches_near
 from services.local_vision import LocalVisionError, analyze_photo_local, model_available
-from services.recommendation import recommend
+from services.recommendation import personalize, recommend
 
 
 DEMO_PROFILE = {
@@ -21,6 +23,14 @@ MANUAL_PROFILE = {
     "skin_tone": "medium", "undertone": "uncertain", "lip_pigmentation": "uncertain",
     "visible_lip_condition": "", "confidence": "manual",
 }
+
+
+def _ai_vision_available() -> bool:
+    return bool(os.environ.get("AI_API_KEY") and os.environ.get("AI_VISION_MODEL"))
+
+
+def _ai_text_available() -> bool:
+    return bool(os.environ.get("AI_API_KEY") and os.environ.get("AI_TEXT_MODEL"))
 
 
 def home(request):
@@ -77,26 +87,51 @@ def scan(request):
         else:
             photo_bytes = photo.read()
             matches_type = (
-                photo.content_type == "image/jpeg" and photo_bytes.startswith(b"\xff\xd8\xff")
-            ) or (
-                photo.content_type == "image/png" and photo_bytes.startswith(b"\x89PNG\r\n\x1a\n")
-            )
+                                   photo.content_type == "image/jpeg" and photo_bytes.startswith(b"\xff\xd8\xff")
+                           ) or (
+                                   photo.content_type == "image/png" and photo_bytes.startswith(b"\x89PNG\r\n\x1a\n")
+                           )
             if not matches_type:
                 messages.error(request, "Isi file tidak sesuai format JPG/PNG.")
                 return render(request, "consumer/scan.html", {
-                    "photo_consent": True, "local_vision_available": model_available(),
+                    "photo_consent": True,
+                    "local_vision_available": model_available(),
+                    "ai_available": _ai_vision_available(),
                 })
             request.session["photo_scanned"] = True
+            # Three-tier fallback, in order of how grounded/explainable the result is:
+            # 1) local deterministic CV + colorimetry (services.local_vision) --
+            #    no API call, every number traces back to a measured pixel.
+            # 2) AI vision API (services.ai_client) -- only if a face/lips could
+            #    not be located/measured reliably by tier 1.
+            # 3) manual profile form -- only if both of the above are unavailable.
             try:
                 request.session["lip_profile"] = analyze_photo_local(photo_bytes, photo.content_type)
-                messages.info(request, "Analisis lokal selesai. Periksa dan koreksi hasil warna jika perlu.")
+                messages.info(
+                    request,
+                    "Kontur wajah/bibir terdeteksi secara lokal dan warna diukur langsung dari "
+                    "foto (bukan AI). Periksa dan koreksi hasilnya jika perlu.",
+                )
             except LocalVisionError as error:
-                request.session["lip_profile"] = MANUAL_PROFILE.copy()
-                messages.warning(request, f"{error} Isi profil secara manual; foto tetap bisa dipakai untuk coba shade.")
+                try:
+                    request.session["lip_profile"] = analyze_photo(photo_bytes, photo.content_type)
+                    messages.info(
+                        request,
+                        f"{error} Menggunakan perkiraan AI vision sebagai cadangan; "
+                        "periksa dan koreksi hasilnya jika perlu.",
+                    )
+                except AIUnavailable:
+                    request.session["lip_profile"] = MANUAL_PROFILE.copy()
+                    messages.warning(
+                        request,
+                        f"{error} Analisis AI juga tidak tersedia. Silakan isi profil secara manual; "
+                        "foto tetap bisa dipakai untuk mencoba shade.",
+                    )
             return redirect("consumer:profile_result")
     return render(request, "consumer/scan.html", {
         "photo_consent": request.session.get("photo_consent", False),
         "local_vision_available": model_available(),
+        "ai_available": _ai_vision_available(),
     })
 
 
@@ -107,13 +142,24 @@ def profile_result(request):
     if request.method == "POST" and form.is_valid():
         request.session["lip_profile"] = {**current, **form.cleaned_data, "confidence": "user_reviewed"}
         return redirect("consumer:recommendations")
-    source_labels = {"demo": "Profil contoh", "manual": "Input manual", "local_low": "Kontur lokal · isi warna manual",
-                     "local_estimate": "Perkiraan foto lokal · periksa kembali", "low": "Perkiraan AI · periksa kembali",
-                     "medium": "Perkiraan AI · periksa kembali", "high": "Perkiraan AI · periksa kembali",
-                     "user_reviewed": "Sudah diperiksa pengguna"}
+    source_labels = {
+        "demo": "Profil contoh",
+        "manual": "Input manual",
+        "local_low": "Kontur lokal · isi warna manual",
+        "local_estimate": "Diukur lokal dari foto (deteksi wajah + analisis warna, bukan AI)",
+        "low": "Perkiraan AI vision · periksa kembali",
+        "medium": "Perkiraan AI vision · periksa kembali",
+        "high": "Perkiraan AI vision · periksa kembali",
+        "user_reviewed": "Sudah diperiksa pengguna",
+    }
     return render(request, "consumer/profile_result.html", {
-        "form": form, "source_label": source_labels.get(current.get("confidence"), "Perkiraan awal"),
+        "form": form,
+        "source_label": source_labels.get(current.get("confidence"), "Perkiraan awal"),
         "analysis_note": current.get("analysis_note", ""),
+        # Raw Lab/measurement numbers when tier 1 (local_vision) produced
+        # them -- absent for demo/manual/AI-vision profiles, template should
+        # only render this block when it's present.
+        "measurement": current.get("measurement"),
     })
 
 
@@ -122,7 +168,18 @@ def recommendations(request):
     profile = request.session.get("lip_profile")
     if not profile:
         return redirect("consumer:profile_result")
-    picks = recommend(profile, request.session.get("preference", {}))
+    preference = request.session.get("preference", {})
+    picks = recommend(profile, preference)
+    # Optional, bounded AI personalization layer -- see
+    # services.recommendation.personalize()'s docstring: it can only choose
+    # among the candidates recommend() already scored deterministically,
+    # never invent a shade. Skipped entirely (falls back to the
+    # deterministic picks untouched) when AI_TEXT_MODEL isn't configured,
+    # or silently on any per-role failure. This adds up to 3 sequential AI
+    # calls (~12s timeout each) -- if a live demo needs to stay snappy,
+    # comment this block out and recommend()'s output is already complete.
+    if _ai_text_available():
+        picks = personalize(picks, profile, preference)
     for pick in picks:
         pick["affinity"] = affinity(pick["shade_id"], profile)
     note = picks[1]["reason"]
@@ -144,8 +201,14 @@ def recommendations(request):
         "note_source": note_source, "spectrum": community_spectrum(profile),
         "public_examples": public_swatches_near(picks),
         "photo_scanned": request.session.get("photo_scanned", False),
-        "lip_points": profile.get("lip_points") if request.session.get("photo_scanned") else None,
+        # Shape differs by which fallback tier produced the profile:
+        # local_vision -> "lip_contours" (outer/inner point arrays),
+        # AI vision (services.ai_client.analyze_photo) -> "lip_points" (a
+        # 4-point left/right/top/bottom box). Pass both through and let the
+        # template render whichever is present -- do not assume only one
+        # shape will ever show up here.
         "lip_contours": profile.get("lip_contours") if request.session.get("photo_scanned") else None,
+        "lip_points": profile.get("lip_points") if request.session.get("photo_scanned") else None,
     })
 
 

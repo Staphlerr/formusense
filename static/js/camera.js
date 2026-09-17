@@ -1,3 +1,5 @@
+import { startLiveOverlay, stopLiveOverlay } from './live_scan.js';
+
 (() => {
   const form = document.querySelector('#scan-form');
   if (!form) return;
@@ -14,6 +16,14 @@
   const name = document.querySelector('#photo-name');
   const ready = document.querySelector('#photo-ready');
   const analyzeButton = document.querySelector('#analyze-button');
+  // Live overlay elements (added alongside #camera-video in scan.html).
+  // Optional by design: if scan.html hasn't been updated yet, or the
+  // browser/venue can't load the live-detection model, everything below
+  // this comment quietly no-ops and the camera flow behaves exactly as
+  // it always has.
+  const liveOverlay = document.querySelector('#live-overlay');
+  const liveStatus = document.querySelector('#live-status');
+  const liveHint = document.querySelector('#live-hint');
   let loading = document.querySelector('#scan-loading');
   if (!loading) {
     // A running Django process may still serve an older cached scan template.
@@ -55,6 +65,9 @@
     captureButton.hidden = true;
     stopButton.hidden = true;
     startButton.hidden = false;
+    stopLiveOverlay(liveOverlay);
+    if (liveStatus) liveStatus.textContent = '';
+    if (liveHint) liveHint.textContent = '';
   };
 
   const showPreview = (fromCamera) => {
@@ -120,6 +133,19 @@
       stopButton.hidden = false;
       startButton.hidden = true;
       stage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      // Live detection is best-effort on top of the camera that just opened
+      // successfully above -- if the model/CDN fails, we just hide its own
+      // elements and leave the already-working capture flow untouched.
+      if (liveOverlay && liveStatus && liveHint) {
+        startLiveOverlay(
+          { video, overlay: liveOverlay, statusText: liveStatus, hintText: liveHint },
+          () => {
+            liveOverlay.hidden = true;
+            liveStatus.hidden = true;
+            liveHint.hidden = true;
+          },
+        );
+      }
     } catch (cause) {
       stopCamera();
       error.textContent = cause.name === 'NotAllowedError'

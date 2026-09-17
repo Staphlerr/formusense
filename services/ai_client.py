@@ -128,6 +128,43 @@ def _text_completion(instructions, facts, max_tokens=180):
         raise AIUnavailable("Catatan AI tidak tersedia") from error
 
 
+def _json_completion(instructions, facts, max_tokens=200):
+    """Like _text_completion, but parses the model's reply as JSON.
+
+    Used by refine_shade_pick, which needs a structured choice back (a
+    shade_id plus a short reason), not free text.
+    """
+    api_key = os.environ.get("AI_API_KEY", "")
+    model = os.environ.get("AI_TEXT_MODEL", "")
+    if not api_key or not model:
+        raise AIUnavailable("Model text atau kunci API belum dikonfigurasi")
+    base_url = os.environ.get("AI_BASE_URL", "https://ai.sumopod.com/v1").rstrip("/")
+    if not base_url.startswith("https://"):
+        raise AIUnavailable("AI_BASE_URL harus memakai HTTPS")
+    payload = {
+        "model": model, "temperature": 0, "max_tokens": max_tokens,
+        "messages": [
+            {"role": "system", "content": instructions},
+            {"role": "user", "content": json.dumps(facts, ensure_ascii=False)},
+        ],
+    }
+    request = Request(
+        f"{base_url}/chat/completions",
+        data=json.dumps(payload).encode("utf-8"),
+        headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
+        method="POST",
+    )
+    try:
+        with urlopen(request, timeout=12) as response:
+            data = json.load(response)
+        content = data["choices"][0]["message"]["content"]
+        if not isinstance(content, str):
+            raise ValueError("AI response is not text")
+        return json.loads(content.strip().removeprefix("```json").removeprefix("```").removesuffix("```").strip())
+    except (OSError, ValueError, KeyError, IndexError, TypeError) as error:
+        raise AIUnavailable("Permintaan AI gagal") from error
+
+
 def generate_personal_note(profile, shade):
     """Optional wording; shade ranking is entirely in recommendation.py."""
     facts = {
@@ -145,6 +182,67 @@ def generate_personal_note(profile, shade):
         "evidence, ratings, product performance, or health claims.",
         facts, max_tokens=120,
     )[:500]
+
+
+def refine_shade_pick(role_label, candidates, profile, preference):
+    """Bounded personalization for ONE recommendation role.
+
+    `candidates` is recommendation.top_candidates()'s output for that role:
+    a short list (already ranked, already scored by deterministic
+    color-science math -- see services/recommendation.py). This function's
+    ONLY job is to pick which of those already-valid candidates best fits
+    qualitative details a numeric rule can't easily capture (the wearer's
+    free-text visible_lip_condition, stated preference nuances). It cannot
+    introduce a new shade_id, cannot invent or override a score, and if its
+    response doesn't name one of the given candidates, the caller
+    (recommendation.personalize) discards it and keeps the deterministic
+    pick. This is the "Claude does optimization/personalization, not
+    prediction from scratch" boundary the rest of this app also follows.
+
+    Returns (shade_id, reason_text). Raises AIUnavailable if the API is
+    unreachable/unconfigured or its answer fails validation.
+    """
+    facts = {
+        "role": role_label,
+        "skin_tone": profile.get("skin_tone"),
+        "undertone": profile.get("undertone"),
+        "lip_pigmentation": profile.get("lip_pigmentation"),
+        "visible_lip_condition": profile.get("visible_lip_condition", ""),
+        "stated_preference": preference,
+        "candidates": [
+            {
+                "shade_id": c["shade_id"], "shade_name": c["shade_name"],
+                "color_family": c["color_family"], "finish": c["finish"],
+                "intensity": c["intensity"],
+                "color_science_score": c.get("score"),
+                "measured_contrast_L_star": (c.get("metrics") or {}).get("contrast"),
+                "measured_hue_difference_degrees": (c.get("metrics") or {}).get("hue_diff"),
+            }
+            for c in candidates
+        ],
+    }
+    result = _json_completion(
+        "You personalize a lipstick shade pick for one wearer. You are given a "
+        "SHORT LIST of candidate shades that have ALREADY been scored by a "
+        "deterministic color-science calculation (facial-contrast and "
+        "hue-harmony metrics) -- that scoring is final; do not re-derive or "
+        "second-guess it with your own color theory. Your only job: pick the "
+        "ONE shade_id from the given candidates whose qualitative details "
+        "(visible lip condition, stated preference) best match this wearer, "
+        "or return the candidate with the highest color_science_score if "
+        "nothing else distinguishes them. You must choose a shade_id that is "
+        "EXACTLY one of the given candidates -- never invent one, never "
+        "return a shade not in the list. Return JSON only: "
+        '{"shade_id": "...", "reason": "one short Indonesian sentence, no '
+        'invented facts, no health or performance claims"}.',
+        facts, max_tokens=150,
+    )
+    valid_ids = {c["shade_id"] for c in candidates}
+    shade_id = result.get("shade_id")
+    reason = result.get("reason")
+    if shade_id not in valid_ids or not isinstance(reason, str) or not reason.strip():
+        raise AIUnavailable("Hasil personalisasi AI tidak valid; gunakan urutan default")
+    return shade_id, reason.strip()[:300]
 
 
 def generate_opportunity_summary(opportunity):
