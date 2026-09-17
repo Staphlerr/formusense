@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="hero two-column">
+  <div>
+    <span class="eyebrow">AI-assisted · closed-loop R&D</span>
+    <h1>Temukan shade lipstik yang terasa pas buatmu.</h1>
+    <p class="lead">Kenali profil warna, pilih dari katalog shade demo, lalu berikan masukan yang membantu tim formulasi.</p>
+    <div class="actions">
+      {% if can_consumer %}
+        <a class="button" href="{% url 'consumer:profile_start' %}">Mulai</a>
+      {% elif not can_research %}
+        <a class="button" href="{% url 'accounts:register' %}">Buat akun konsumen</a>
+      {% endif %}
+      <a class="button secondary" href="{% if can_research %}{% url 'research:overview' %}{% else %}{% url 'accounts:rd_login' %}{% endif %}">{% if can_research %}Buka dashboard R&D{% else %}Masuk sisi R&D{% endif %}</a>
+    </div>
+  </div>
+  <div class="hero-art" aria-hidden="true"><span class="swatch a"></span><span class="swatch b"></span><span class="swatch c"></span><span class="swatch d"></span></div>
+</section>
+<section class="flow-grid" aria-label="Alur aplikasi">
+  <div class="card"><small>01</small><h3>Profil</h3><p>Foto berizin atau isi manual.</p></div>
+  <div class="card"><small>02</small><h3>Rekomendasi</h3><p>Tiga pilihan dari katalog tersedia.</p></div>
+  <div class="card"><small>03</small><h3>Feedback</h3><p>Minat warna dan pengalaman pakai dicatat terpisah.</p></div>
+  <div class="card"><small>04</small><h3>R&D</h3><p>Sinyal diringkas sebagai peluang formulasi.</p></div>
+</section>
+<section class="manifesto" style="margin-bottom:40px">
+  <span class="eyebrow">The Equity Commitment</span>
+  <blockquote>“Kecantikan tidak boleh terasa rumit, namun formulasinya harus berakar pada sains presisi.”</blockquote>
+  <p>Setiap tanggapan yang kamu kirim langsung tersambung ke ringkasan R&D FormuSense — demi katalog shade yang lebih inklusif untuk berbagai undertone.</p>
+</section>
+{% endblock %}

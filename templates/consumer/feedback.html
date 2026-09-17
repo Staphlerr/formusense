@@ -1,35 +1,184 @@
 {% extends 'base.html' %}
 {% block title %}Feedback · FormuSense{% endblock %}
 {% block content %}
-<section class="page narrow"><span class="eyebrow">{{ shade.shade_id }} · {{ shade.portfolio_status }}</span><h1>Bagaimana menurutmu tentang {{ shade.shade_name }}?</h1>
-<div class="mini-swatch" style="background: {{ shade.hex }}"></div>
-<p class="lead">Pisahkan kesan dari gambar dan pengalaman setelah mencoba. Masukanmu akan dihitung sebagai sinyal lokal pada dashboard R&D.</p>
-<form method="post" class="card form-card" id="feedback-form">{% csrf_token %}
-  {{ form.non_field_errors }}
-  <div><label>Jenis penilaian</label>{{ form.feedback_type }}{{ form.feedback_type.errors }}</div>
-  <div><label for="{{ form.color_response.id_for_label }}">Penilaian warna</label>{{ form.color_response }}{{ form.color_response.errors }}</div>
-  <div class="form-divider"><strong>Masih mencari shade lain?</strong><p>Opsional. Pilihan ini muncul sebagai permintaan baru di dashboard R&D.</p></div>
-  <div><label for="{{ form.desired_color_family.id_for_label }}">{{ form.desired_color_family.label }}</label>{{ form.desired_color_family }}{{ form.desired_color_family.errors }}</div>
-  <div><label for="{{ form.desired_finish.id_for_label }}">{{ form.desired_finish.label }}</label>{{ form.desired_finish }}{{ form.desired_finish.errors }}</div>
-  <div class="form-divider wear-only"><strong>Setelah mencoba produk</strong><p>Isi hanya jika produk benar-benar sudah dipakai.</p></div>
-  <div class="wear-only"><label for="{{ form.texture_response.id_for_label }}">Tekstur</label>{{ form.texture_response }}{{ form.texture_response.errors }}</div>
-  <div class="wear-only"><label for="{{ form.finish_response.id_for_label }}">Hasil akhir</label>{{ form.finish_response }}{{ form.finish_response.errors }}</div>
-  <div class="wear-only"><label for="{{ form.rating.id_for_label }}">Rating (1–5)</label>{{ form.rating }}{{ form.rating.errors }}</div>
-  <div class="wear-only checkbox-line">{{ form.tried_product }}<label for="{{ form.tried_product.id_for_label }}">{{ form.tried_product.label }}</label>{{ form.tried_product.errors }}</div>
-  <div><label for="{{ form.comment.id_for_label }}">Komentar (opsional)</label>{{ form.comment }}{{ form.comment.errors }}</div>
-  <div class="checkbox-line">{{ form.rd_consent }}<label for="{{ form.rd_consent.id_for_label }}">{{ form.rd_consent.label }} Komentar dapat terlihat di dashboard R&D lokal tanpa nama, bersama kategori warna kulit dan undertone. Foto tidak disertakan.</label>{{ form.rd_consent.errors }}</div>
-  <button class="button" type="submit">Kirim feedback</button>
-</form>
-<script>
-  (() => {
-    const form = document.querySelector('#feedback-form');
-    const update = () => {
-      const wear = form.querySelector('input[name="feedback_type"]:checked')?.value === 'wear_feedback';
-      form.querySelectorAll('.wear-only').forEach(el => { el.hidden = !wear; });
-    };
-    form.querySelectorAll('input[name="feedback_type"]').forEach(el => el.addEventListener('change', update));
-    update();
-  })();
-</script>
+<section class="page narrow">
+  <span class="eyebrow">{{ shade.shade_id }} · {{ shade.portfolio_status }}</span>
+  <h1>Bagaimana menurutmu tentang {{ shade.shade_name }}?</h1>
+  <div class="mini-swatch" style="background: {{ shade.hex }}"></div>
+  <p class="lead">Beri kesanmu tentang warnanya, lalu isi bagian pemakaian kalau kamu sudah benar-benar mencoba produknya — semuanya di satu tempat, semua opsional kecuali kesan warna.</p>
+
+  <form method="post" class="card form-card" id="feedback-form">{% csrf_token %}
+    {{ form.non_field_errors }}
+
+    {# feedback_type is decided automatically from what you fill in below — no need to pick it yourself. #}
+    <div class="visually-hidden" aria-hidden="true">{{ form.feedback_type }}</div>
+
+    <div class="feedback-step">
+      <div class="feedback-step-head">
+        <label>Kesan warna terhadap {{ shade.shade_name }}</label>
+      </div>
+      <p class="fine-print">Bagaimana warnanya menurutmu sejauh ini — dari layar atau saat sudah dipakai.</p>
+      <div class="visually-hidden">{{ form.color_response }}</div>
+      {{ form.color_response.errors }}
+    </div>
+
+    <div class="feedback-step">
+      <div class="feedback-step-head">
+        <label>Masih mencari shade lain? <span class="optional-tag">Opsional</span></label>
+      </div>
+      <p class="fine-print">Muncul sebagai permintaan warna baru di dashboard R&D.</p>
+      <div class="grid" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:12px">
+        <div>
+          <label for="{{ form.desired_color_family.id_for_label }}" style="font-size:.85rem">{{ form.desired_color_family.label }}</label>
+          {{ form.desired_color_family }}{{ form.desired_color_family.errors }}
+        </div>
+        <div>
+          <label for="{{ form.desired_finish.id_for_label }}" style="font-size:.85rem">{{ form.desired_finish.label }}</label>
+          {{ form.desired_finish }}{{ form.desired_finish.errors }}
+        </div>
+      </div>
+    </div>
+
+    <div class="feedback-step">
+      <div class="feedback-step-head">
+        <label>Setelah mencoba produk <span class="optional-tag">Opsional</span></label>
+      </div>
+      <p class="fine-print">Isi bagian ini kalau produknya sudah benar-benar kamu pakai. Kalau belum, lewati saja — tidak wajib.</p>
+
+      <div style="margin-top:16px">
+        <label style="font-size:.9rem;font-weight:700;color:var(--ink)">Tekstur</label>
+        <div class="visually-hidden">{{ form.texture_response }}</div>
+        {{ form.texture_response.errors }}
+      </div>
+
+      <div style="margin-top:18px">
+        <label style="font-size:.9rem;font-weight:700;color:var(--ink)">Hasil akhir</label>
+        <div class="visually-hidden">{{ form.finish_response }}</div>
+        {{ form.finish_response.errors }}
+      </div>
+
+      <div style="margin-top:18px">
+        <label style="font-size:.9rem;font-weight:700;color:var(--ink)">Rating keseluruhan</label>
+        <div class="visually-hidden">{{ form.rating }}</div>
+        {{ form.rating.errors }}
+      </div>
+
+      <div class="checkbox-line" style="margin-top:20px">
+        {{ form.tried_product }}<label for="{{ form.tried_product.id_for_label }}">{{ form.tried_product.label }}</label>{{ form.tried_product.errors }}
+      </div>
+    </div>
+
+    <div class="feedback-step">
+      <label for="{{ form.comment.id_for_label }}">Komentar <span class="optional-tag">Opsional</span></label>
+      {{ form.comment }}{{ form.comment.errors }}
+    </div>
+
+    <div class="checkbox-line">
+      {{ form.rd_consent }}
+      <label for="{{ form.rd_consent.id_for_label }}">{{ form.rd_consent.label }} Komentar dapat terlihat di dashboard R&D lokal tanpa nama, bersama kategori warna kulit dan undertone. Foto tidak disertakan.</label>
+      {{ form.rd_consent.errors }}
+    </div>
+
+    <div class="impact-banner">
+      <div style="display:flex;align-items:flex-start;gap:12px">
+        <span class="hub">◎</span>
+        <div>
+          <span class="badge badge-ok"><span class="dot"></span>Closed-loop signal ready</span>
+          <p style="margin:8px 0 2px;font-weight:700;color:var(--ink)">Feedback ini masuk sebagai +1 sinyal baru ke dashboard R&D.</p>
+          <p class="fine-print" style="margin:0">Warna dan tekstur yang kamu pilih memengaruhi ringkasan permintaan pada keluarga warna {{ shade.color_family|default:"ini" }}.</p>
+        </div>
+      </div>
+    </div>
+
+    <button class="button" type="submit" id="feedback-submit">Kirim feedback</button>
+  </form>
 </section>
+<script>
+(() => {
+  const form = document.querySelector('#feedback-form');
+  if (!form) return;
+
+  /* ---- turn a hidden <select> into a row of pill buttons ---- */
+  function pillify(name, { skipEmpty = true } = {}) {
+    const select = form.querySelector(`select[name="${name}"]`);
+    if (!select) return;
+    const group = document.createElement('div');
+    group.className = 'pill-select-group';
+    group.setAttribute('role', 'group');
+    [...select.options].forEach((opt) => {
+      if (skipEmpty && !opt.value) return;
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.textContent = opt.textContent;
+      btn.setAttribute('aria-pressed', opt.selected ? 'true' : 'false');
+      btn.addEventListener('click', () => {
+        select.value = opt.value;
+        select.dispatchEvent(new Event('change'));
+        [...group.children].forEach((b) => b.setAttribute('aria-pressed', 'false'));
+        btn.setAttribute('aria-pressed', 'true');
+      });
+      group.appendChild(btn);
+    });
+    (select.closest('.visually-hidden') || select).insertAdjacentElement('afterend', group);
+  }
+
+  /* ---- turn the rating <select> into a star row ---- */
+  function starify(name) {
+    const select = form.querySelector(`select[name="${name}"]`);
+    if (!select) return;
+    const options = [...select.options].filter((o) => o.value);
+    const group = document.createElement('div');
+    group.className = 'star-select-group';
+    const label = document.createElement('span');
+    label.className = 'star-label';
+    label.textContent = select.options[select.selectedIndex]?.value ? `${select.value} / ${options.length}` : 'Belum memberi rating';
+    const paint = (n) => {
+      [...group.querySelectorAll('button')].forEach((b, i) => b.classList.toggle('is-lit', i < n));
+    };
+    options.forEach((opt, i) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.setAttribute('aria-label', opt.textContent);
+      btn.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.6l2.9 6 6.6.9-4.8 4.6 1.2 6.5-5.9-3.1-5.9 3.1 1.2-6.5L2.5 9.5l6.6-.9z"/></svg>';
+      btn.addEventListener('click', () => {
+        select.value = opt.value;
+        select.dispatchEvent(new Event('change'));
+        paint(i + 1);
+        label.textContent = `${opt.value} / ${options.length}`;
+      });
+      group.appendChild(btn);
+    });
+    group.appendChild(label);
+    (select.closest('.visually-hidden') || select).insertAdjacentElement('afterend', group);
+    paint(options.findIndex((o) => o.value === select.value) + 1);
+  }
+
+  pillify('color_response');
+  pillify('desired_color_family');
+  pillify('desired_finish');
+  pillify('texture_response');
+  pillify('finish_response');
+  starify('rating');
+
+  /* ---- feedback_type is decided for you, not asked up front ---- */
+  const typeRadios = [...form.querySelectorAll('input[name="feedback_type"]')];
+  const setType = (value) => {
+    const target = typeRadios.find((r) => r.value === value);
+    if (target) target.checked = true;
+  };
+  // Default so the hidden required field always has a value.
+  setType('color_interest');
+
+  const wearFieldNames = ['texture_response', 'finish_response', 'rating'];
+  const computeAndApplyType = () => {
+    const triedChecked = form.querySelector('[name="tried_product"]')?.checked;
+    const wearFilled = wearFieldNames.some((n) => {
+      const el = form.querySelector(`select[name="${n}"]`);
+      return el && el.value;
+    });
+    setType((triedChecked || wearFilled) ? 'wear_feedback' : 'color_interest');
+  };
+  form.querySelector('#feedback-submit').addEventListener('click', computeAndApplyType);
+})();
+</script>
 {% endblock %}

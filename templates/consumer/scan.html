@@ -24,7 +24,12 @@
       <div class="camera-capture-actions"><button class="button" id="capture-photo" type="button" hidden>2 · Ambil foto sekarang</button></div>
     </div>
     <div><label for="photo">Atau pilih foto JPG/PNG, maksimal 10 MB</label><input id="photo" name="photo" type="file" accept="image/jpeg,image/png" required></div>
-    <div id="photo-preview-wrap" hidden><strong id="photo-ready" class="photo-ready" role="status"></strong><img id="photo-preview" class="photo-preview" alt="Pratinjau foto yang akan dianalisis"><p id="photo-name"></p></div>
+    <div id="photo-preview-wrap" hidden>
+      <strong id="photo-ready" class="photo-ready" role="status"></strong>
+      <img id="photo-preview" class="photo-preview" alt="Pratinjau foto yang akan dianalisis">
+      <p id="photo-name"></p>
+      <button class="button secondary" id="retake-photo" type="button">↺ Ambil ulang gambar</button>
+    </div>
     <button class="button" id="analyze-button" name="action" value="analyze">3 · Analisis foto</button>
   </form>
   <div class="scan-loading" id="scan-loading" role="status" aria-live="polite" aria-label="Foto sedang diproses" hidden>
@@ -42,6 +47,18 @@
     </div>
   </div>
   <script type="module" src="{% static 'js/camera.js' %}"></script>
+  <script>
+    (() => {
+      const retakeBtn = document.querySelector('#retake-photo');
+      const startBtn = document.querySelector('#start-camera');
+      if (retakeBtn && startBtn) {
+        retakeBtn.addEventListener('click', () => {
+          startBtn.click();
+          startBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+      }
+    })();
+  </script>
   {% endif %}
   <form method="post" class="actions">{% csrf_token %}<button class="button secondary" name="action" value="manual">Isi profil manual</button><button class="button secondary" name="action" value="demo">Gunakan profil demo</button></form>
 </section>

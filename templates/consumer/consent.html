@@ -1,9 +1,81 @@
 {% extends 'base.html' %}
 {% block title %}Persetujuan foto · FormuSense{% endblock %}
 {% block content %}
-<section class="page narrow"><span class="eyebrow">Langkah 2 dari 4</span><h1>Foto kamu, pilihan kamu</h1>
-<p class="lead">Jika setuju, foto dikirim ke server demo ini untuk analisis wajah dan bibir secara lokal dengan MediaPipe dan OpenCV. Foto tidak dikirim ke penyedia AI eksternal dan tidak disimpan sebagai foto di server; profil serta koordinat bibir disimpan sementara dalam sesi. Salinan kecil foto tersimpan di tab browsermu agar kamu bisa mencoba shade, dan dapat dihapus di halaman rekomendasi. Hasil analisis bisa kamu koreksi.</p>
-<div class="card"><p>Analisis ini bukan pemeriksaan kesehatan. Kamu bisa lanjut tanpa foto dan mengisi profil manual.</p>
-<form method="post" class="actions">{% csrf_token %}<button class="button" name="choice" value="photo">Saya setuju menggunakan foto</button><button class="button secondary" name="choice" value="manual">Lanjut tanpa foto</button></form></div>
+<section class="page">
+  <div class="consent-layout">
+    <div>
+      <span class="eyebrow">Langkah 2 dari 4</span>
+      <h1>Foto kamu, pilihan kamu</h1>
+      <p class="lead">Jika setuju, foto kamu dianalisis untuk mengenali profil bibir. Ini yang sebenarnya terjadi di baliknya:</p>
+
+      <div class="consent-info-list">
+        <div class="consent-info-item">
+          <span class="consent-info-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10" width="15" height="10.5" rx="2.6"/><path d="M8.2 10V7.4a3.8 3.8 0 017.6 0V10"/></svg>
+          </span>
+          <div>
+            <h3>Diproses lokal, bukan dikirim ke AI luar</h3>
+            <p>Analisis wajah dan bibir dilakukan secara lokal di server demo ini dengan MediaPipe dan OpenCV — foto tidak dikirim ke penyedia AI eksternal.</p>
+          </div>
+        </div>
+
+        <div class="consent-info-item">
+          <span class="consent-info-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7l8-4 8 4v6c0 5-3.5 8.5-8 9-4.5-.5-8-4-8-9V7z"/><path d="M9 12l2 2 4-4"/></svg>
+          </span>
+          <div>
+            <h3>Fotonya sendiri tidak disimpan di server</h3>
+            <p>Hanya profil dan koordinat bibir yang tersimpan, itu pun sementara — hanya selama sesi kamu berlangsung.</p>
+          </div>
+        </div>
+
+        <div class="consent-info-item">
+          <span class="consent-info-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="17" height="15" rx="2.4"/><path d="M4 17l5-5 4 4 3-3 4 4"/><circle cx="9" cy="9.5" r="1.6"/></svg>
+          </span>
+          <div>
+            <h3>Salinan kecil ada di tab browsermu</h3>
+            <p>Ini yang dipakai untuk mencoba shade di fotomu, dan bisa kamu hapus kapan saja dari halaman rekomendasi.</p>
+          </div>
+        </div>
+
+        <div class="consent-info-item">
+          <span class="consent-info-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L20 8l-4-4L4 16z"/></svg>
+          </span>
+          <div>
+            <h3>Hasil analisis bisa kamu koreksi</h3>
+            <p>Kalau ada nilai yang terasa kurang pas, kamu bisa mengubahnya sebelum lanjut ke rekomendasi. Ini bukan pemeriksaan kesehatan.</p>
+          </div>
+        </div>
+      </div>
+
+      <form method="post" class="actions">
+        {% csrf_token %}
+        <button class="button secondary" name="choice" value="photo">Saya setuju menggunakan foto</button>
+        <button class="button secondary" name="choice" value="manual">Lanjut tanpa foto</button>
+      </form>
+
+    </div>
+
+    <div>
+      <div class="consent-hero-photo" aria-hidden="true">
+        <div class="consent-swatch-overlay">
+          <span style="background:#D9C6AD"></span>
+          <span style="background:#C9927A"></span>
+          <span style="background:#9A3A2E"></span>
+        </div>
+        <span class="consent-sparkle" style="top:14%;left:10%;width:26px;height:26px">
+          <svg viewBox="0 0 40 40" fill="currentColor" width="26" height="26"><path d="M20 2c1.2 7 3 12 6 15 3 3 8 4.8 15 6-7 1.2-12 3-15 6-3 3-4.8 8-6 15-1.2-7-3-12-6-15-3-3-8-4.8-15-6 7-1.2 12-3 15-6 3-3 4.8-8 6-15z"/></svg>
+        </span>
+        <span class="consent-sparkle" style="top:22%;right:14%;width:18px;height:18px">
+          <svg viewBox="0 0 40 40" fill="currentColor" width="18" height="18"><path d="M20 2c1.2 7 3 12 6 15 3 3 8 4.8 15 6-7 1.2-12 3-15 6-3 3-4.8 8-6 15-1.2-7-3-12-6-15-3-3-8-4.8-15-6 7-1.2 12-3 15-6 3-3 4.8-8 6-15z"/></svg>
+        </span>
+        <span class="consent-sparkle" style="bottom:12%;right:20%;width:20px;height:20px">
+          <svg viewBox="0 0 40 40" fill="currentColor" width="20" height="20"><path d="M20 2c1.2 7 3 12 6 15 3 3 8 4.8 15 6-7 1.2-12 3-15 6-3 3-4.8 8-6 15-1.2-7-3-12-6-15-3-3-8-4.8-15-6 7-1.2 12-3 15-6 3-3 4.8-8 6-15z"/></svg>
+        </span>
+      </div>
+    </div>
+  </div>
 </section>
 {% endblock %}

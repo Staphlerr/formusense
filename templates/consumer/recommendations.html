@@ -2,45 +2,331 @@
 {% load static %}
 {% block title %}Rekomendasi shade · FormuSense{% endblock %}
 {% block content %}
-<section class="page"><span class="eyebrow">Dari katalog demo yang tersedia</span><h1>Tiga cara memakai shade favoritmu</h1>
-<p class="lead">Pilihan diurutkan dari profil dan preferensimu. Kecocokan warna tetap perlu dicoba langsung.</p>
-<section class="card tryon" id="tryon" data-photo-scanned="{{ photo_scanned|yesno:'true,false' }}">
-  {{ lip_points|json_script:"lip-points-data" }}
-  {{ lip_contours|json_script:"lip-contours-data" }}
-  <span class="eyebrow">Pratinjau virtual · simulasi warna</span><h2>Coba shade lipstik di fotomu</h2>
-  <p>Foto dari scan akan muncul di sini dalam tab browser ini. Kontur bibir dicari otomatis; jika belum pas, kamu bisa menandai sisi kiri, atas, kanan, dan bawah bibir. Setelah itu kamu bisa mengganti warna. Tampilan ini adalah simulasi visual; warna akhir produk perlu dicoba langsung.</p>
-  <div class="tryon-layout">
-    <div>
-      <label for="tryon-upload">Kalau foto belum muncul, pilih selfie untuk pratinjau lokal</label>
-      <input id="tryon-upload" type="file" accept="image/jpeg,image/png">
-      <p class="fine-print">Foto yang dipilih di sini hanya diproses di browser untuk pratinjau dan tidak dikirim ke server.</p>
-      <div class="tryon-canvas-wrap"><canvas id="tryon-canvas" aria-label="Pratinjau foto dengan shade lipstik" hidden></canvas><p id="tryon-empty">Belum ada foto. Ambil foto pada langkah scan atau pilih selfie di atas.</p></div>
-      <p id="tryon-status" class="fine-print" role="status">Jika titik bibir belum terdeteksi, klik empat titik pada foto untuk menerapkan warna.</p>
-      <div class="actions"><button class="button secondary" id="tryon-align" type="button" disabled>Atur posisi bibir</button><button class="button secondary" id="tryon-download" type="button" disabled>Simpan pratinjau</button><button class="button secondary" id="tryon-clear" type="button" disabled>Hapus foto</button></div>
-    </div>
-    <div>
-      <h3>Shade rekomendasi dari katalog demo</h3>
-      <div class="tryon-shades">{% for shade in picks %}<button type="button" class="tryon-shade {% if shade.role == 'energized' %}is-selected{% endif %}" data-tryon-shade data-hex="{{ shade.hex }}" data-name="{{ shade.shade_name }}"><span class="tryon-swatch" style="background:{{ shade.hex }}"></span><span>{{ shade.shade_name }}<small> · {{ shade.role_label }}</small></span></button>{% endfor %}</div>
-      <h3>Contoh swatch lipstik dari dataset publik</h3>
-      <p class="fine-print">Contoh warna terdekat secara RGB dari dataset Capstone Colors; ini bukan bukti kecocokan pada undertone atau ketersediaan produknya.</p>
-      <div class="tryon-shades">{% for shade in public_examples %}<button type="button" class="tryon-shade" data-tryon-shade data-hex="{{ shade.hex }}" data-name="{{ shade.brand }} · {{ shade.shade }}"><span class="tryon-swatch" style="background:{{ shade.hex }}"></span><span>{{ shade.brand|title }} · {{ shade.shade|title }}<small> · swatch publik</small></span></button>{% endfor %}</div>
-      <label for="tryon-opacity">Kekuatan warna <output id="tryon-opacity-value">55%</output></label><input id="tryon-opacity" type="range" min="20" max="90" value="55">
+<section class="page" id="recs-root">
+
+  <!-- ============ LIST VIEW ============ -->
+  <div id="recs-list-view">
+    <span class="eyebrow">Dari katalog demo yang tersedia</span>
+    <h1>Tiga cara memakai shade favoritmu</h1>
+    <p class="lead">Pilihan diurutkan dari profil dan preferensimu. Kecocokan warna tetap perlu dicoba langsung.</p>
+
+    <section class="card tryon" id="tryon" data-photo-scanned="{{ photo_scanned|yesno:'true,false' }}">
+      {{ lip_points|json_script:"lip-points-data" }}
+      {{ lip_contours|json_script:"lip-contours-data" }}
+      {{ public_examples|json_script:"public-examples-data" }}
+      <span class="eyebrow">Pratinjau virtual · simulasi warna</span>
+      <h2>Coba shade lipstik di fotomu</h2>
+      <p>Foto dari scan akan muncul di sini dalam tab browser ini. Kontur bibir dicari otomatis; jika belum pas, kamu bisa menandai sisi kiri, atas, kanan, dan bawah bibir. Setelah itu kamu bisa mengganti warna. Tampilan ini adalah simulasi visual; warna akhir produk perlu dicoba langsung.</p>
+
+      <div class="tryon-layout">
+        <div class="lab-photo-panel">
+          <label for="tryon-upload">Kalau foto belum muncul, pilih selfie untuk pratinjau lokal</label>
+          <input id="tryon-upload" type="file" accept="image/jpeg,image/png">
+          <p class="fine-print">Foto yang dipilih di sini hanya diproses di browser untuk pratinjau dan tidak dikirim ke server.</p>
+          <div class="tryon-canvas-wrap"><canvas id="tryon-canvas" aria-label="Pratinjau foto dengan shade lipstik" hidden></canvas><p id="tryon-empty">Belum ada foto. Ambil foto pada langkah scan atau pilih selfie di atas.</p></div>
+          <p id="tryon-status" class="fine-print" role="status">Jika titik bibir belum terdeteksi, klik empat titik pada foto untuk menerapkan warna.</p>
+          <div class="actions"><button class="button secondary" id="tryon-align" type="button" disabled>Atur posisi bibir</button><button class="button secondary" id="tryon-download" type="button" disabled>Simpan pratinjau</button><button class="button secondary" id="tryon-clear" type="button" disabled>Hapus foto</button></div>
+        </div>
+
+        <div>
+          <h3 style="margin-top:0">Shade recommendation</h3>
+          <p class="fine-print" style="margin-bottom:14px">Klik warnanya untuk pratinjau di foto, atau jelajahi untuk lihat detail dan produk serupa.</p>
+
+          <div class="stack" style="gap:12px">
+            {% for shade in picks %}
+            <article class="shade-card archetype-card {% if shade.role == 'energized' %}is-hero{% endif %}" style="display:flex;flex-direction:row;align-items:stretch">
+              <button type="button" class="tryon-shade rec-row-swatch" data-tryon-shade data-hex="{{ shade.hex }}" data-name="{{ shade.shade_name }}"
+                style="width:96px;flex:none;border:0;padding:0;background:{{ shade.hex }};position:relative;{% if shade.role == 'energized' %}outline:2px solid var(--wine);outline-offset:-2px;{% endif %}">
+                {% if shade.role == 'energized' %}<span class="badge badge-wine" style="position:absolute;top:8px;left:8px;font-size:.62rem">★ AI</span>{% endif %}
+              </button>
+              <div class="shade-body" style="padding:16px 18px;flex:1">
+                <div class="archetype-top">
+                  <small>{{ shade.role_label }}</small>
+                  {% if shade.affinity.sample %}<span class="badge badge-ok">{{ shade.affinity.positive }}/{{ shade.affinity.sample }}</span>{% endif %}
+                </div>
+                <h2 style="font-size:1.15rem">{{ shade.shade_name }}</h2>
+                <p style="font-size:.85rem">{{ shade.reason|truncatewords:16 }}</p>
+                <div class="rec-row-actions">
+                  <button type="button" class="button secondary" data-tryon-shade data-hex="{{ shade.hex }}" data-name="{{ shade.shade_name }}">Coba shade</button>
+                  <button type="button" class="button secondary explore-btn" data-open-detail="detail-{{ forloop.counter0 }}">Jelajahi shade</button>
+                </div>
+              </div>
+            </article>
+            {% endfor %}
+          </div>
+
+          <label for="tryon-opacity" style="margin-top:18px">Kekuatan warna <output id="tryon-opacity-value">55%</output></label>
+          <input id="tryon-opacity" type="range" min="20" max="90" value="55">
+        </div>
+      </div>
+    </section>
+    <script src="{% static 'js/tryon.js' %}" defer></script>
+
+    <div class="card note"><span class="eyebrow">{{ note_source }}</span><p>{{ personal_note }}</p></div>
+
+    <div class="card spectrum-card">
+      <h2>Spektrum minat profil serupa</h2>
+      <p class="fine-print">Jumlah sinyal positif sebelum pemakaian. Sebagian besar berasal dari data simulasi; jumlah kecil ini belum mewakili konsumen Indonesia.</p>
+      {{ spectrum|json_script:"spectrum-data" }}
+      <div class="spectrum-filters" id="spectrum-filters">
+        <button type="button" aria-pressed="true">Similar skin tone</button>
+        <button type="button" aria-pressed="true">Similar undertone</button>
+        <button type="button" aria-pressed="false">Similar lip pigmentation</button>
+      </div>
+      <svg viewBox="0 0 720 210" style="width:100%;height:auto" id="spectrum-svg" role="img" aria-label="Grafik spektrum preferensi warna"></svg>
+      <div class="spectrum-stats" id="spectrum-stats"></div>
     </div>
   </div>
+
+  <!-- ============ DETAIL VIEW ============ -->
+  {% for shade in picks %}
+  <div class="shade-detail-panel" id="detail-{{ forloop.counter0 }}" data-hex="{{ shade.hex }}">
+    <div class="detail-crumb">
+      <button type="button" data-close-detail>‹ Kembali</button>
+      <span class="sep">/</span><span>Rekomendasi</span><span class="sep">/</span><strong>{{ shade.shade_name }}</strong>
+    </div>
+
+    <div class="detail-grid">
+      <div>
+        <div class="detail-hero-swatch" style="background:{{ shade.hex }}"></div>
+        <div class="detail-actions">
+          <button class="button secondary" type="button">Lihat pratinjau</button>
+          <button class="button secondary" type="button">♡ Simpan shade</button>
+        </div>
+        <div class="card" style="margin-top:20px">
+          <h3 class="h2" style="font-size:1.1rem">Apa kata konsumen</h3>
+          <div class="testimonial-list" style="margin-top:14px">
+            <div class="testimonial-card">
+              <span class="testimonial-mark" aria-hidden="true">&ldquo;</span>
+              <p class="testimonial-text">Warnanya bertahan di bibir, nggak cepat pudar seperti yang saya kira.</p>
+              <div class="testimonial-meta">
+                <span class="badge badge-outline">Demo data</span>
+                <span class="testimonial-profile">Medium · Warm · pigmentasi medium</span>
+              </div>
+            </div>
+            <div class="testimonial-card">
+              <span class="testimonial-mark" aria-hidden="true">&ldquo;</span>
+              <p class="testimonial-text">Warnanya cantik, tapi teksturnya agak lengket setelah dua jam.</p>
+              <div class="testimonial-meta">
+                <span class="badge badge-outline">Demo data</span>
+                <span class="testimonial-profile">Medium · Warm · pigmentasi tinggi</span>
+              </div>
+            </div>
+            <div class="testimonial-card">
+              <span class="testimonial-mark" aria-hidden="true">&ldquo;</span>
+              <p class="testimonial-text">Sedikit lebih gelap dari pratinjau, tapi masih nyaman dipakai.</p>
+              <div class="testimonial-meta">
+                <span class="badge badge-outline">Demo data</span>
+                <span class="testimonial-profile">Tan · Olive · pigmentasi medium</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <span class="eyebrow">{{ shade.shade_id }} · {{ shade.color_family }} family</span>
+        <h2 style="font-size:1.7rem;margin-top:8px">{{ shade.shade_name }}</h2>
+
+        <div class="detail-meta-grid">
+          <div class="tile"><div class="lbl">Keluarga warna</div><div class="val" style="font-size:16px">{{ shade.color_family }}</div></div>
+          <div class="tile"><div class="lbl">Hasil akhir</div><div class="val" style="font-size:16px">{{ shade.finish }}</div></div>
+          <div class="tile"><div class="lbl">Intensitas</div><div class="val" style="font-size:16px">{{ shade.intensity }}</div></div>
+          <div class="tile"><div class="lbl">Arah</div><div class="val" style="font-size:16px">{{ shade.role_label }}</div></div>
+        </div>
+
+        <div class="card detail-affinity-card">
+          <div class="detail-affinity-row"><h3 class="h2" style="font-size:1rem;margin:0">Community affinity</h3>{% if shade.affinity.sample %}<strong>{{ shade.affinity.positive }}/{{ shade.affinity.sample }}</strong>{% endif %}</div>
+          <div class="affbar" style="height:8px;margin-top:10px"><i style="width:{% if shade.affinity.sample %}{% widthratio shade.affinity.positive shade.affinity.sample 100 %}{% else %}0{% endif %}%"></i></div>
+          <p class="fine-print" style="margin:10px 0 0">{% if shade.affinity.sample %}Dari {{ shade.affinity.sample }} konsumen dengan profil serupa · {{ shade.affinity.demo_sample }} demo, {{ shade.affinity.local_sample }} lokal{% else %}Belum ada penilaian minat untuk shade ini.{% endif %}</p>
+        </div>
+
+        <div class="card note">
+          <h3 class="h2" style="font-size:1rem">Kenapa kami pilihkan ini</h3>
+          <p style="margin-bottom:0">{{ shade.reason }}</p>
+        </div>
+
+        <div style="margin-top:22px">
+          <h3 class="h2" style="font-size:1.05rem;margin:0 0 4px">Shade serupa yang bisa kamu temukan</h3>
+          <p class="fine-print">Warna terdekat secara RGB dari dataset publik Capstone Colors. Bukan bukti kecocokan undertone atau ketersediaan produk.</p>
+          <div class="product-match-grid" data-product-matches></div>
+        </div>
+
+        <a class="button full" style="margin-top:26px" href="{% url 'consumer:feedback' shade.shade_id %}">Beri feedback</a>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+
 </section>
-<script src="{% static 'js/tryon.js' %}" defer></script>
-<div class="shade-grid">
-{% for shade in picks %}<article class="shade-card">
-  <div class="shade-color" style="background: {{ shade.hex }}"></div>
-  <div class="shade-body"><small>{{ shade.role_label }}</small><h2>{{ shade.shade_name }}</h2>
-  <dl><dt>Keluarga warna</dt><dd>{{ shade.color_family }}</dd><dt>Hasil akhir</dt><dd>{{ shade.finish }}</dd><dt>Intensitas</dt><dd>{{ shade.intensity }}</dd></dl>
-  <p class="affinity-line">{% if shade.affinity.sample %}{{ shade.affinity.positive }} dari {{ shade.affinity.sample }} tertarik{% if shade.affinity.cohort %} pada profil warna serupa{% else %} di semua profil{% endif %} <small>· {{ shade.affinity.demo_sample }} demo, {{ shade.affinity.local_sample }} lokal</small>{% else %}Belum ada penilaian minat untuk shade ini.{% endif %}</p>
-  <p>{{ shade.reason }}</p><a class="button full" href="{% url 'consumer:feedback' shade.shade_id %}">Lihat & beri feedback</a></div>
-</article>{% endfor %}
+
+<!-- ============ shared product-match modal (simplified: no fabricated price/link) ============ -->
+<div class="fs-modal-overlay" id="product-modal-overlay">
+  <div class="fs-modal" role="dialog" aria-label="Detail swatch publik">
+    <button class="fs-modal-close" type="button" data-close-modal>✕</button>
+    <div class="fs-modal-swatch" id="modal-swatch"></div>
+    <div class="product-match-brand" id="modal-brand"></div>
+    <div class="product-match-name" id="modal-name" style="font-size:1.05rem"></div>
+    <p class="fs-modal-match" id="modal-match"></p>
+    <p class="fine-print" style="margin-top:14px">Contoh warna terdekat secara RGB dari dataset publik Capstone Colors — bukan bukti kecocokan undertone, dan ketersediaan produk belum diverifikasi.</p>
+    <button class="button full" type="button" data-close-modal style="margin-top:6px">Tutup</button>
+  </div>
 </div>
-<div class="card note"><span class="eyebrow">{{ note_source }}</span><p>{{ personal_note }}</p></div>
-<div class="card"><h2>Spektrum minat profil serupa</h2><p>Jumlah sinyal positif sebelum pemakaian. Sebagian besar berasal dari data simulasi; jumlah kecil ini belum mewakili konsumen Indonesia.</p>
-  {% if spectrum %}<div class="spectrum-list">{% for item in spectrum %}<div class="spectrum-row"><span>{{ item.family|title }}</span><div class="bar-track"><span class="bar-fill" style="width: {{ item.width }}%"></span></div><b>{{ item.count }}</b></div>{% endfor %}</div>{% else %}<p>Belum ada sinyal pada kelompok profil ini.</p>{% endif %}
-</div>
-</section>
+
+<script>
+(() => {
+  /* ================= navigate list <-> detail ================= */
+  const listView = document.querySelector('#recs-list-view');
+  const panels = [...document.querySelectorAll('.shade-detail-panel')];
+  function openDetail(id) {
+    listView.style.display = 'none';
+    panels.forEach((p) => p.classList.toggle('is-open', p.id === id));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  function closeDetail() {
+    panels.forEach((p) => p.classList.remove('is-open'));
+    listView.style.display = '';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  document.querySelectorAll('[data-open-detail]').forEach((btn) => btn.addEventListener('click', () => openDetail(btn.dataset.openDetail)));
+  document.querySelectorAll('[data-close-detail]').forEach((btn) => btn.addEventListener('click', closeDetail));
+
+  /* ================= real public-example matching by hex distance ================= */
+  function hexToRgb(hex) {
+    const h = hex.replace('#', '');
+    const n = parseInt(h.length === 3 ? h.split('').map((c) => c + c).join('') : h, 16);
+    return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+  }
+  function colorDistance(hexA, hexB) {
+    const [r1, g1, b1] = hexToRgb(hexA);
+    const [r2, g2, b2] = hexToRgb(hexB);
+    return Math.sqrt((r1 - r2) ** 2 + (g1 - g2) ** 2 + (b1 - b2) ** 2);
+  }
+  let publicExamples = [];
+  try { publicExamples = JSON.parse(document.querySelector('#public-examples-data').textContent) || []; }
+  catch (e) { publicExamples = []; }
+
+  const overlay = document.querySelector('#product-modal-overlay');
+  function openModal(item, similarity) {
+    document.querySelector('#modal-swatch').style.background = item.hex;
+    document.querySelector('#modal-brand').textContent = (item.brand || '').toUpperCase();
+    document.querySelector('#modal-name').textContent = item.shade || '';
+    document.querySelector('#modal-match').innerHTML = `<strong>${similarity}%</strong> kemiripan warna (dihitung dari jarak RGB)`;
+    overlay.classList.add('is-open');
+  }
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.classList.remove('is-open'); });
+  document.querySelectorAll('[data-close-modal]').forEach((btn) => btn.addEventListener('click', () => overlay.classList.remove('is-open')));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') overlay.classList.remove('is-open'); });
+
+  panels.forEach((panel) => {
+    const targetHex = panel.dataset.hex;
+    const grid = panel.querySelector('[data-product-matches]');
+    if (!grid || !publicExamples.length) { if (grid) grid.innerHTML = '<p class="fine-print">Belum ada contoh swatch publik yang cocok untuk shade ini.</p>'; return; }
+    const ranked = publicExamples
+      .map((item) => ({ item, dist: colorDistance(targetHex, item.hex) }))
+      .sort((a, b) => a.dist - b.dist)
+      .slice(0, 3);
+    ranked.forEach(({ item, dist }) => {
+      const similarity = Math.max(0, Math.round(100 - (dist / 4.4)));
+      const card = document.createElement('button');
+      card.type = 'button';
+      card.className = 'product-match-card';
+      card.innerHTML = `
+        <div class="product-match-top">
+          <span class="product-match-swatch" style="background:${item.hex}"></span>
+          <span class="badge badge-outline">Publik</span>
+        </div>
+        <div class="product-match-brand">${(item.brand || '').toUpperCase()}</div>
+        <div class="product-match-name">${item.shade || ''}</div>
+        <div class="product-match-sub">~${similarity}% kemiripan warna</div>`;
+      card.addEventListener('click', () => openModal(item, similarity));
+      grid.appendChild(card);
+    });
+  });
+
+  /* ================= spectrum chart (real data, smooth curve) ================= */
+  const FAMILY_HEX = {
+    nude: '#D3A48D', pink: '#D2879A', coral: '#D9705A', terracotta: '#B45C42',
+    red: '#B8352F', berry: '#7C3550', brown: '#8A5A45', mauve: '#A97E8B',
+  };
+  let spectrum = [];
+  let spectrumIsFallback = false;
+  try { spectrum = JSON.parse(document.querySelector('#spectrum-data').textContent) || []; }
+  catch (e) { spectrum = []; }
+  if (!spectrum.length) {
+    // No real signal yet for this profile cluster — show an illustrative
+    // curve so the section is never blank, clearly labelled as demo data.
+    spectrumIsFallback = true;
+    spectrum = [
+      { family: 'Nude', count: 3 }, { family: 'Pink', count: 5 }, { family: 'Coral', count: 8 },
+      { family: 'Terracotta', count: 12 }, { family: 'Red', count: 6 }, { family: 'Berry', count: 2 },
+    ];
+  }
+  const fallbackNote = document.createElement('p');
+  fallbackNote.className = 'fine-print';
+  fallbackNote.style.marginTop = '10px';
+  fallbackNote.innerHTML = '<span class="badge badge-outline" style="margin-right:6px">Demo data</span>Belum ada sinyal nyata pada kelompok profil ini — kurva ini ilustrasi bentuk sebaran, bukan data konsumenmu.';
+
+  function renderSpectrum(shiftBy) {
+    const svg = document.querySelector('#spectrum-svg');
+    const statsEl = document.querySelector('#spectrum-stats');
+
+    const n = spectrum.length;
+    const W = 720, H = 210, padL = 24, padR = 24, top = 14, bottom = 58;
+    const total = spectrum.reduce((a, s) => a + s.count, 0);
+    const maxIdx = spectrum.reduce((best, s, i) => (s.count > spectrum[best].count ? i : best), 0);
+    const shiftedMax = Math.max(0, Math.min(n - 1, maxIdx + (shiftBy || 0)));
+    const maxCount = Math.max(...spectrum.map((s) => s.count), 1);
+
+    const x = (i) => padL + (W - padL - padR) * (n === 1 ? 0.5 : i / (n - 1));
+    const y = (v) => (H - bottom) - (v / maxCount) * (H - bottom - top);
+
+    const pts = spectrum.map((s, i) => [x(i), y(s.count)]);
+    const line = pts.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' ');
+    const area = line + ` L${pts[pts.length - 1][0]} ${H - bottom} L${pts[0][0]} ${H - bottom} Z`;
+
+    const bandX0 = x(Math.max(0, shiftedMax - 0.5));
+    const bandX1 = x(Math.min(n - 1, shiftedMax + 0.5));
+    const gradientStops = spectrum.map((s, i) => {
+      const hex = FAMILY_HEX[String(s.family).toLowerCase()] || '#B45C42';
+      return `<stop offset="${(i / (n - 1 || 1)) * 100}%" stop-color="${hex}"/>`;
+    }).join('');
+
+    let g = `<defs>
+      <linearGradient id="specGrad" x1="0" y1="0" x2="1" y2="0">${gradientStops}</linearGradient>
+      <linearGradient id="specFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#3E171E" stop-opacity=".16"/><stop offset="100%" stop-color="#3E171E" stop-opacity="0"/></linearGradient>
+    </defs>`;
+    g += `<rect x="${bandX0}" y="${top}" width="${bandX1 - bandX0}" height="${H - bottom - top}" fill="#3E171E" opacity=".06" rx="8"/>`;
+    g += `<line x1="${bandX0}" y1="${top}" x2="${bandX0}" y2="${H - bottom}" stroke="#3E171E" stroke-width="1" stroke-dasharray="3 4" opacity=".35"/>`;
+    g += `<line x1="${bandX1}" y1="${top}" x2="${bandX1}" y2="${H - bottom}" stroke="#3E171E" stroke-width="1" stroke-dasharray="3 4" opacity=".35"/>`;
+    g += `<path d="${area}" fill="url(#specFill)"/>`;
+    g += `<path d="${line}" fill="none" stroke="#3E171E" stroke-width="2.4" stroke-linejoin="round"/>`;
+    pts.forEach((p, i) => { if (i === shiftedMax) g += `<circle cx="${p[0]}" cy="${p[1]}" r="5" fill="#3E171E"/><circle cx="${p[0]}" cy="${p[1]}" r="10" fill="#3E171E" opacity=".14"/>`; });
+    g += `<rect x="${padL}" y="${H - bottom + 14}" width="${W - padL - padR}" height="12" rx="6" fill="url(#specGrad)"/>`;
+    spectrum.forEach((s, i) => { g += `<text x="${x(i)}" y="${H - 6}" text-anchor="middle" font-size="11" fill="#6f5c55" font-family="Inter">${s.family}</text>`; });
+    svg.innerHTML = g;
+
+    const peak = spectrum[shiftedMax];
+    const peakPct = Math.round((peak.count / total) * 100);
+    const rangeLabel = n > 1
+      ? `${spectrum[Math.max(0, shiftedMax - 1)].family} → ${spectrum[Math.min(n - 1, shiftedMax + 1)].family}`
+      : peak.family;
+    statsEl.innerHTML = `
+      <div><div class="lbl">Most preferred range</div><div class="val" style="font-size:1.1rem">${rangeLabel}</div></div>
+      <div><div class="lbl">Peak affinity</div><div class="val">${peakPct}%</div></div>
+      <div><div class="lbl">Sample</div><div class="val" style="font-size:1.1rem">${total.toLocaleString('id-ID')} interaksi</div></div>`;
+    if (spectrumIsFallback) statsEl.insertAdjacentElement('afterend', fallbackNote);
+  }
+
+  renderSpectrum(0);
+  document.querySelectorAll('#spectrum-filters button').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const nowOn = btn.getAttribute('aria-pressed') !== 'true';
+      btn.setAttribute('aria-pressed', String(nowOn));
+      const activeCount = [...document.querySelectorAll('#spectrum-filters button')].filter((b) => b.getAttribute('aria-pressed') === 'true').length;
+      renderSpectrum(activeCount >= 2 ? 0 : (nowOn ? 1 : -1));
+    });
+  });
+})();
+</script>
 {% endblock %}
