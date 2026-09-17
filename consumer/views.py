@@ -7,6 +7,7 @@ from django.shortcuts import redirect, render
 from consumer.forms import FeedbackForm, LipProfileForm, PreferenceForm, ProfileStartForm
 from services.ai_client import AIUnavailable, analyze_photo, generate_personal_note
 from services.analytics import affinity, community_spectrum
+from services.color_science import LandmarkNotFound, analyze_photo_objective
 from services.data import shade_by_id
 from services.dataset_insights import public_swatches_near
 from services.recommendation import recommend
@@ -73,21 +74,37 @@ def scan(request):
         else:
             photo_bytes = photo.read()
             matches_type = (
-                photo.content_type == "image/jpeg" and photo_bytes.startswith(b"\xff\xd8\xff")
-            ) or (
-                photo.content_type == "image/png" and photo_bytes.startswith(b"\x89PNG\r\n\x1a\n")
-            )
+                                   photo.content_type == "image/jpeg" and photo_bytes.startswith(b"\xff\xd8\xff")
+                           ) or (
+                                   photo.content_type == "image/png" and photo_bytes.startswith(b"\x89PNG\r\n\x1a\n")
+                           )
             if not matches_type:
                 messages.error(request, "Isi file tidak sesuai format JPG/PNG.")
                 return render(request, "consumer/scan.html", {"photo_consent": True,
-                    "ai_available": bool(os.environ.get("AI_API_KEY") and os.environ.get("AI_VISION_MODEL"))})
+                                                              "ai_available": bool(os.environ.get("AI_API_KEY") and os.environ.get("AI_VISION_MODEL"))})
             request.session["photo_scanned"] = True
+            # Three-tier fallback, in order of how grounded/explainable the result is:
+            # 1) objective CV + colorimetry measurement (deterministic, local, no API call)
+            # 2) AI vision API (only if a face/lips could not be located reliably)
+            # 3) manual profile (only if both of the above are unavailable)
             try:
-                request.session["lip_profile"] = analyze_photo(photo_bytes, photo.content_type)
-                messages.info(request, "Hasil AI adalah perkiraan. Periksa dan ubah jika perlu.")
-            except AIUnavailable:
-                request.session["lip_profile"] = MANUAL_PROFILE.copy()
-                messages.warning(request, "Analisis AI tidak tersedia. Silakan isi profil secara manual.")
+                request.session["lip_profile"] = analyze_photo_objective(photo_bytes, photo.content_type)
+                messages.info(
+                    request,
+                    "Skin tone dan undertone diukur langsung dari foto (deteksi wajah + "
+                    "analisis warna). Periksa dan ubah jika perlu.",
+                )
+            except LandmarkNotFound:
+                try:
+                    request.session["lip_profile"] = analyze_photo(photo_bytes, photo.content_type)
+                    messages.info(
+                        request,
+                        "Wajah/bibir tidak terdeteksi cukup jelas untuk pengukuran otomatis; "
+                        "hasil AI di bawah adalah perkiraan. Periksa dan ubah jika perlu.",
+                    )
+                except AIUnavailable:
+                    request.session["lip_profile"] = MANUAL_PROFILE.copy()
+                    messages.warning(request, "Analisis foto tidak tersedia. Silakan isi profil secara manual.")
             return redirect("consumer:profile_result")
     return render(request, "consumer/scan.html", {
         "photo_consent": request.session.get("photo_consent", False),
@@ -101,11 +118,18 @@ def profile_result(request):
     if request.method == "POST" and form.is_valid():
         request.session["lip_profile"] = {**current, **form.cleaned_data, "confidence": "user_reviewed"}
         return redirect("consumer:recommendations")
-    source_labels = {"demo": "Profil contoh", "manual": "Input manual", "low": "Perkiraan AI · periksa kembali",
-                     "medium": "Perkiraan AI · periksa kembali", "high": "Perkiraan AI · periksa kembali",
-                     "user_reviewed": "Sudah diperiksa pengguna"}
+    source_labels = {
+        "demo": "Profil contoh",
+        "manual": "Input manual",
+        "measured": "Diukur otomatis dari foto (deteksi wajah + analisis warna)",
+        "low": "Perkiraan AI · periksa kembali",
+        "medium": "Perkiraan AI · periksa kembali",
+        "high": "Perkiraan AI · periksa kembali",
+        "user_reviewed": "Sudah diperiksa pengguna",
+    }
     return render(request, "consumer/profile_result.html", {
         "form": form, "source_label": source_labels.get(current.get("confidence"), "Perkiraan awal"),
+        "measurement": current.get("measurement"),
     })
 
 
